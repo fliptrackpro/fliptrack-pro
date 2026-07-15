@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/Toast'
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -15,9 +16,11 @@ function fileToBase64(file) {
 
 export default function NewProduct() {
   const router = useRouter()
+  const toast = useToast()
   const [loading, setLoading] = useState(false)
   const [estimating, setEstimating] = useState(false)
   const [estimateError, setEstimateError] = useState('')
+  const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [aiEstimate, setAiEstimate] = useState(null)
   const [description, setDescription] = useState('')
@@ -37,6 +40,7 @@ export default function NewProduct() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    setPhotoFile(file)
     setPhotoPreview(URL.createObjectURL(file))
     setAiEstimate(null)
     setEstimateError('')
@@ -76,6 +80,20 @@ export default function NewProduct() {
       setLoading(false)
       return router.push('/login')
     }
+
+    let photo_url = null
+    if (photoFile) {
+      const ext = photoFile.name.split('.').pop()
+      const path = `${user.id}/${crypto.randomUUID()}.${ext}`
+      const { error: uploadError } = await supabase.storage.from('products').upload(path, photoFile)
+      if (uploadError) {
+        toast('Erreur upload photo : ' + uploadError.message)
+        setLoading(false)
+        return
+      }
+      photo_url = supabase.storage.from('products').getPublicUrl(path).data.publicUrl
+    }
+
     const { error } = await supabase.from('products').insert({
       user_id: user.id,
       name: form.name,
@@ -86,10 +104,12 @@ export default function NewProduct() {
       purchase_fees: parseFloat(form.purchase_fees) || 0,
       status: 'stock',
       description: description || null,
+      photo_url,
     })
     if (error) {
-      alert('Erreur : ' + error.message)
+      toast('Erreur : ' + error.message)
     } else {
+      toast('Produit ajouté', 'success')
       router.push('/products')
     }
     setLoading(false)

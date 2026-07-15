@@ -110,6 +110,20 @@ export default function PublishProduct() {
         </div>
 
         <div className="bg-[#161920] rounded-2xl border border-white/5 p-6 md:p-8 flex flex-col gap-6">
+          {product.photo_url && (
+            <div className="flex items-center gap-4">
+              <img src={product.photo_url} alt="" className="w-16 h-16 rounded-xl object-cover" />
+              <a
+                href={product.photo_url}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-3 py-1.5 rounded-lg transition"
+              >
+                Télécharger la photo
+              </a>
+            </div>
+          )}
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Prix de vente visé</label>
             <div className="relative">

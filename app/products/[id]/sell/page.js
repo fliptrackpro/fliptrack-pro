@@ -3,10 +3,12 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
+import { useToast } from '@/components/Toast'
 
 export default function SellProduct() {
   const router = useRouter()
   const params = useParams()
+  const toast = useToast()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
@@ -40,6 +42,10 @@ export default function SellProduct() {
   const handleSubmit = async () => {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setLoading(false)
+      return router.push('/login')
+    }
 
     const { error: saleError } = await supabase.from('sales').insert({
       product_id: product.id,
@@ -51,7 +57,7 @@ export default function SellProduct() {
     })
 
     if (saleError) {
-      alert('Erreur : ' + saleError.message)
+      toast('Erreur : ' + saleError.message)
       setLoading(false)
       return
     }
@@ -62,11 +68,12 @@ export default function SellProduct() {
       .eq('id', product.id)
 
     if (productError) {
-      alert('Erreur : ' + productError.message)
+      toast('Erreur : ' + productError.message)
       setLoading(false)
       return
     }
 
+    toast('Vente enregistrée', 'success')
     router.push('/sales')
   }
 

@@ -12,6 +12,7 @@ create table if not exists products (
   purchase_date date not null default current_date,
   status text not null default 'stock' check (status in ('stock', 'vendu')),
   description text,
+  photo_url text,
   created_at timestamptz not null default now()
 );
 
@@ -50,3 +51,19 @@ create policy "sales_update_own" on sales
   for update using (auth.uid() = user_id);
 create policy "sales_delete_own" on sales
   for delete using (auth.uid() = user_id);
+
+insert into storage.buckets (id, name, public)
+values ('products', 'products', true)
+on conflict (id) do nothing;
+
+create policy "Public read product photos" on storage.objects
+  for select using (bucket_id = 'products');
+
+create policy "Users upload own product photos" on storage.objects
+  for insert with check (bucket_id = 'products' and auth.uid()::text = (storage.foldername(name))[1]);
+
+create policy "Users update own product photos" on storage.objects
+  for update using (bucket_id = 'products' and auth.uid()::text = (storage.foldername(name))[1]);
+
+create policy "Users delete own product photos" on storage.objects
+  for delete using (bucket_id = 'products' and auth.uid()::text = (storage.foldername(name))[1]);

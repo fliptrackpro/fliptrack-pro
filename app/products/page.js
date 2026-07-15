@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
+import { useToast } from '@/components/Toast'
 
 export default function ProductsPage() {
   const [user, setUser] = useState(null)
   const [products, setProducts] = useState([])
   const [filter, setFilter] = useState('tous')
   const router = useRouter()
+  const toast = useToast()
 
   const load = async (userId) => {
     const { data } = await supabase
@@ -33,8 +35,9 @@ export default function ProductsPage() {
   const handleDelete = async (id) => {
     if (!confirm('Supprimer ce produit et ses ventes associées ?')) return
     const { error } = await supabase.from('products').delete().eq('id', id)
-    if (error) return alert('Erreur : ' + error.message)
+    if (error) return toast('Erreur : ' + error.message)
     setProducts(products.filter(p => p.id !== id))
+    toast('Produit supprimé', 'success')
   }
 
   const filtered = products.filter(p => filter === 'tous' ? true : p.status === filter)
@@ -98,7 +101,11 @@ export default function ProductsPage() {
             {filtered.map(p => (
               <div key={p.id} className="bg-[#161920] border border-white/5 rounded-2xl p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className={`w-2 h-2 rounded-full flex-shrink-0 ${p.status === 'stock' ? 'bg-emerald-400' : 'bg-gray-600'}`} />
+                  {p.photo_url ? (
+                    <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                  ) : (
+                    <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#34d399' : '#4b5563' }} />
+                  )}
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-white truncate">{p.name}</p>
                     <p className="text-xs text-gray-500">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
