@@ -107,12 +107,20 @@ export default function ProductsPage() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <p className="text-sm font-semibold text-white">{p.purchase_price}€</p>
                   {p.status === 'stock' ? (
-                    <button
-                      onClick={() => router.push(`/products/${p.id}/sell`)}
-                      className="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-medium px-3 py-1.5 rounded-lg transition"
-                    >
-                      Vendre
-                    </button>
+                    <>
+                      <button
+                        onClick={() => router.push(`/products/${p.id}/publish`)}
+                        className="text-xs bg-white/5 text-gray-300 hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg transition"
+                      >
+                        Publier
+                      </button>
+                      <button
+                        onClick={() => router.push(`/products/${p.id}/sell`)}
+                        className="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-medium px-3 py-1.5 rounded-lg transition"
+                      >
+                        Vendre
+                      </button>
+                    </>
                   ) : (
                     <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-400">Vendu</span>
                   )}
