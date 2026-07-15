@@ -45,57 +45,60 @@ export default function NewProduct() {
 
   const totalCost = (parseFloat(form.purchase_price || 0) + parseFloat(form.purchase_fees || 0)).toFixed(2)
 
+  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
+
   return (
-    <div className="min-h-screen bg-[#f7f7f5] text-gray-900">
+    <div className="min-h-screen bg-[#0d0f14] text-white">
 
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-[#111318] border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/dashboard')}
-            className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-500 transition text-sm"
+            className="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-gray-400 transition text-sm"
           >
             ←
           </button>
-          <span className="text-sm text-gray-400">Dashboard</span>
-          <span className="text-sm text-gray-300">/</span>
-          <span className="text-sm font-medium text-gray-700">Nouveau produit</span>
+          <span className="text-sm text-gray-500">Dashboard</span>
+          <span className="text-sm text-gray-700">/</span>
+          <span className="text-sm font-medium text-gray-300">Nouveau produit</span>
         </div>
-        <span className="text-lg font-bold text-gray-900">
-          Flip<span className="text-emerald-500">Track</span>
+        <span className="text-lg font-bold text-white">
+          Flip<span className="text-emerald-400">Track</span>
         </span>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Ajouter un produit</h2>
-          <p className="text-gray-400 text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
+          <h2 className="text-2xl font-bold text-white">Ajouter un produit</h2>
+          <p className="text-gray-500 text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-[#161920] rounded-2xl border border-white/5 p-6 md:p-8 flex flex-col gap-6">
 
           {/* Nom */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Nom du produit</label>
+            <label className={labelClass}>Nom du produit</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               placeholder="Ex: Nike Air Max 90 blanche T42"
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white transition text-sm"
+              className={inputClass}
             />
           </div>
 
           {/* Categorie + Etat */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Catégorie</label>
+              <label className={labelClass}>Catégorie</label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-emerald-400 focus:bg-white transition text-sm"
+                className={inputClass}
               >
                 <option value="">Choisir</option>
                 {categories.map(c => (
@@ -104,12 +107,12 @@ export default function NewProduct() {
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">État</label>
+              <label className={labelClass}>État</label>
               <select
                 name="condition"
                 value={form.condition}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:border-emerald-400 focus:bg-white transition text-sm"
+                className={inputClass}
               >
                 <option value="">Choisir</option>
                 {conditions.map(c => (
@@ -120,12 +123,12 @@ export default function NewProduct() {
           </div>
 
           {/* Separateur */}
-          <div className="border-t border-gray-100" />
+          <div className="border-t border-white/5" />
 
           {/* Prix + Frais */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Prix d'achat</label>
+              <label className={labelClass}>Prix d'achat</label>
               <div className="relative">
                 <input
                   name="purchase_price"
@@ -133,13 +136,13 @@ export default function NewProduct() {
                   onChange={handleChange}
                   type="number"
                   placeholder="0"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-8 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white transition text-sm"
+                  className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Frais d'achat</label>
+              <label className={labelClass}>Frais d'achat</label>
               <div className="relative">
                 <input
                   name="purchase_fees"
@@ -147,21 +150,21 @@ export default function NewProduct() {
                   onChange={handleChange}
                   type="number"
                   placeholder="0"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-8 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:bg-white transition text-sm"
+                  className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
               </div>
             </div>
           </div>
 
           {/* Apercu cout total */}
           {form.purchase_price && (
-            <div className="bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 flex items-center justify-between">
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-emerald-600 font-semibold uppercase tracking-wider">Coût total</p>
-                <p className="text-xs text-emerald-500 mt-0.5">Prix achat + frais</p>
+                <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Coût total</p>
+                <p className="text-xs text-emerald-500/70 mt-0.5">Prix achat + frais</p>
               </div>
-              <span className="text-xl font-bold text-emerald-600">{totalCost} €</span>
+              <span className="text-xl font-bold text-emerald-400">{totalCost} €</span>
             </div>
           )}
 
@@ -169,11 +172,11 @@ export default function NewProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-gray-900 hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-400 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <span className="w-4 h-4 border-2 border-gray-400 border-t-white rounded-full animate-spin"></span>
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                 Enregistrement...
               </span>
             ) : (
