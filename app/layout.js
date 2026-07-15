@@ -15,6 +15,15 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "FlipTrack",
   description: "Gérez vos achats et ventes en un clic",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0d0f14",
 };
 
 export default function RootLayout({ children }) {
