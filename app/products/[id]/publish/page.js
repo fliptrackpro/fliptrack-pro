@@ -54,9 +54,13 @@ export default function PublishProduct() {
     setError('')
     setListings(null)
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       const res = await fetch('/api/listing', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
         body: JSON.stringify({
           name: product.name,
           category: product.category,
@@ -88,10 +92,12 @@ export default function PublishProduct() {
   const handleMarkReposted = async () => {
     setMarking(true)
     const now = new Date().toISOString()
+    const { data: { user } } = await supabase.auth.getUser()
     const { error } = await supabase
       .from('products')
       .update({ last_reposted_at: now })
       .eq('id', product.id)
+      .eq('user_id', user?.id)
     if (error) {
       toast('Erreur : ' + error.message)
     } else {

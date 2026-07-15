@@ -1,4 +1,21 @@
+import { requireUser } from '@/lib/apiAuth'
+
+function isOwnStoragePhoto(url) {
+  try {
+    const u = new URL(url)
+    const base = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL)
+    return u.protocol === 'https:' && u.hostname === base.hostname && u.pathname.startsWith('/storage/v1/object/public/products/')
+  } catch {
+    return false
+  }
+}
+
 export async function POST(req) {
+  const user = await requireUser(req)
+  if (!user) {
+    return Response.json({ error: 'Non authentifié.' }, { status: 401 })
+  }
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return Response.json({ error: 'Clé API Gemini manquante côté serveur.' }, { status: 500 })
@@ -12,7 +29,7 @@ export async function POST(req) {
   const parts = []
 
   let imagePart = null
-  if (photo_url) {
+  if (photo_url && isOwnStoragePhoto(photo_url)) {
     try {
       const imgRes = await fetch(photo_url)
       if (imgRes.ok) {

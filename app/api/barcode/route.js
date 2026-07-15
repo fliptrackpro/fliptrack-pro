@@ -1,4 +1,11 @@
+import { requireUser } from '@/lib/apiAuth'
+
 export async function GET(req) {
+  const user = await requireUser(req)
+  if (!user) {
+    return Response.json({ error: 'Non authentifié.' }, { status: 401 })
+  }
+
   const { searchParams } = new URL(req.url)
   const code = searchParams.get('code')
   if (!code) {

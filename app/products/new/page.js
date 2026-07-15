@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
 import { CameraIcon, BarcodeIcon, SparkleIcon } from '@/components/icons'
 
+async function authHeaders() {
+  const { data: { session } } = await supabase.auth.getSession()
+  return session ? { Authorization: `Bearer ${session.access_token}` } : {}
+}
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -70,7 +75,7 @@ export default function NewProduct() {
       const base64 = await fileToBase64(file)
       const res = await fetch('/api/estimate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
         body: JSON.stringify({ image: base64, mimeType: file.type }),
       })
       const data = await res.json()
@@ -118,7 +123,9 @@ export default function NewProduct() {
       }
 
       const code = barcodes[0].rawValue
-      const res = await fetch(`/api/barcode?code=${encodeURIComponent(code)}`)
+      const res = await fetch(`/api/barcode?code=${encodeURIComponent(code)}`, {
+        headers: await authHeaders(),
+      })
       const data = await res.json()
 
       if (!res.ok) {

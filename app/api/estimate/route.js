@@ -1,7 +1,14 @@
+import { requireUser } from '@/lib/apiAuth'
+
 const CATEGORIES = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
 const CONDITIONS = ['Neuf avec étiquette', 'Très bon état', 'Bon état', 'État correct']
 
 export async function POST(req) {
+  const user = await requireUser(req)
+  if (!user) {
+    return Response.json({ error: 'Non authentifié.' }, { status: 401 })
+  }
+
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return Response.json({ error: 'Clé API Gemini manquante côté serveur.' }, { status: 500 })

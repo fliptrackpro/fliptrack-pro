@@ -66,6 +66,7 @@ export default function SellProduct() {
       .from('products')
       .update({ status: 'vendu' })
       .eq('id', product.id)
+      .eq('user_id', user.id)
 
     if (productError) {
       toast('Erreur : ' + productError.message)
