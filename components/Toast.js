@@ -24,8 +24,8 @@ export function ToastProvider({ children }) {
             key={t.id}
             className={`rounded-xl px-4 py-3 text-sm shadow-lg border bg-white ${
               t.type === 'error'
-                ? 'border-[#c14f4a]/25 text-[#c14f4a]'
-                : 'border-[#4f8f6e]/25 text-[#4f8f6e]'
+                ? 'border-[#e0654a]/25 text-[#e0654a]'
+                : 'border-[#4a8a6f]/25 text-[#4a8a6f]'
             }`}
           >
             {t.message}

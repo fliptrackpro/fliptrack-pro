@@ -4,8 +4,8 @@
   "description": "Gérez vos achats et ventes en un clic",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#f4f1f9",
-  "theme_color": "#7c6fe0",
+  "background_color": "#f5f2ec",
+  "theme_color": "#6d5ce6",
   "icons": [
     {
       "src": "/icons/icon-192.png",

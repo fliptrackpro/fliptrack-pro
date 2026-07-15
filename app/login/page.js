@@ -20,14 +20,14 @@ export default function LoginPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-[#e7e2f3] rounded-2xl p-8 shadow-xl shadow-[#2b2438]/5">
+    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white border border-[#eae5f0] rounded-2xl p-8 shadow-xl shadow-[#241f2e]/5">
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-serif italic text-[#2b2438]">
-            Flip<span className="not-italic font-sans font-bold text-[#7c6fe0]">Track</span>
+          <h1 className="text-3xl font-serif italic text-[#241f2e]">
+            Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
           </h1>
-          <p className="text-[#948da8] mt-2">
+          <p className="text-[#8b8496] mt-2">
             Gérez vos achats et ventes en un clic
           </p>
         </div>
@@ -39,24 +39,24 @@ export default function LoginPage() {
             variables: {
               default: {
                 colors: {
-                  brand: '#7c6fe0',
-                  brandAccent: '#6c5dd3',
+                  brand: '#6d5ce6',
+                  brandAccent: '#5d4dd6',
                   brandButtonText: '#ffffff',
                   defaultButtonBackground: '#ffffff',
-                  defaultButtonBackgroundHover: '#f4f1f9',
-                  defaultButtonBorder: '#e7e2f3',
-                  defaultButtonText: '#2b2438',
+                  defaultButtonBackgroundHover: '#f5f2ec',
+                  defaultButtonBorder: '#eae5f0',
+                  defaultButtonText: '#241f2e',
                   inputBackground: '#ffffff',
-                  inputBorder: '#e7e2f3',
-                  inputBorderHover: '#c9c0e6',
-                  inputBorderFocus: '#7c6fe0',
-                  inputText: '#2b2438',
-                  inputLabelText: '#948da8',
-                  inputPlaceholder: '#b8b2c9',
-                  messageText: '#948da8',
-                  messageTextDanger: '#c14f4a',
-                  anchorTextColor: '#948da8',
-                  anchorTextHoverColor: '#7c6fe0',
+                  inputBorder: '#eae5f0',
+                  inputBorderHover: '#c3bcf0',
+                  inputBorderFocus: '#6d5ce6',
+                  inputText: '#241f2e',
+                  inputLabelText: '#8b8496',
+                  inputPlaceholder: '#b3aebf',
+                  messageText: '#8b8496',
+                  messageTextDanger: '#e0654a',
+                  anchorTextColor: '#8b8496',
+                  anchorTextHoverColor: '#6d5ce6',
                 }
               }
             }

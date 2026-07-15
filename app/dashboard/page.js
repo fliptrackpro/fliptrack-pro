@@ -35,6 +35,24 @@ function daysSince(dateStr) {
   return Math.floor((now - d) / (1000 * 60 * 60 * 24))
 }
 
+function last7DaysMargin(sales, products) {
+  const days = []
+  const now = new Date()
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now)
+    d.setDate(now.getDate() - i)
+    const key = d.toISOString().split('T')[0]
+    const dayMargin = sales
+      .filter(s => s.sale_date === key)
+      .reduce((acc, s) => {
+        const p = products.find(pp => pp.id === s.product_id)
+        return acc + saleMargin(p, s)
+      }, 0)
+    days.push(Math.max(dayMargin, 0))
+  }
+  return days
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState(null)
   const [products, setProducts] = useState([])
@@ -91,26 +109,31 @@ export default function Dashboard() {
     .sort((a, b) => b.days - a.days)
     .slice(0, 5)
 
+  const recentStock = products.filter(p => p.status === 'stock').slice(0, 3)
+
+  const sparkline = last7DaysMargin(sales, products)
+  const maxSpark = Math.max(...sparkline, 1)
+
   if (!user) return (
-    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438] md:pl-56">
+    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e] md:pl-56">
 
       <Nav />
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-5 border-b border-[#e7e2f3]">
+      <header className="flex items-center justify-between px-6 py-5">
         <div>
           <h1 className="text-xl font-serif italic">Dashboard</h1>
-          <p className="text-[#948da8] text-xs mt-0.5">{user?.email}</p>
+          <p className="text-[#8b8496] text-xs mt-0.5">{user?.email}</p>
         </div>
       </header>
 
-      <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-6">
+      <main className="px-6 py-2 pb-24 md:pb-6 flex flex-col gap-6">
 
         {/* Sélecteur de période */}
         <div className="flex gap-2">
@@ -119,7 +142,7 @@ export default function Dashboard() {
               key={p.key}
               onClick={() => setPeriod(p.key)}
               className={`text-xs font-medium px-3 py-1.5 rounded-full transition ${
-                period === p.key ? 'bg-[#7c6fe0]/10 text-[#7c6fe0]' : 'text-[#948da8] hover:bg-[#7c6fe0]/5'
+                period === p.key ? 'bg-[#6d5ce6]/10 text-[#6d5ce6]' : 'text-[#8b8496] hover:bg-[#6d5ce6]/5'
               }`}
             >
               {p.label}
@@ -127,91 +150,134 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10">
-            <p className="text-[#948da8] text-xs mb-2">CA</p>
-            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={totalRevenue} />€</p>
-            <p className="text-[#4f8f6e] text-xs mt-1">Ventes encaissées</p>
+        {/* Héro + stats secondaires */}
+        <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-3.5">
+          <div className="animate-rise-in relative overflow-hidden rounded-[22px] p-6 text-white flex flex-col justify-between min-h-[220px] bg-gradient-to-br from-[#6d5ce6] via-[#8b7bf0] to-[#a893f5]">
+            <div className="absolute -right-10 -bottom-12 w-44 h-44 rounded-full bg-white/10" />
+            <div className="relative z-10">
+              <p className="text-[11px] uppercase tracking-widest opacity-75">Marge nette · {PERIODS.find(p => p.key === period)?.label.toLowerCase()}</p>
+              <p className="font-serif text-5xl mt-2.5"><CountUp value={totalMargin} />€</p>
+              <p className="text-sm opacity-85 mt-1.5">Taux de marge {marginRate}%</p>
+            </div>
+            <div className="relative z-10 flex items-end gap-1 h-10 mt-4">
+              {sparkline.map((v, i) => (
+                <div
+                  key={i}
+                  className={`flex-1 rounded-t-sm ${i === sparkline.length - 1 ? 'bg-white' : 'bg-white/35'}`}
+                  style={{ height: `${Math.max((v / maxSpark) * 100, 8)}%` }}
+                />
+              ))}
+            </div>
           </div>
-          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '40ms' }}>
-            <p className="text-[#948da8] text-xs mb-2">Marge Nette</p>
-            <p className={`text-2xl font-serif ${totalMargin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>
-              <CountUp value={totalMargin} />€
-            </p>
-            <p className="text-[#948da8] text-xs mt-1">Taux {marginRate}%</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-1 gap-3.5">
+            <div className="animate-rise-in bg-white rounded-2xl p-4" style={{ animationDelay: '40ms' }}>
+              <p className="text-[11px] text-[#8b8496] uppercase tracking-wide">Chiffre d'affaires</p>
+              <p className="font-serif text-2xl mt-1.5"><CountUp value={totalRevenue} />€</p>
+            </div>
+            <div className="animate-rise-in bg-white rounded-2xl p-4" style={{ animationDelay: '80ms' }}>
+              <p className="text-[11px] text-[#8b8496] uppercase tracking-wide">En stock</p>
+              <p className="font-serif text-2xl mt-1.5"><CountUp value={inStock} /></p>
+            </div>
           </div>
-          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '80ms' }}>
-            <p className="text-[#948da8] text-xs mb-2">En Stock</p>
-            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={inStock} /></p>
-            <p className="text-[#948da8] text-xs mt-1">Articles disponibles</p>
-          </div>
-          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '120ms' }}>
-            <p className="text-[#948da8] text-xs mb-2">Vendus</p>
-            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={soldInPeriod} /></p>
-            <p className="text-[#948da8] text-xs mt-1">Sur la période</p>
-          </div>
+        </div>
+
+        <div className="animate-rise-in bg-white rounded-2xl p-4 flex items-center justify-between" style={{ animationDelay: '100ms' }}>
+          <p className="text-sm text-[#8b8496]">Articles vendus sur la période</p>
+          <p className="font-serif text-xl"><CountUp value={soldInPeriod} /></p>
         </div>
 
         {/* Meilleures catégories */}
-        <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-5" style={{ animationDelay: '160ms' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <TrendUpIcon className="w-4 h-4 text-[#4f8f6e]" />
-            <h2 className="text-sm font-semibold text-[#2b2438]">Meilleures catégories</h2>
+        <section style={{ animationDelay: '140ms' }} className="animate-rise-in">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <TrendUpIcon className="w-4 h-4 text-[#4a8a6f]" />
+              <h2 className="text-sm font-bold">Meilleures catégories</h2>
+            </div>
           </div>
-
-          {topCategories.length === 0 ? (
-            <p className="text-[#b8b2c9] text-sm py-4 text-center">Pas encore de vente sur cette période</p>
-          ) : (
-            <div className="flex flex-col gap-3">
-              {topCategories.map(([cat, margin]) => (
-                <div key={cat}>
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-[#4b4560] font-medium">{cat}</span>
-                    <span className={margin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}>{margin.toFixed(0)}€</span>
+          <div className="bg-white rounded-2xl p-5">
+            {topCategories.length === 0 ? (
+              <p className="text-[#b3aebf] text-sm py-4 text-center">Pas encore de vente sur cette période</p>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {topCategories.map(([cat, margin]) => (
+                  <div key={cat}>
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span className="font-semibold">{cat}</span>
+                      <span className="font-serif text-[#4a8a6f] font-bold">{margin >= 0 ? '+' : ''}{margin.toFixed(0)}€</span>
+                    </div>
+                    <div className="w-full bg-[#eae5f0] rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full bg-gradient-to-r from-[#6d5ce6] to-[#a893f5] transition-all duration-700"
+                        style={{ width: `${Math.max((Math.abs(margin) / maxCategoryMargin) * 100, 3)}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-[#f0edf8] rounded-full h-1.5">
-                    <div
-                      className="bg-[#7c6fe0] h-1.5 rounded-full transition-all duration-700"
-                      style={{ width: `${Math.max((Math.abs(margin) / maxCategoryMargin) * 100, 3)}%` }}
-                    />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Stock récent */}
+        {recentStock.length > 0 && (
+          <section style={{ animationDelay: '180ms' }} className="animate-rise-in">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-bold">Stock récent</h2>
+              <button onClick={() => router.push('/products')} className="text-xs text-[#6d5ce6] font-semibold hover:underline">
+                Voir tout →
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {recentStock.map(p => (
+                <div key={p.id} className="bg-white rounded-2xl overflow-hidden cursor-pointer transition hover:-translate-y-0.5" onClick={() => router.push(`/products/${p.id}/edit`)}>
+                  <div className="aspect-square bg-[#efebfd] flex items-center justify-center">
+                    {p.photo_url ? (
+                      <img src={p.photo_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-[10px] text-[#8b8496]">photo</span>
+                    )}
+                  </div>
+                  <div className="px-3 py-2.5">
+                    <p className="text-xs font-bold leading-tight truncate">{p.name}</p>
+                    <p className="text-[10px] text-[#8b8496] mt-0.5 mb-2 truncate">{p.category || 'Sans catégorie'}</p>
+                    <span className="inline-block bg-[#e7f3ee] text-[#4a8a6f] text-xs font-bold px-2.5 py-0.5 rounded-full">{p.purchase_price}€</span>
                   </div>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </section>
+        )}
 
         {/* Produits qui stagnent */}
-        <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-5" style={{ animationDelay: '200ms' }}>
-          <div className="flex items-center gap-2 mb-4">
-            <ClockIcon className="w-4 h-4 text-[#c98a3e]" />
-            <h2 className="text-sm font-semibold text-[#2b2438]">En stock depuis longtemps</h2>
+        <section style={{ animationDelay: '220ms' }} className="animate-rise-in">
+          <div className="flex items-center gap-2 mb-3">
+            <ClockIcon className="w-4 h-4 text-[#e0654a]" />
+            <h2 className="text-sm font-bold">En stock depuis longtemps</h2>
           </div>
-
-          {stagnant.length === 0 ? (
-            <p className="text-[#b8b2c9] text-sm py-4 text-center">Rien ne traîne, bien joué</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {stagnant.map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 px-2 -mx-2 rounded-lg border-b border-[#f0edf8] last:border-0 transition-colors hover:bg-[#f4f1f9]">
+          <div className="bg-white rounded-2xl px-5">
+            {stagnant.length === 0 ? (
+              <p className="text-[#b3aebf] text-sm py-6 text-center">Rien ne traîne, bien joué</p>
+            ) : (
+              stagnant.map((p, i) => (
+                <div key={p.id} className={`flex items-center justify-between py-3 ${i < stagnant.length - 1 ? 'border-b border-[#eae5f0]' : ''}`}>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#2b2438] truncate max-w-[180px]">{p.name}</p>
-                    <p className="text-xs text-[#948da8]">{p.category || 'Sans catégorie'}</p>
+                    <p className="text-sm font-medium truncate max-w-[180px]">{p.name}</p>
+                    <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'}</p>
                   </div>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#c98a3e]/10 text-[#c98a3e] flex-shrink-0">
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#fbeee9] text-[#e0654a] flex-shrink-0">
                     {p.days} jours
                   </span>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              ))
+            )}
+          </div>
+        </section>
 
         {/* Bouton rapide */}
         <button
           onClick={() => router.push('/products/new')}
-          className="w-full bg-[#7c6fe0] hover:bg-[#6c5dd3] active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
+          className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
         >
           <PlusIcon className="w-4 h-4" />
           Ajouter un produit
