@@ -9,6 +9,8 @@ const PLATFORMS = [
   { key: 'vinted', label: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', url: 'https://www.vinted.fr/items/new' },
   { key: 'leboncoin', label: 'Leboncoin', color: 'bg-orange-50 text-orange-700 border-orange-200', url: 'https://www.leboncoin.fr/deposer-une-annonce' },
   { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', url: 'https://www.facebook.com/marketplace/create/item' },
+  { key: 'ebay', label: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', url: 'https://www.ebay.fr/sl/sell' },
+  { key: 'vestiaire', label: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200', url: 'https://www.vestiairecollective.com/' },
 ]
 
 function daysSince(dateStr) {

@@ -34,10 +34,12 @@ export async function POST(req) {
 - Notes : ${description || 'aucune'}
 ${imagePart ? "\nUne photo de l'article est fournie : regarde-la attentivement et intègre dans les descriptifs des détails concrets et vérifiables que tu observes sur la photo (couleur exacte, matière, détails de design, état visible, usure éventuelle, accessoires visibles). Ne décris pas quelque chose qui n'est pas visible sur la photo." : ''}
 
-Rédige une annonce vendeuse et percutante adaptée à chacune de ces 3 plateformes, avec leurs codes propres. AUCUN emoji ou émoticône dans aucun texte, nulle part.
+Rédige une annonce vendeuse et percutante adaptée à chacune de ces 5 plateformes, avec leurs codes propres. AUCUN emoji ou émoticône dans aucun texte, nulle part.
 - Vinted : ton décontracté, direct, courte (2-4 phrases), orientée mode/objets d'occasion entre particuliers, met en avant le point fort de l'article.
 - Leboncoin : ton neutre et informatif, structuré, précise l'état et les modalités (main propre / envoi), argumente la valeur du prix.
 - Facebook Marketplace : ton chaleureux et local, invite au message privé, peut mentionner la remise en main propre, met en avant l'urgence ou la rareté si pertinent.
+- eBay : ton précis et factuel, orienté international, détaille les caractéristiques techniques/état avec rigueur (comme une fiche produit), rassure sur l'expédition.
+- Vestiaire Collective : ton haut de gamme et soigné, orienté mode/luxe d'occasion, met en avant l'authenticité, la marque, le matériau et la rareté de la pièce.
 
 Chaque descriptif doit donner envie d'acheter : mets en avant l'état, la qualité, un détail concret qui rassure l'acheteur. Reste crédible, pas de superlatifs exagérés ni de fausses promesses.
 
@@ -45,7 +47,9 @@ Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte aut
 {
   "vinted": { "title": "...", "description": "..." },
   "leboncoin": { "title": "...", "description": "..." },
-  "facebook": { "title": "...", "description": "..." }
+  "facebook": { "title": "...", "description": "..." },
+  "ebay": { "title": "...", "description": "..." },
+  "vestiaire": { "title": "...", "description": "..." }
 }
 Les titres font 80 caractères maximum.`
 
