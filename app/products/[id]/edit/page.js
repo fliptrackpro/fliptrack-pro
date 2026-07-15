@@ -94,12 +94,12 @@ export default function EditProduct() {
   const categories = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
   const conditions = ['Neuf avec étiquette', 'Très bon état', 'Bon état', 'État correct']
 
-  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
   const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
 
   if (!form) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -121,7 +121,7 @@ export default function EditProduct() {
           <span className="text-sm font-medium text-gray-300">Modifier</span>
         </div>
         <span className="text-lg font-bold text-white">
-          Flip<span className="text-emerald-400">Track</span>
+          Flip<span className="text-indigo-400">Track</span>
         </span>
       </header>
 
@@ -135,7 +135,7 @@ export default function EditProduct() {
 
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Photo</label>
-            <label className="flex items-center gap-4 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-emerald-400/50 transition">
+            <label className="flex items-center gap-4 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-indigo-400/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
@@ -237,7 +237,7 @@ export default function EditProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

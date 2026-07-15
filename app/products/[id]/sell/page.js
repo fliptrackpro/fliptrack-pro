@@ -83,12 +83,12 @@ export default function SellProduct() {
     ? (parseFloat(form.sale_price || 0) - product.purchase_price - product.purchase_fees - parseFloat(form.platform_fees || 0)).toFixed(2)
     : 0
 
-  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
   const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
 
   if (!product) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -108,7 +108,7 @@ export default function SellProduct() {
           <span className="text-sm font-medium text-gray-300">Vendre</span>
         </div>
         <span className="text-lg font-bold text-white">
-          Flip<span className="text-emerald-400">Track</span>
+          Flip<span className="text-indigo-400">Track</span>
         </span>
       </header>
 
@@ -184,7 +184,7 @@ export default function SellProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.sale_price}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

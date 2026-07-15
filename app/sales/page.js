@@ -65,7 +65,7 @@ export default function SalesPage() {
 
   if (!user) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -108,7 +108,7 @@ export default function SalesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher une vente..."
-            className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+            className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
           />
         )}
 
@@ -117,7 +117,7 @@ export default function SalesPage() {
             <p className="text-gray-600 text-sm">Aucune vente enregistrée</p>
             <button
               onClick={() => router.push('/products')}
-              className="mt-3 text-xs text-emerald-400 hover:underline"
+              className="mt-3 text-xs text-indigo-400 hover:underline"
             >
               Voir le stock →
             </button>

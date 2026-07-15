@@ -26,7 +26,7 @@ export default function Nav() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-[#111318] border-r border-white/5 z-20">
         <div className="px-5 py-6 mb-2">
           <span className="text-lg font-bold text-white">
-            Flip<span className="text-emerald-400">Track</span>
+            Flip<span className="text-indigo-400">Track</span>
           </span>
         </div>
         <nav className="flex flex-col gap-1 px-3">
@@ -36,7 +36,7 @@ export default function Nav() {
               onClick={() => router.push(l.href)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left
                 ${path === l.href
-                  ? 'bg-emerald-500/10 text-emerald-400'
+                  ? 'bg-indigo-500/10 text-indigo-400'
                   : 'text-gray-400 hover:bg-white/5 hover:text-white'
                 }`}
             >
@@ -61,7 +61,7 @@ export default function Nav() {
             key={l.href}
             onClick={() => router.push(l.href)}
             className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition
-              ${path === l.href ? 'text-emerald-400' : 'text-gray-500'}`}
+              ${path === l.href ? 'text-indigo-400' : 'text-gray-500'}`}
           >
             <l.Icon className="w-5 h-5" />
             <span className="text-[10px] font-medium">{l.label}</span>

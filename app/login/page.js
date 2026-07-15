@@ -20,12 +20,12 @@ export default function LoginPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-gray-900 rounded-2xl p-8 shadow-2xl">
+    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-[#161920] border border-white/5 rounded-2xl p-8 shadow-2xl">
 
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white">
-            Flip<span className="text-emerald-400">Track</span>
+            Flip<span className="text-indigo-400">Track</span>
           </h1>
           <p className="text-gray-400 mt-2">
             Gérez vos achats et ventes en un clic
@@ -39,9 +39,9 @@ export default function LoginPage() {
             variables: {
               default: {
                 colors: {
-                  brand: '#34d399',
-                  brandAccent: '#10b981',
-                  brandButtonText: '#0d0f14',
+                  brand: '#818cf8',
+                  brandAccent: '#6366f1',
+                  brandButtonText: '#ffffff',
                   defaultButtonBackground: '#161920',
                   defaultButtonBackgroundHover: '#1e222b',
                   defaultButtonBorder: 'rgba(255,255,255,0.1)',
@@ -49,7 +49,7 @@ export default function LoginPage() {
                   inputBackground: '#0d0f14',
                   inputBorder: 'rgba(255,255,255,0.1)',
                   inputBorderHover: 'rgba(255,255,255,0.25)',
-                  inputBorderFocus: '#34d399',
+                  inputBorderFocus: '#818cf8',
                   inputText: '#ffffff',
                   inputLabelText: '#9ca3af',
                   inputPlaceholder: '#6b7280',

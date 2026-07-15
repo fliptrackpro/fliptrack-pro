@@ -47,7 +47,7 @@ export default function ProductsPage() {
 
   if (!user) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -62,7 +62,7 @@ export default function ProductsPage() {
         </div>
         <button
           onClick={() => router.push('/products/new')}
-          className="text-xs bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-lg transition"
+          className="text-xs bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-lg transition"
         >
           + Ajouter
         </button>
@@ -75,7 +75,7 @@ export default function ProductsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un produit..."
-          className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+          className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
         />
 
         {/* Filtres */}
@@ -89,7 +89,7 @@ export default function ProductsPage() {
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={`text-xs font-medium px-3 py-1.5 rounded-lg transition ${
-                filter === f.key ? 'bg-emerald-500/10 text-emerald-400' : 'text-gray-500 hover:bg-white/5'
+                filter === f.key ? 'bg-indigo-500/10 text-indigo-400' : 'text-gray-500 hover:bg-white/5'
               }`}
             >
               {f.label}
@@ -102,7 +102,7 @@ export default function ProductsPage() {
             <p className="text-gray-600 text-sm">Aucun produit dans cette catégorie</p>
             <button
               onClick={() => router.push('/products/new')}
-              className="mt-3 text-xs text-emerald-400 hover:underline"
+              className="mt-3 text-xs text-indigo-400 hover:underline"
             >
               Ajouter un produit →
             </button>
@@ -140,7 +140,7 @@ export default function ProductsPage() {
                       </button>
                       <button
                         onClick={() => router.push(`/products/${p.id}/sell`)}
-                        className="text-xs bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 font-medium px-3 py-1.5 rounded-lg transition"
+                        className="text-xs bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 font-medium px-3 py-1.5 rounded-lg transition"
                       >
                         Vendre
                       </button>

@@ -73,12 +73,12 @@ export default function PublishProduct() {
     setTimeout(() => setCopiedKey(''), 2000)
   }
 
-  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
   const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
 
   if (!product) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -98,7 +98,7 @@ export default function PublishProduct() {
           <span className="text-sm font-medium text-gray-300">Publier</span>
         </div>
         <span className="text-lg font-bold text-white">
-          Flip<span className="text-emerald-400">Track</span>
+          Flip<span className="text-indigo-400">Track</span>
         </span>
       </header>
 
@@ -143,7 +143,7 @@ export default function PublishProduct() {
           <button
             onClick={handleGenerate}
             disabled={generating || !price}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
+            className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
           >
             {generating ? (
               <span className="flex items-center justify-center gap-2">
@@ -178,7 +178,7 @@ export default function PublishProduct() {
                         href={p.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-medium px-3 py-1.5 rounded-lg transition"
+                        className="text-xs bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 font-medium px-3 py-1.5 rounded-lg transition"
                       >
                         Ouvrir {p.label} ↗
                       </a>

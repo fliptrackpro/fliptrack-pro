@@ -92,7 +92,7 @@ export default function Dashboard() {
 
   if (!user) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -118,7 +118,7 @@ export default function Dashboard() {
               key={p.key}
               onClick={() => setPeriod(p.key)}
               className={`text-xs font-medium px-3 py-1.5 rounded-lg transition ${
-                period === p.key ? 'bg-emerald-500/10 text-emerald-400' : 'text-gray-500 hover:bg-white/5'
+                period === p.key ? 'bg-indigo-500/10 text-indigo-400' : 'text-gray-500 hover:bg-white/5'
               }`}
             >
               {p.label}
@@ -210,7 +210,7 @@ export default function Dashboard() {
         {/* Bouton rapide */}
         <button
           onClick={() => router.push('/products/new')}
-          className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
+          className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
         >
           <PlusIcon className="w-4 h-4" />
           Ajouter un produit
