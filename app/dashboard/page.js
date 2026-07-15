@@ -92,21 +92,21 @@ export default function Dashboard() {
     .slice(0, 5)
 
   if (!user) return (
-    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white md:pl-56">
+    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438] md:pl-56">
 
       <Nav />
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+      <header className="flex items-center justify-between px-6 py-5 border-b border-[#e7e2f3]">
         <div>
-          <h1 className="text-xl font-bold">Dashboard</h1>
-          <p className="text-gray-500 text-xs mt-0.5">{user?.email}</p>
+          <h1 className="text-xl font-serif italic">Dashboard</h1>
+          <p className="text-[#948da8] text-xs mt-0.5">{user?.email}</p>
         </div>
       </header>
 
@@ -118,8 +118,8 @@ export default function Dashboard() {
             <button
               key={p.key}
               onClick={() => setPeriod(p.key)}
-              className={`text-xs font-medium px-3 py-1.5 rounded-lg transition ${
-                period === p.key ? 'bg-indigo-500/10 text-indigo-400' : 'text-gray-500 hover:bg-white/5'
+              className={`text-xs font-medium px-3 py-1.5 rounded-full transition ${
+                period === p.key ? 'bg-[#7c6fe0]/10 text-[#7c6fe0]' : 'text-[#948da8] hover:bg-[#7c6fe0]/5'
               }`}
             >
               {p.label}
@@ -129,50 +129,50 @@ export default function Dashboard() {
 
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30">
-            <p className="text-gray-500 text-xs mb-2">CA</p>
-            <p className="text-2xl font-bold text-white"><CountUp value={totalRevenue} />€</p>
-            <p className="text-emerald-400 text-xs mt-1">Ventes encaissées</p>
+          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10">
+            <p className="text-[#948da8] text-xs mb-2">CA</p>
+            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={totalRevenue} />€</p>
+            <p className="text-[#4f8f6e] text-xs mt-1">Ventes encaissées</p>
           </div>
-          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '40ms' }}>
-            <p className="text-gray-500 text-xs mb-2">Marge Nette</p>
-            <p className={`text-2xl font-bold ${totalMargin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '40ms' }}>
+            <p className="text-[#948da8] text-xs mb-2">Marge Nette</p>
+            <p className={`text-2xl font-serif ${totalMargin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>
               <CountUp value={totalMargin} />€
             </p>
-            <p className="text-gray-500 text-xs mt-1">Taux {marginRate}%</p>
+            <p className="text-[#948da8] text-xs mt-1">Taux {marginRate}%</p>
           </div>
-          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '80ms' }}>
-            <p className="text-gray-500 text-xs mb-2">En Stock</p>
-            <p className="text-2xl font-bold text-white"><CountUp value={inStock} /></p>
-            <p className="text-gray-500 text-xs mt-1">Articles disponibles</p>
+          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '80ms' }}>
+            <p className="text-[#948da8] text-xs mb-2">En Stock</p>
+            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={inStock} /></p>
+            <p className="text-[#948da8] text-xs mt-1">Articles disponibles</p>
           </div>
-          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '120ms' }}>
-            <p className="text-gray-500 text-xs mb-2">Vendus</p>
-            <p className="text-2xl font-bold text-white"><CountUp value={soldInPeriod} /></p>
-            <p className="text-gray-500 text-xs mt-1">Sur la période</p>
+          <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10" style={{ animationDelay: '120ms' }}>
+            <p className="text-[#948da8] text-xs mb-2">Vendus</p>
+            <p className="text-2xl font-serif text-[#2b2438]"><CountUp value={soldInPeriod} /></p>
+            <p className="text-[#948da8] text-xs mt-1">Sur la période</p>
           </div>
         </div>
 
         {/* Meilleures catégories */}
-        <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5" style={{ animationDelay: '160ms' }}>
+        <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-5" style={{ animationDelay: '160ms' }}>
           <div className="flex items-center gap-2 mb-4">
-            <TrendUpIcon className="w-4 h-4 text-emerald-400" />
-            <h2 className="text-sm font-semibold text-white">Meilleures catégories</h2>
+            <TrendUpIcon className="w-4 h-4 text-[#4f8f6e]" />
+            <h2 className="text-sm font-semibold text-[#2b2438]">Meilleures catégories</h2>
           </div>
 
           {topCategories.length === 0 ? (
-            <p className="text-gray-600 text-sm py-4 text-center">Pas encore de vente sur cette période</p>
+            <p className="text-[#b8b2c9] text-sm py-4 text-center">Pas encore de vente sur cette période</p>
           ) : (
             <div className="flex flex-col gap-3">
               {topCategories.map(([cat, margin]) => (
                 <div key={cat}>
                   <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="text-gray-300 font-medium">{cat}</span>
-                    <span className={margin >= 0 ? 'text-emerald-400' : 'text-red-400'}>{margin.toFixed(0)}€</span>
+                    <span className="text-[#4b4560] font-medium">{cat}</span>
+                    <span className={margin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}>{margin.toFixed(0)}€</span>
                   </div>
-                  <div className="w-full bg-white/5 rounded-full h-1.5">
+                  <div className="w-full bg-[#f0edf8] rounded-full h-1.5">
                     <div
-                      className="bg-emerald-400 h-1.5 rounded-full transition-all duration-700"
+                      className="bg-[#7c6fe0] h-1.5 rounded-full transition-all duration-700"
                       style={{ width: `${Math.max((Math.abs(margin) / maxCategoryMargin) * 100, 3)}%` }}
                     />
                   </div>
@@ -183,23 +183,23 @@ export default function Dashboard() {
         </div>
 
         {/* Produits qui stagnent */}
-        <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5" style={{ animationDelay: '200ms' }}>
+        <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-5" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center gap-2 mb-4">
-            <ClockIcon className="w-4 h-4 text-amber-400" />
-            <h2 className="text-sm font-semibold text-white">En stock depuis longtemps</h2>
+            <ClockIcon className="w-4 h-4 text-[#c98a3e]" />
+            <h2 className="text-sm font-semibold text-[#2b2438]">En stock depuis longtemps</h2>
           </div>
 
           {stagnant.length === 0 ? (
-            <p className="text-gray-600 text-sm py-4 text-center">Rien ne traîne, bien joué</p>
+            <p className="text-[#b8b2c9] text-sm py-4 text-center">Rien ne traîne, bien joué</p>
           ) : (
             <div className="flex flex-col gap-2">
               {stagnant.map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 px-2 -mx-2 rounded-lg border-b border-white/5 last:border-0 transition-colors hover:bg-white/[0.03]">
+                <div key={p.id} className="flex items-center justify-between py-2 px-2 -mx-2 rounded-lg border-b border-[#f0edf8] last:border-0 transition-colors hover:bg-[#f4f1f9]">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white truncate max-w-[180px]">{p.name}</p>
-                    <p className="text-xs text-gray-500">{p.category || 'Sans catégorie'}</p>
+                    <p className="text-sm font-medium text-[#2b2438] truncate max-w-[180px]">{p.name}</p>
+                    <p className="text-xs text-[#948da8]">{p.category || 'Sans catégorie'}</p>
                   </div>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 flex-shrink-0">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-[#c98a3e]/10 text-[#c98a3e] flex-shrink-0">
                     {p.days} jours
                   </span>
                 </div>
@@ -211,7 +211,7 @@ export default function Dashboard() {
         {/* Bouton rapide */}
         <button
           onClick={() => router.push('/products/new')}
-          className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
+          className="w-full bg-[#7c6fe0] hover:bg-[#6c5dd3] active:scale-[0.98] text-white font-semibold rounded-2xl py-4 transition text-sm flex items-center justify-center gap-2"
         >
           <PlusIcon className="w-4 h-4" />
           Ajouter un produit

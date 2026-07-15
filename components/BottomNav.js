@@ -23,10 +23,10 @@ export default function Nav() {
   return (
     <>
       {/* Sidebar PC */}
-      <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-[#111318] border-r border-white/5 z-20">
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-[#e7e2f3] z-20">
         <div className="px-5 py-6 mb-2">
-          <span className="text-lg font-bold text-white">
-            Flip<span className="text-indigo-400">Track</span>
+          <span className="text-lg font-serif italic text-[#2b2438]">
+            Flip<span className="not-italic font-sans font-bold text-[#7c6fe0]">Track</span>
           </span>
         </div>
         <nav className="flex flex-col gap-1 px-3">
@@ -36,8 +36,8 @@ export default function Nav() {
               onClick={() => router.push(l.href)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left
                 ${path === l.href
-                  ? 'bg-indigo-500/10 text-indigo-400'
-                  : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                  ? 'bg-[#7c6fe0]/10 text-[#7c6fe0]'
+                  : 'text-[#948da8] hover:bg-[#7c6fe0]/5 hover:text-[#2b2438]'
                 }`}
             >
               <l.Icon className="w-[18px] h-[18px]" />
@@ -47,7 +47,7 @@ export default function Nav() {
         </nav>
         <button
           onClick={handleLogout}
-          className="mt-auto mx-3 mb-5 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition text-left"
+          className="mt-auto mx-3 mb-5 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#948da8] hover:bg-[#c14f4a]/10 hover:text-[#c14f4a] transition text-left"
         >
           <LogoutIcon className="w-[18px] h-[18px]" />
           <span>Déconnexion</span>
@@ -55,13 +55,13 @@ export default function Nav() {
       </aside>
 
       {/* Barre mobile bas */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-[#111318] border-t border-white/5 flex items-center justify-around px-2 py-2.5">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-[#e7e2f3] flex items-center justify-around px-2 py-2.5">
         {links.map(l => (
           <button
             key={l.href}
             onClick={() => router.push(l.href)}
             className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition
-              ${path === l.href ? 'text-indigo-400' : 'text-gray-500'}`}
+              ${path === l.href ? 'text-[#7c6fe0]' : 'text-[#948da8]'}`}
           >
             <l.Icon className="w-5 h-5" />
             <span className="text-[10px] font-medium">{l.label}</span>
@@ -69,7 +69,7 @@ export default function Nav() {
         ))}
         <button
           onClick={handleLogout}
-          className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition text-gray-500"
+          className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition text-[#948da8]"
         >
           <LogoutIcon className="w-5 h-5" />
           <span className="text-[10px] font-medium">Sortir</span>

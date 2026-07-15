@@ -13,8 +13,8 @@ body {
 }
 
 select option {
-  background-color: #0d0f14;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #2b2438;
 }
 
 @keyframes riseIn {
@@ -32,7 +32,7 @@ select option {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+  background: linear-gradient(90deg, rgba(43,36,56,0.04) 25%, rgba(43,36,56,0.09) 50%, rgba(43,36,56,0.04) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }

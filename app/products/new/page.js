@@ -186,60 +186,60 @@ export default function NewProduct() {
 
   const totalCost = (parseFloat(form.purchase_price || 0) + parseFloat(form.purchase_fees || 0)).toFixed(2)
 
-  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
-  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
+  const inputClass = "w-full bg-white border border-[#e7e2f3] rounded-xl px-4 py-3 text-[#2b2438] placeholder-[#b8b2c9] focus:outline-none focus:border-[#7c6fe0] transition text-sm"
+  const labelClass = "text-xs font-semibold text-[#948da8] uppercase tracking-wider"
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white">
+    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438]">
 
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-[#111318] border-b border-white/5 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#e7e2f3] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/dashboard')}
-            className="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-gray-400 transition text-sm"
+            className="w-8 h-8 rounded-lg hover:bg-[#f4f1f9] flex items-center justify-center text-[#948da8] transition text-sm"
           >
             ←
           </button>
-          <span className="text-sm text-gray-500">Dashboard</span>
-          <span className="text-sm text-gray-700">/</span>
-          <span className="text-sm font-medium text-gray-300">Nouveau produit</span>
+          <span className="text-sm text-[#948da8]">Dashboard</span>
+          <span className="text-sm text-[#d8d2e8]">/</span>
+          <span className="text-sm font-medium text-[#4b4560]">Nouveau produit</span>
         </div>
-        <span className="text-lg font-bold text-white">
-          Flip<span className="text-indigo-400">Track</span>
+        <span className="text-lg font-serif italic text-[#2b2438]">
+          Flip<span className="not-italic font-sans font-bold text-[#7c6fe0]">Track</span>
         </span>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white">Ajouter un produit</h2>
-          <p className="text-gray-500 text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
+          <h2 className="text-2xl font-serif italic text-[#2b2438]">Ajouter un produit</h2>
+          <p className="text-[#948da8] text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
         </div>
 
-        <div className="bg-[#161920] rounded-2xl border border-white/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-6 md:p-8 flex flex-col gap-6">
 
           {/* Photo + estimation IA */}
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Photo (estimation IA)</label>
-            <label className="flex items-center gap-4 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-indigo-400/50 transition">
+            <label className="flex items-center gap-4 cursor-pointer bg-[#f4f1f9] border border-dashed border-[#d8d2e8] rounded-xl px-4 py-3 hover:border-[#7c6fe0]/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
-                <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center">
-                  <CameraIcon className="w-6 h-6 text-gray-500" />
+                <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center">
+                  <CameraIcon className="w-6 h-6 text-[#b8b2c9]" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-300">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
-                <p className="text-xs text-gray-600">L'IA remplit le nom, la catégorie et l'état pour toi</p>
+                <p className="text-sm text-[#4b4560]">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
+                <p className="text-xs text-[#b8b2c9]">L'IA remplit le nom, la catégorie et l'état pour toi</p>
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
 
             {estimating && (
-              <div className="rounded-xl px-4 py-3 mt-1 border border-indigo-400/20 bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-fuchsia-500/10">
-                <div className="flex items-center gap-2 text-xs text-indigo-300 mb-3">
+              <div className="rounded-xl px-4 py-3 mt-1 border border-[#e2ddf5] bg-gradient-to-br from-[#f0edfb] via-[#f3ecf9] to-[#faf0f6]">
+                <div className="flex items-center gap-2 text-xs text-[#7c6fe0] mb-3">
                   <SparkleIcon className="w-3.5 h-3.5 animate-pulse" />
                   Analyse de la photo en cours...
                 </div>
@@ -250,18 +250,18 @@ export default function NewProduct() {
               </div>
             )}
             {estimateError && (
-              <p className="text-xs text-red-400 mt-1">{estimateError}</p>
+              <p className="text-xs text-[#c14f4a] mt-1">{estimateError}</p>
             )}
             {aiEstimate && !estimating && (
-              <div className="animate-rise-in rounded-xl px-4 py-3 mt-1 border border-indigo-400/20 bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-fuchsia-500/10">
-                <div className="flex items-center gap-1.5 text-xs text-indigo-300 font-semibold uppercase tracking-wider">
+              <div className="animate-rise-in rounded-xl px-4 py-3 mt-1 border border-[#e2ddf5] bg-gradient-to-br from-[#f0edfb] via-[#f3ecf9] to-[#faf0f6]">
+                <div className="flex items-center gap-1.5 text-xs text-[#7c6fe0] font-semibold uppercase tracking-wider">
                   <SparkleIcon className="w-3.5 h-3.5" />
                   Valeur de revente estimée
                 </div>
-                <p className="text-lg font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent mt-1">
+                <p className="text-lg font-serif text-[#4f8f6e] mt-1">
                   {aiEstimate.estimated_price_min}€ – {aiEstimate.estimated_price_max}€
                 </p>
-                <p className="text-xs text-gray-400 mt-2">{aiEstimate.description}</p>
+                <p className="text-xs text-[#6a6383] mt-2">{aiEstimate.description}</p>
 
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {[
@@ -274,7 +274,7 @@ export default function NewProduct() {
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-2.5 py-1 rounded-full transition"
+                      className="text-[11px] bg-white hover:bg-[#f4f1f9] text-[#6a6383] font-medium px-2.5 py-1 rounded-full transition border border-[#e7e2f3]"
                     >
                       Vérifier sur {l.label} ↗
                     </a>
@@ -286,23 +286,23 @@ export default function NewProduct() {
 
           {/* Scanner code-barres */}
           <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-3 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-indigo-400/50 transition">
-              <BarcodeIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />
+            <label className="flex items-center gap-3 cursor-pointer bg-[#f4f1f9] border border-dashed border-[#d8d2e8] rounded-xl px-4 py-3 hover:border-[#7c6fe0]/50 transition">
+              <BarcodeIcon className="w-5 h-5 text-[#b8b2c9] flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-300">Scanner un code-barres</p>
-                <p className="text-xs text-gray-600">Utile pour les objets encore emballés/scellés</p>
+                <p className="text-sm text-[#4b4560]">Scanner un code-barres</p>
+                <p className="text-xs text-[#b8b2c9]">Utile pour les objets encore emballés/scellés</p>
               </div>
               {scanning && (
-                <span className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <span className="w-4 h-4 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin flex-shrink-0" />
               )}
               <input type="file" accept="image/*" capture="environment" onChange={handleScan} className="hidden" />
             </label>
             {scanError && (
-              <p className="text-xs text-red-400 mt-1">{scanError}</p>
+              <p className="text-xs text-[#c14f4a] mt-1">{scanError}</p>
             )}
           </div>
 
-          <div className="border-t border-white/5" />
+          <div className="border-t border-[#f0edf8]" />
 
           {/* Nom */}
           <div className="flex flex-col gap-1.5">
@@ -349,7 +349,7 @@ export default function NewProduct() {
           </div>
 
           {/* Separateur */}
-          <div className="border-t border-white/5" />
+          <div className="border-t border-[#f0edf8]" />
 
           {/* Prix + Frais */}
           <div className="grid grid-cols-2 gap-4">
@@ -364,7 +364,7 @@ export default function NewProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8b2c9] text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -378,19 +378,19 @@ export default function NewProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8b2c9] text-sm">€</span>
               </div>
             </div>
           </div>
 
           {/* Apercu cout total */}
           {form.purchase_price && (
-            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 flex items-center justify-between">
+            <div className="bg-[#4f8f6e]/10 border border-[#4f8f6e]/20 rounded-xl px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Coût total</p>
-                <p className="text-xs text-emerald-500/70 mt-0.5">Prix achat + frais</p>
+                <p className="text-xs text-[#4f8f6e] font-semibold uppercase tracking-wider">Coût total</p>
+                <p className="text-xs text-[#4f8f6e]/70 mt-0.5">Prix achat + frais</p>
               </div>
-              <span className="text-xl font-bold text-emerald-400">{totalCost} €</span>
+              <span className="text-xl font-serif text-[#4f8f6e]">{totalCost} €</span>
             </div>
           )}
 
@@ -398,7 +398,7 @@ export default function NewProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-[#7c6fe0] hover:bg-[#6c5dd3] active:scale-[0.98] disabled:bg-[#f0edf8] disabled:text-[#c9c0e6] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

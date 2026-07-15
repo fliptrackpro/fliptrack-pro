@@ -46,23 +46,23 @@ export default function ProductsPage() {
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
   if (!user) return (
-    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white md:pl-56">
+    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438] md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+      <header className="flex items-center justify-between px-6 py-5 border-b border-[#e7e2f3]">
         <div>
-          <h1 className="text-xl font-bold">Stock</h1>
-          <p className="text-gray-500 text-xs mt-0.5">{products.length} produit{products.length > 1 ? 's' : ''}</p>
+          <h1 className="text-xl font-serif italic">Stock</h1>
+          <p className="text-[#948da8] text-xs mt-0.5">{products.length} produit{products.length > 1 ? 's' : ''}</p>
         </div>
         <button
           onClick={() => router.push('/products/new')}
-          className="text-xs bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-lg transition"
+          className="text-xs bg-[#7c6fe0] hover:bg-[#6c5dd3] active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-full transition"
         >
           + Ajouter
         </button>
@@ -75,7 +75,7 @@ export default function ProductsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un produit..."
-          className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
+          className="w-full bg-white border border-[#e7e2f3] rounded-xl px-4 py-2.5 text-[#2b2438] placeholder-[#b8b2c9] focus:outline-none focus:border-[#7c6fe0] transition text-sm"
         />
 
         {/* Filtres */}
@@ -88,8 +88,8 @@ export default function ProductsPage() {
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`text-xs font-medium px-3 py-1.5 rounded-lg transition ${
-                filter === f.key ? 'bg-indigo-500/10 text-indigo-400' : 'text-gray-500 hover:bg-white/5'
+              className={`text-xs font-medium px-3 py-1.5 rounded-full transition ${
+                filter === f.key ? 'bg-[#7c6fe0]/10 text-[#7c6fe0]' : 'text-[#948da8] hover:bg-[#7c6fe0]/5'
               }`}
             >
               {f.label}
@@ -99,10 +99,10 @@ export default function ProductsPage() {
 
         {filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-600 text-sm">Aucun produit dans cette catégorie</p>
+            <p className="text-[#b8b2c9] text-sm">Aucun produit dans cette catégorie</p>
             <button
               onClick={() => router.push('/products/new')}
-              className="mt-3 text-xs text-indigo-400 hover:underline"
+              className="mt-3 text-xs text-[#7c6fe0] hover:underline"
             >
               Ajouter un produit →
             </button>
@@ -113,24 +113,24 @@ export default function ProductsPage() {
               <div
                 key={p.id}
                 style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
-                className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 p-4 flex items-center justify-between gap-3"
+                className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10 p-4 flex items-center justify-between gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
                     <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                   ) : (
-                    <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#34d399' : '#4b5563' }} />
+                    <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#4f8f6e' : '#c9c0e6' }} />
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{p.name}</p>
-                    <p className="text-xs text-gray-500">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
+                    <p className="text-sm font-medium text-[#2b2438] truncate">{p.name}</p>
+                    <p className="text-xs text-[#948da8]">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <p className="text-sm font-semibold text-white">{p.purchase_price}€</p>
+                  <p className="text-sm font-semibold text-[#2b2438]">{p.purchase_price}€</p>
                   <button
                     onClick={() => router.push(`/products/${p.id}/edit`)}
-                    className="text-xs bg-white/5 text-gray-300 hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg transition"
+                    className="text-xs bg-[#f4f1f9] text-[#6a6383] hover:bg-[#ece9f7] font-medium px-3 py-1.5 rounded-full transition"
                   >
                     Modifier
                   </button>
@@ -138,23 +138,23 @@ export default function ProductsPage() {
                     <>
                       <button
                         onClick={() => router.push(`/products/${p.id}/publish`)}
-                        className="text-xs bg-white/5 text-gray-300 hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg transition"
+                        className="text-xs bg-[#f4f1f9] text-[#6a6383] hover:bg-[#ece9f7] font-medium px-3 py-1.5 rounded-full transition"
                       >
                         Publier
                       </button>
                       <button
                         onClick={() => router.push(`/products/${p.id}/sell`)}
-                        className="text-xs bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 font-medium px-3 py-1.5 rounded-lg transition"
+                        className="text-xs bg-[#7c6fe0]/10 text-[#7c6fe0] hover:bg-[#7c6fe0]/20 font-medium px-3 py-1.5 rounded-full transition"
                       >
                         Vendre
                       </button>
                     </>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-400">Vendu</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-[#f0edf8] text-[#948da8]">Vendu</span>
                   )}
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="text-xs text-gray-600 hover:text-red-400 px-2 py-1.5 rounded-lg hover:bg-red-500/10 transition"
+                    className="text-xs text-[#c9c0e6] hover:text-[#c14f4a] px-2 py-1.5 rounded-full hover:bg-[#c14f4a]/10 transition"
                   >
                     ✕
                   </button>

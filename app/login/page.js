@@ -20,14 +20,14 @@ export default function LoginPage() {
   }, [router])
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-[#161920] border border-white/5 rounded-2xl p-8 shadow-2xl">
+    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white border border-[#e7e2f3] rounded-2xl p-8 shadow-xl shadow-[#2b2438]/5">
 
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">
-            Flip<span className="text-indigo-400">Track</span>
+          <h1 className="text-3xl font-serif italic text-[#2b2438]">
+            Flip<span className="not-italic font-sans font-bold text-[#7c6fe0]">Track</span>
           </h1>
-          <p className="text-gray-400 mt-2">
+          <p className="text-[#948da8] mt-2">
             Gérez vos achats et ventes en un clic
           </p>
         </div>
@@ -39,24 +39,24 @@ export default function LoginPage() {
             variables: {
               default: {
                 colors: {
-                  brand: '#818cf8',
-                  brandAccent: '#6366f1',
+                  brand: '#7c6fe0',
+                  brandAccent: '#6c5dd3',
                   brandButtonText: '#ffffff',
-                  defaultButtonBackground: '#161920',
-                  defaultButtonBackgroundHover: '#1e222b',
-                  defaultButtonBorder: 'rgba(255,255,255,0.1)',
-                  defaultButtonText: '#ffffff',
-                  inputBackground: '#0d0f14',
-                  inputBorder: 'rgba(255,255,255,0.1)',
-                  inputBorderHover: 'rgba(255,255,255,0.25)',
-                  inputBorderFocus: '#818cf8',
-                  inputText: '#ffffff',
-                  inputLabelText: '#9ca3af',
-                  inputPlaceholder: '#6b7280',
-                  messageText: '#9ca3af',
-                  messageTextDanger: '#f87171',
-                  anchorTextColor: '#9ca3af',
-                  anchorTextHoverColor: '#ffffff',
+                  defaultButtonBackground: '#ffffff',
+                  defaultButtonBackgroundHover: '#f4f1f9',
+                  defaultButtonBorder: '#e7e2f3',
+                  defaultButtonText: '#2b2438',
+                  inputBackground: '#ffffff',
+                  inputBorder: '#e7e2f3',
+                  inputBorderHover: '#c9c0e6',
+                  inputBorderFocus: '#7c6fe0',
+                  inputText: '#2b2438',
+                  inputLabelText: '#948da8',
+                  inputPlaceholder: '#b8b2c9',
+                  messageText: '#948da8',
+                  messageTextDanger: '#c14f4a',
+                  anchorTextColor: '#948da8',
+                  anchorTextHoverColor: '#7c6fe0',
                 }
               }
             }

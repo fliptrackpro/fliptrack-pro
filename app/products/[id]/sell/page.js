@@ -83,43 +83,43 @@ export default function SellProduct() {
     ? (parseFloat(form.sale_price || 0) - product.purchase_price - product.purchase_fees - parseFloat(form.platform_fees || 0)).toFixed(2)
     : 0
 
-  const inputClass = "w-full bg-[#0d0f14] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
-  const labelClass = "text-xs font-semibold text-gray-500 uppercase tracking-wider"
+  const inputClass = "w-full bg-white border border-[#e7e2f3] rounded-xl px-4 py-3 text-[#2b2438] placeholder-[#b8b2c9] focus:outline-none focus:border-[#7c6fe0] transition text-sm"
+  const labelClass = "text-xs font-semibold text-[#948da8] uppercase tracking-wider"
 
   if (!product) return (
-    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white">
+    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438]">
 
-      <header className="sticky top-0 z-10 bg-[#111318] border-b border-white/5 px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#e7e2f3] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/products')}
-            className="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center text-gray-400 transition text-sm"
+            className="w-8 h-8 rounded-lg hover:bg-[#f4f1f9] flex items-center justify-center text-[#948da8] transition text-sm"
           >
             ←
           </button>
-          <span className="text-sm text-gray-500">Stock</span>
-          <span className="text-sm text-gray-700">/</span>
-          <span className="text-sm font-medium text-gray-300">Vendre</span>
+          <span className="text-sm text-[#948da8]">Stock</span>
+          <span className="text-sm text-[#d8d2e8]">/</span>
+          <span className="text-sm font-medium text-[#4b4560]">Vendre</span>
         </div>
-        <span className="text-lg font-bold text-white">
-          Flip<span className="text-indigo-400">Track</span>
+        <span className="text-lg font-serif italic text-[#2b2438]">
+          Flip<span className="not-italic font-sans font-bold text-[#7c6fe0]">Track</span>
         </span>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white">Vendre « {product.name} »</h2>
-          <p className="text-gray-500 text-sm mt-1">Coût d'achat : {(product.purchase_price + product.purchase_fees).toFixed(2)}€</p>
+          <h2 className="text-2xl font-serif italic text-[#2b2438]">Vendre « {product.name} »</h2>
+          <p className="text-[#948da8] text-sm mt-1">Coût d'achat : {(product.purchase_price + product.purchase_fees).toFixed(2)}€</p>
         </div>
 
-        <div className="bg-[#161920] rounded-2xl border border-white/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-6 md:p-8 flex flex-col gap-6">
 
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Plateforme</label>
@@ -136,7 +136,7 @@ export default function SellProduct() {
             </select>
           </div>
 
-          <div className="border-t border-white/5" />
+          <div className="border-t border-[#f0edf8]" />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
@@ -150,7 +150,7 @@ export default function SellProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8b2c9] text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -164,27 +164,27 @@ export default function SellProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8b2c9] text-sm">€</span>
               </div>
             </div>
           </div>
 
           {form.sale_price && (
             <div className={`rounded-xl px-4 py-3 flex items-center justify-between border ${
-              margin >= 0 ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'
+              margin >= 0 ? 'bg-[#4f8f6e]/10 border-[#4f8f6e]/20' : 'bg-[#c14f4a]/10 border-[#c14f4a]/20'
             }`}>
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>Marge nette</p>
-                <p className={`text-xs mt-0.5 ${margin >= 0 ? 'text-emerald-500/70' : 'text-red-500/70'}`}>Vente − coût d'achat − frais</p>
+                <p className={`text-xs font-semibold uppercase tracking-wider ${margin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>Marge nette</p>
+                <p className={`text-xs mt-0.5 ${margin >= 0 ? 'text-[#4f8f6e]/70' : 'text-[#c14f4a]/70'}`}>Vente − coût d'achat − frais</p>
               </div>
-              <span className={`text-xl font-bold ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>{margin}€</span>
+              <span className={`text-xl font-serif ${margin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>{margin}€</span>
             </div>
           )}
 
           <button
             onClick={handleSubmit}
             disabled={loading || !form.sale_price}
-            className="w-full bg-indigo-500 hover:bg-indigo-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-[#7c6fe0] hover:bg-[#6c5dd3] active:scale-[0.98] disabled:bg-[#f0edf8] disabled:text-[#c9c0e6] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

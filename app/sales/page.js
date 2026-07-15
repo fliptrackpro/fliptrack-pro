@@ -64,24 +64,24 @@ export default function SalesPage() {
   const totalMargin = filtered.reduce((acc, s) => acc + saleMargin(s.products, s), 0)
 
   if (!user) return (
-    <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#f4f1f9] flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-[#7c6fe0] border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#0d0f14] text-white md:pl-56">
+    <div className="min-h-screen bg-[#f4f1f9] text-[#2b2438] md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+      <header className="flex items-center justify-between px-6 py-5 border-b border-[#e7e2f3]">
         <div>
-          <h1 className="text-xl font-bold">Ventes</h1>
-          <p className="text-gray-500 text-xs mt-0.5">{sales.length} vente{sales.length > 1 ? 's' : ''}</p>
+          <h1 className="text-xl font-serif italic">Ventes</h1>
+          <p className="text-[#948da8] text-xs mt-0.5">{sales.length} vente{sales.length > 1 ? 's' : ''}</p>
         </div>
         {sales.length > 0 && (
           <button
             onClick={() => exportCSV(filtered)}
-            className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-4 py-2 rounded-lg transition"
+            className="text-xs bg-white hover:bg-[#f4f1f9] text-[#6a6383] border border-[#e7e2f3] font-medium px-4 py-2 rounded-full transition"
           >
             Exporter CSV
           </button>
@@ -91,13 +91,13 @@ export default function SalesPage() {
       <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4">
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4">
-            <p className="text-gray-500 text-xs mb-2">CA Total</p>
-            <p className="text-2xl font-bold text-white">{totalRevenue.toFixed(0)}€</p>
+          <div className="bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4">
+            <p className="text-[#948da8] text-xs mb-2">CA Total</p>
+            <p className="text-2xl font-serif text-[#2b2438]">{totalRevenue.toFixed(0)}€</p>
           </div>
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4">
-            <p className="text-gray-500 text-xs mb-2">Marge Nette</p>
-            <p className={`text-2xl font-bold ${totalMargin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <div className="bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 p-4">
+            <p className="text-[#948da8] text-xs mb-2">Marge Nette</p>
+            <p className={`text-2xl font-serif ${totalMargin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>
               {totalMargin.toFixed(0)}€
             </p>
           </div>
@@ -108,23 +108,23 @@ export default function SalesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Rechercher une vente..."
-            className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-indigo-400 transition text-sm"
+            className="w-full bg-white border border-[#e7e2f3] rounded-xl px-4 py-2.5 text-[#2b2438] placeholder-[#b8b2c9] focus:outline-none focus:border-[#7c6fe0] transition text-sm"
           />
         )}
 
         {sales.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-600 text-sm">Aucune vente enregistrée</p>
+            <p className="text-[#b8b2c9] text-sm">Aucune vente enregistrée</p>
             <button
               onClick={() => router.push('/products')}
-              className="mt-3 text-xs text-indigo-400 hover:underline"
+              className="mt-3 text-xs text-[#7c6fe0] hover:underline"
             >
               Voir le stock →
             </button>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-600 text-sm">Aucune vente ne correspond à ta recherche</p>
+            <p className="text-[#b8b2c9] text-sm">Aucune vente ne correspond à ta recherche</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
@@ -134,15 +134,15 @@ export default function SalesPage() {
                 <div
                   key={s.id}
                   style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
-                  className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 p-4 flex items-center justify-between gap-3"
+                  className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#2b2438]/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#2b2438]/10 p-4 flex items-center justify-between gap-3"
                 >
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{s.products?.name || 'Produit supprimé'}</p>
-                    <p className="text-xs text-gray-500">{s.platform || 'Plateforme non précisée'} · {s.sale_date}</p>
+                    <p className="text-sm font-medium text-[#2b2438] truncate">{s.products?.name || 'Produit supprimé'}</p>
+                    <p className="text-xs text-[#948da8]">{s.platform || 'Plateforme non précisée'} · {s.sale_date}</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-semibold text-white">{s.sale_price}€</p>
-                    <p className={`text-xs ${margin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    <p className="text-sm font-semibold text-[#2b2438]">{s.sale_price}€</p>
+                    <p className={`text-xs ${margin >= 0 ? 'text-[#4f8f6e]' : 'text-[#c14f4a]'}`}>
                       {margin >= 0 ? '+' : ''}{margin.toFixed(2)}€ marge
                     </p>
                   </div>
