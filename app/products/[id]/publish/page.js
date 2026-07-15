@@ -45,6 +45,9 @@ export default function PublishProduct() {
 
       if (error || !data) return router.push('/products')
       setProduct(data)
+      if (data.estimated_price_min != null && data.estimated_price_max != null) {
+        setPrice(String(Math.round((data.estimated_price_min + data.estimated_price_max) / 2)))
+      }
     }
     load()
   }, [params.id, router])
@@ -177,6 +180,9 @@ export default function PublishProduct() {
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
             </div>
+            {product.estimated_price_min != null && (
+              <p className="text-xs text-[#4a8a6f]">Préremplis avec l'estimation IA ({product.estimated_price_min}–{product.estimated_price_max}€), ajuste si besoin.</p>
+            )}
           </div>
 
           {error && <p className="text-xs text-[#e0654a]">{error}</p>}

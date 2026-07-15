@@ -14,6 +14,8 @@ create table if not exists products (
   description text,
   photo_url text,
   last_reposted_at timestamptz,
+  estimated_price_min numeric,
+  estimated_price_max numeric,
   created_at timestamptz not null default now()
 );
 

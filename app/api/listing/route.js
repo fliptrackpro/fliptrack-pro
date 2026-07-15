@@ -60,7 +60,7 @@ Rédige une annonce vendeuse et percutante adaptée à chacune de ces 5 platefor
 
 Chaque descriptif doit donner envie d'acheter : mets en avant l'état, la qualité, un détail concret qui rassure l'acheteur. Reste crédible, pas de superlatifs exagérés ni de fausses promesses.
 
-Pour Vinted et Facebook Marketplace uniquement, ajoute aussi 5 à 8 hashtags pertinents (marque, catégorie, style, mot-clé de recherche), sans le symbole #, en minuscules, sans espace dans chaque mot. Pas de hashtags pour Leboncoin, eBay et Vestiaire Collective (ces plateformes n'en utilisent pas).
+Pour Vinted et Facebook Marketplace uniquement, ajoute aussi 5 à 8 hashtags, sans le symbole #, en minuscules, sans espace dans chaque mot. Ils doivent être spécifiques à CET article précis, pas génériques : utilise la marque exacte, le modèle/nom précis, la couleur, la matière, la taille/pointure si pertinente, et le type d'objet précis. Évite les mots creux qui s'appliquent à n'importe quel article (comme "mode", "style", "occasion", "vintage" sauf si c'est vraiment vintage, "streetwear" sauf si c'est vraiment du streetwear). Chaque hashtag doit correspondre à un terme qu'un acheteur taperait réellement dans la barre de recherche pour trouver CET article. Pas de hashtags pour Leboncoin, eBay et Vestiaire Collective (ces plateformes n'en utilisent pas).
 
 Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte autour) au format exact :
 {

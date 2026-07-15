@@ -178,6 +178,8 @@ export default function NewProduct() {
       status: 'stock',
       description: description || null,
       photo_url,
+      estimated_price_min: aiEstimate?.estimated_price_min ?? null,
+      estimated_price_max: aiEstimate?.estimated_price_max ?? null,
     })
     if (error) {
       toast('Erreur : ' + error.message)

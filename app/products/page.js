@@ -130,11 +130,18 @@ export default function ProductsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#241f2e] truncate">{p.name}</p>
                     <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
-                    {p.status === 'stock' && (
-                      <p className={`text-[11px] mt-0.5 ${!p.last_reposted_at || daysSince(p.last_reposted_at) >= 14 ? 'text-[#e0654a]' : 'text-[#b3aebf]'}`}>
-                        {p.last_reposted_at ? `Reposté il y a ${daysSince(p.last_reposted_at)}j` : 'Jamais reposté'}
-                      </p>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                      {p.status === 'stock' && (
+                        <p className={`text-[11px] ${!p.last_reposted_at || daysSince(p.last_reposted_at) >= 14 ? 'text-[#e0654a]' : 'text-[#b3aebf]'}`}>
+                          {p.last_reposted_at ? `Reposté il y a ${daysSince(p.last_reposted_at)}j` : 'Jamais reposté'}
+                        </p>
+                      )}
+                      {p.estimated_price_min != null && (
+                        <span className="text-[11px] bg-[#e7f3ee] text-[#4a8a6f] font-medium px-1.5 py-0.5 rounded-full">
+                          Est. {p.estimated_price_min}–{p.estimated_price_max}€
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <p className="text-sm font-semibold text-[#241f2e] flex-shrink-0 sm:hidden">{p.purchase_price}€</p>
                 </div>
