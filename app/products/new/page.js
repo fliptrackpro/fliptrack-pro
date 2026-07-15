@@ -193,17 +193,17 @@ export default function NewProduct() {
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
 
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/dashboard')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm"
+            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="text-sm text-[#8b8496]">Dashboard</span>
-          <span className="text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356]">Nouveau produit</span>
+          <span className="hidden sm:inline text-sm text-[#8b8496]">Dashboard</span>
+          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
+          <span className="text-sm font-medium text-[#4a4356] truncate">Nouveau produit</span>
         </div>
         <span className="text-lg font-serif italic text-[#241f2e]">
           Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>

@@ -55,7 +55,7 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e] md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-6 py-5 border-b border-[#eae5f0]">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-[#eae5f0]">
         <div>
           <h1 className="text-xl font-serif italic">Stock</h1>
           <p className="text-[#8b8496] text-xs mt-0.5">{products.length} produit{products.length > 1 ? 's' : ''}</p>
@@ -68,7 +68,7 @@ export default function ProductsPage() {
         </button>
       </header>
 
-      <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4">
+      <main className="px-4 sm:px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4 max-w-3xl mx-auto w-full">
 
         {/* Recherche */}
         <input
@@ -113,7 +113,7 @@ export default function ProductsPage() {
               <div
                 key={p.id}
                 style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
-                className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#241f2e]/10 p-4 flex items-center justify-between gap-3"
+                className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#241f2e]/10 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
@@ -121,13 +121,14 @@ export default function ProductsPage() {
                   ) : (
                     <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#4a8a6f' : '#c3bcf0' }} />
                   )}
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#241f2e] truncate">{p.name}</p>
                     <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
                   </div>
+                  <p className="text-sm font-semibold text-[#241f2e] flex-shrink-0 sm:hidden">{p.purchase_price}€</p>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <p className="text-sm font-semibold text-[#241f2e]">{p.purchase_price}€</p>
+                <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap flex-shrink-0">
+                  <p className="hidden sm:block text-sm font-semibold text-[#241f2e]">{p.purchase_price}€</p>
                   <button
                     onClick={() => router.push(`/products/${p.id}/edit`)}
                     className="text-xs bg-[#f5f2ec] text-[#655e72] hover:bg-[#e5e0f7] font-medium px-3 py-1.5 rounded-full transition"

@@ -73,7 +73,7 @@ export default function SalesPage() {
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e] md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-6 py-5 border-b border-[#eae5f0]">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-[#eae5f0]">
         <div>
           <h1 className="text-xl font-serif italic">Ventes</h1>
           <p className="text-[#8b8496] text-xs mt-0.5">{sales.length} vente{sales.length > 1 ? 's' : ''}</p>
@@ -88,7 +88,7 @@ export default function SalesPage() {
         )}
       </header>
 
-      <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4">
+      <main className="px-4 sm:px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4 max-w-3xl mx-auto w-full">
 
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-4">

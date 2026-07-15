@@ -126,14 +126,14 @@ export default function Dashboard() {
       <Nav />
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-5">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-5">
         <div>
           <h1 className="text-xl font-serif italic">Dashboard</h1>
           <p className="text-[#8b8496] text-xs mt-0.5">{user?.email}</p>
         </div>
       </header>
 
-      <main className="px-6 py-2 pb-24 md:pb-6 flex flex-col gap-6">
+      <main className="px-4 sm:px-6 py-2 pb-24 md:pb-6 flex flex-col gap-6 max-w-3xl mx-auto w-full">
 
         {/* Sélecteur de période */}
         <div className="flex gap-2">
@@ -228,7 +228,7 @@ export default function Dashboard() {
                 Voir tout →
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {recentStock.map(p => (
                 <div key={p.id} className="bg-white rounded-2xl overflow-hidden cursor-pointer transition hover:-translate-y-0.5" onClick={() => router.push(`/products/${p.id}/edit`)}>
                   <div className="aspect-square bg-[#efebfd] flex items-center justify-center">

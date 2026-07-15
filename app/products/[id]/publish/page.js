@@ -86,17 +86,17 @@ export default function PublishProduct() {
   return (
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
 
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/products')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm"
+            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="text-sm text-[#8b8496]">Stock</span>
-          <span className="text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356]">Publier</span>
+          <span className="hidden sm:inline text-sm text-[#8b8496]">Stock</span>
+          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
+          <span className="text-sm font-medium text-[#4a4356] truncate">Publier</span>
         </div>
         <span className="text-lg font-serif italic text-[#241f2e]">
           Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
@@ -164,11 +164,11 @@ export default function PublishProduct() {
               if (!listing) return null
               return (
                 <div key={p.key} className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${p.color}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border w-fit ${p.color}`}>
                       {p.label}
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => handleCopy(p.key, listing.title, listing.description)}
                         className="text-xs bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-3 py-1.5 rounded-full transition"
