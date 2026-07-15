@@ -52,6 +52,7 @@ export default function PublishProduct() {
           condition: product.condition,
           price: parseFloat(price),
           description: product.description,
+          photo_url: product.photo_url,
         }),
       })
       const data = await res.json()

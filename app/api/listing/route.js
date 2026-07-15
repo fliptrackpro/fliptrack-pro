@@ -4,9 +4,26 @@ export async function POST(req) {
     return Response.json({ error: 'Clé API Gemini manquante côté serveur.' }, { status: 500 })
   }
 
-  const { name, category, condition, price, description } = await req.json()
+  const { name, category, condition, price, description, photo_url } = await req.json()
   if (!name || !price) {
     return Response.json({ error: 'Nom et prix requis.' }, { status: 400 })
+  }
+
+  const parts = []
+
+  let imagePart = null
+  if (photo_url) {
+    try {
+      const imgRes = await fetch(photo_url)
+      if (imgRes.ok) {
+        const buffer = await imgRes.arrayBuffer()
+        const base64 = Buffer.from(buffer).toString('base64')
+        const mimeType = imgRes.headers.get('content-type') || 'image/jpeg'
+        imagePart = { inline_data: { mime_type: mimeType, data: base64 } }
+      }
+    } catch {
+      // pas de photo exploitable, on continue sans
+    }
   }
 
   const prompt = `Tu es un vendeur particulier français qui revend un article d'occasion. Voici les infos :
@@ -15,6 +32,7 @@ export async function POST(req) {
 - État : ${condition || 'non précisé'}
 - Prix de vente : ${price}€
 - Notes : ${description || 'aucune'}
+${imagePart ? "\nUne photo de l'article est fournie : regarde-la attentivement et intègre dans les descriptifs des détails concrets et vérifiables que tu observes sur la photo (couleur exacte, matière, détails de design, état visible, usure éventuelle, accessoires visibles). Ne décris pas quelque chose qui n'est pas visible sur la photo." : ''}
 
 Rédige une annonce vendeuse et percutante adaptée à chacune de ces 3 plateformes, avec leurs codes propres. AUCUN emoji ou émoticône dans aucun texte, nulle part.
 - Vinted : ton décontracté, direct, courte (2-4 phrases), orientée mode/objets d'occasion entre particuliers, met en avant le point fort de l'article.
@@ -31,6 +49,9 @@ Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte aut
 }
 Les titres font 80 caractères maximum.`
 
+  parts.push({ text: prompt })
+  if (imagePart) parts.push(imagePart)
+
   try {
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${apiKey}`,
@@ -38,7 +59,7 @@ Les titres font 80 caractères maximum.`
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts }],
           generationConfig: { responseMimeType: 'application/json' },
         }),
       }
