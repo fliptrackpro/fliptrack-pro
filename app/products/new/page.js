@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
-import { CameraIcon, BarcodeIcon } from '@/components/icons'
+import { CameraIcon, BarcodeIcon, SparkleIcon } from '@/components/icons'
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -238,21 +238,48 @@ export default function NewProduct() {
             </label>
 
             {estimating && (
-              <div className="flex items-center gap-2 text-xs text-indigo-400 mt-1">
-                <span className="w-3.5 h-3.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
-                Analyse de la photo en cours...
+              <div className="rounded-xl px-4 py-3 mt-1 border border-indigo-400/20 bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-fuchsia-500/10">
+                <div className="flex items-center gap-2 text-xs text-indigo-300 mb-3">
+                  <SparkleIcon className="w-3.5 h-3.5 animate-pulse" />
+                  Analyse de la photo en cours...
+                </div>
+                <div className="h-3 w-1/3 rounded-full animate-shimmer mb-2" />
+                <div className="h-5 w-1/2 rounded-full animate-shimmer mb-3" />
+                <div className="h-2.5 w-full rounded-full animate-shimmer mb-1.5" />
+                <div className="h-2.5 w-4/5 rounded-full animate-shimmer" />
               </div>
             )}
             {estimateError && (
               <p className="text-xs text-red-400 mt-1">{estimateError}</p>
             )}
             {aiEstimate && !estimating && (
-              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mt-1">
-                <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Valeur de revente estimée</p>
-                <p className="text-lg font-bold text-emerald-400 mt-0.5">
+              <div className="animate-rise-in rounded-xl px-4 py-3 mt-1 border border-indigo-400/20 bg-gradient-to-br from-indigo-500/10 via-violet-500/10 to-fuchsia-500/10">
+                <div className="flex items-center gap-1.5 text-xs text-indigo-300 font-semibold uppercase tracking-wider">
+                  <SparkleIcon className="w-3.5 h-3.5" />
+                  Valeur de revente estimée
+                </div>
+                <p className="text-lg font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent mt-1">
                   {aiEstimate.estimated_price_min}€ – {aiEstimate.estimated_price_max}€
                 </p>
                 <p className="text-xs text-gray-400 mt-2">{aiEstimate.description}</p>
+
+                <div className="flex flex-wrap gap-1.5 mt-3">
+                  {[
+                    { label: 'eBay (vendus)', url: `https://www.ebay.fr/sch/i.html?_nkw=${encodeURIComponent(form.name || aiEstimate.name || '')}&LH_Sold=1&LH_Complete=1` },
+                    { label: 'Vinted', url: `https://www.vinted.fr/catalog?search_text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
+                    { label: 'Amazon', url: `https://www.amazon.fr/s?k=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
+                  ].map(l => (
+                    <a
+                      key={l.label}
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-2.5 py-1 rounded-full transition"
+                    >
+                      Vérifier sur {l.label} ↗
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
           </div>
