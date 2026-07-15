@@ -16,10 +16,12 @@ export async function POST(req) {
 - Prix de vente : ${price}€
 - Notes : ${description || 'aucune'}
 
-Rédige une annonce adaptée à chacune de ces 3 plateformes, avec leurs codes propres :
-- Vinted : ton décontracté, direct, quelques emojis, courte (2-4 phrases), orientée mode/objets d'occasion entre particuliers.
-- Leboncoin : ton neutre et informatif, structuré, précise l'état et les modalités (main propre / envoi), pas d'emoji.
-- Facebook Marketplace : ton chaleureux et local, invite au message privé, peut mentionner la remise en main propre, 1-2 emojis max.
+Rédige une annonce vendeuse et percutante adaptée à chacune de ces 3 plateformes, avec leurs codes propres. AUCUN emoji ou émoticône dans aucun texte, nulle part.
+- Vinted : ton décontracté, direct, courte (2-4 phrases), orientée mode/objets d'occasion entre particuliers, met en avant le point fort de l'article.
+- Leboncoin : ton neutre et informatif, structuré, précise l'état et les modalités (main propre / envoi), argumente la valeur du prix.
+- Facebook Marketplace : ton chaleureux et local, invite au message privé, peut mentionner la remise en main propre, met en avant l'urgence ou la rareté si pertinent.
+
+Chaque descriptif doit donner envie d'acheter : mets en avant l'état, la qualité, un détail concret qui rassure l'acheteur. Reste crédible, pas de superlatifs exagérés ni de fausses promesses.
 
 Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte autour) au format exact :
 {

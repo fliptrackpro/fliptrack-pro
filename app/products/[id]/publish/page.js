@@ -5,9 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 
 const PLATFORMS = [
-  { key: 'vinted', label: 'Vinted', color: 'bg-teal-500/10 text-teal-400 border-teal-500/20' },
-  { key: 'leboncoin', label: 'Leboncoin', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
-  { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+  { key: 'vinted', label: 'Vinted', color: 'bg-teal-500/10 text-teal-400 border-teal-500/20', url: 'https://www.vinted.fr/items/new' },
+  { key: 'leboncoin', label: 'Leboncoin', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20', url: 'https://www.leboncoin.fr/deposer-une-annonce' },
+  { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', url: 'https://www.facebook.com/marketplace/create/item' },
 ]
 
 export default function PublishProduct() {
@@ -153,12 +153,22 @@ export default function PublishProduct() {
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${p.color}`}>
                       {p.label}
                     </span>
-                    <button
-                      onClick={() => handleCopy(p.key, listing.title, listing.description)}
-                      className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-3 py-1.5 rounded-lg transition"
-                    >
-                      {copiedKey === p.key ? '✓ Copié' : 'Copier'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleCopy(p.key, listing.title, listing.description)}
+                        className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 font-medium px-3 py-1.5 rounded-lg transition"
+                      >
+                        {copiedKey === p.key ? '✓ Copié' : 'Copier'}
+                      </button>
+                      <a
+                        href={p.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-medium px-3 py-1.5 rounded-lg transition"
+                      >
+                        Ouvrir {p.label} ↗
+                      </a>
+                    </div>
                   </div>
                   <p className="text-sm font-semibold text-white mb-1.5">{listing.title}</p>
                   <p className="text-sm text-gray-400 whitespace-pre-line">{listing.description}</p>
