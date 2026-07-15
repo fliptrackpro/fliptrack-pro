@@ -109,8 +109,12 @@ export default function ProductsPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {filtered.map(p => (
-              <div key={p.id} className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-colors hover:border-white/10 p-4 flex items-center justify-between gap-3">
+            {filtered.map((p, i) => (
+              <div
+                key={p.id}
+                style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
+                className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 p-4 flex items-center justify-between gap-3"
+              >
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
                     <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />

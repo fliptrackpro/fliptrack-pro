@@ -6,6 +6,7 @@ import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { PlusIcon, TrendUpIcon, ClockIcon } from '@/components/icons'
+import CountUp from '@/components/CountUp'
 
 const PERIODS = [
   { key: 'semaine', label: 'Cette semaine' },
@@ -128,32 +129,32 @@ export default function Dashboard() {
 
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition hover:border-white/10">
+          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30">
             <p className="text-gray-500 text-xs mb-2">CA</p>
-            <p className="text-2xl font-bold text-white">{totalRevenue.toFixed(0)}€</p>
+            <p className="text-2xl font-bold text-white"><CountUp value={totalRevenue} />€</p>
             <p className="text-emerald-400 text-xs mt-1">Ventes encaissées</p>
           </div>
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition hover:border-white/10">
+          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '40ms' }}>
             <p className="text-gray-500 text-xs mb-2">Marge Nette</p>
             <p className={`text-2xl font-bold ${totalMargin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-              {totalMargin.toFixed(0)}€
+              <CountUp value={totalMargin} />€
             </p>
             <p className="text-gray-500 text-xs mt-1">Taux {marginRate}%</p>
           </div>
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition hover:border-white/10">
+          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '80ms' }}>
             <p className="text-gray-500 text-xs mb-2">En Stock</p>
-            <p className="text-2xl font-bold text-white">{inStock}</p>
+            <p className="text-2xl font-bold text-white"><CountUp value={inStock} /></p>
             <p className="text-gray-500 text-xs mt-1">Articles disponibles</p>
           </div>
-          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition hover:border-white/10">
+          <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30" style={{ animationDelay: '120ms' }}>
             <p className="text-gray-500 text-xs mb-2">Vendus</p>
-            <p className="text-2xl font-bold text-white">{soldInPeriod}</p>
+            <p className="text-2xl font-bold text-white"><CountUp value={soldInPeriod} /></p>
             <p className="text-gray-500 text-xs mt-1">Sur la période</p>
           </div>
         </div>
 
         {/* Meilleures catégories */}
-        <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5">
+        <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5" style={{ animationDelay: '160ms' }}>
           <div className="flex items-center gap-2 mb-4">
             <TrendUpIcon className="w-4 h-4 text-emerald-400" />
             <h2 className="text-sm font-semibold text-white">Meilleures catégories</h2>
@@ -182,7 +183,7 @@ export default function Dashboard() {
         </div>
 
         {/* Produits qui stagnent */}
-        <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5">
+        <div className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-5" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center gap-2 mb-4">
             <ClockIcon className="w-4 h-4 text-amber-400" />
             <h2 className="text-sm font-semibold text-white">En stock depuis longtemps</h2>
@@ -193,7 +194,7 @@ export default function Dashboard() {
           ) : (
             <div className="flex flex-col gap-2">
               {stagnant.map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                <div key={p.id} className="flex items-center justify-between py-2 px-2 -mx-2 rounded-lg border-b border-white/5 last:border-0 transition-colors hover:bg-white/[0.03]">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-white truncate max-w-[180px]">{p.name}</p>
                     <p className="text-xs text-gray-500">{p.category || 'Sans catégorie'}</p>

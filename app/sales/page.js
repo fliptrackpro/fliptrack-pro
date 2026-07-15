@@ -128,10 +128,14 @@ export default function SalesPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {filtered.map(s => {
+            {filtered.map((s, i) => {
               const margin = saleMargin(s.products, s)
               return (
-                <div key={s.id} className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 flex items-center justify-between gap-3">
+                <div
+                  key={s.id}
+                  style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
+                  className="animate-rise-in bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-all hover:border-white/10 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30 p-4 flex items-center justify-between gap-3"
+                >
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-white truncate">{s.products?.name || 'Produit supprimé'}</p>
                     <p className="text-xs text-gray-500">{s.platform || 'Plateforme non précisée'} · {s.sale_date}</p>

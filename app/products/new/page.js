@@ -267,7 +267,7 @@ export default function NewProduct() {
                   {[
                     { label: 'eBay (vendus)', url: `https://www.ebay.fr/sch/i.html?_nkw=${encodeURIComponent(form.name || aiEstimate.name || '')}&LH_Sold=1&LH_Complete=1` },
                     { label: 'Vinted', url: `https://www.vinted.fr/catalog?search_text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
-                    { label: 'Amazon', url: `https://www.amazon.fr/s?k=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
+                    { label: 'Leboncoin', url: `https://www.leboncoin.fr/recherche?text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
                   ].map(l => (
                     <a
                       key={l.label}
