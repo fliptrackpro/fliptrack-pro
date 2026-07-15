@@ -10,6 +10,7 @@ export default function ProductsPage() {
   const [user, setUser] = useState(null)
   const [products, setProducts] = useState([])
   const [filter, setFilter] = useState('tous')
+  const [search, setSearch] = useState('')
   const router = useRouter()
   const toast = useToast()
 
@@ -40,7 +41,9 @@ export default function ProductsPage() {
     toast('Produit supprimé', 'success')
   }
 
-  const filtered = products.filter(p => filter === 'tous' ? true : p.status === filter)
+  const filtered = products
+    .filter(p => filter === 'tous' ? true : p.status === filter)
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
   if (!user) return (
     <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center">
@@ -66,6 +69,14 @@ export default function ProductsPage() {
       </header>
 
       <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4">
+
+        {/* Recherche */}
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Rechercher un produit..."
+          className="w-full bg-[#161920] border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-emerald-400 transition text-sm"
+        />
 
         {/* Filtres */}
         <div className="flex gap-2">
@@ -113,6 +124,12 @@ export default function ProductsPage() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <p className="text-sm font-semibold text-white">{p.purchase_price}€</p>
+                  <button
+                    onClick={() => router.push(`/products/${p.id}/edit`)}
+                    className="text-xs bg-white/5 text-gray-300 hover:bg-white/10 font-medium px-3 py-1.5 rounded-lg transition"
+                  >
+                    Modifier
+                  </button>
                   {p.status === 'stock' ? (
                     <>
                       <button
