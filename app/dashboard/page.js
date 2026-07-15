@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 
@@ -29,13 +30,12 @@ export default function Dashboard() {
       setSales(allSales)
     }
     load()
-  }, [])
+  }, [router])
 
   const totalRevenue = sales.reduce((acc, s) => acc + (s.sale_price || 0), 0)
   const totalMargin = sales.reduce((acc, s) => {
     const product = products.find(p => p.id === s.product_id)
-    if (!product) return acc
-    return acc + (s.sale_price - product.purchase_price - product.purchase_fees - s.platform_fees)
+    return acc + saleMargin(product, s)
   }, 0)
   const inStock = products.filter(p => p.status === 'stock').length
   const sold = products.filter(p => p.status === 'vendu').length
@@ -105,7 +105,7 @@ export default function Dashboard() {
           <div className="w-full bg-white/5 rounded-full h-2 mb-2">
             <div
               className="bg-emerald-400 h-2 rounded-full transition-all duration-700"
-              style={{ width: `${Math.min(marginRate, 100)}%` }}
+              style={{ width: `${Math.min(Math.max(marginRate, 0), 100)}%` }}
             />
           </div>
           <div className="flex justify-between text-xs text-gray-600 mt-1">
