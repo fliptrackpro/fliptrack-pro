@@ -62,7 +62,7 @@ export default function ProductsPage() {
         </div>
         <button
           onClick={() => router.push('/products/new')}
-          className="text-xs bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-4 py-2 rounded-lg transition"
+          className="text-xs bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-lg transition"
         >
           + Ajouter
         </button>
@@ -110,7 +110,7 @@ export default function ProductsPage() {
         ) : (
           <div className="flex flex-col gap-2">
             {filtered.map(p => (
-              <div key={p.id} className="bg-[#161920] border border-white/5 rounded-2xl p-4 flex items-center justify-between gap-3">
+              <div key={p.id} className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 transition-colors hover:border-white/10 p-4 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
                     <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />

@@ -91,11 +91,11 @@ export default function SalesPage() {
       <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4">
 
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#161920] border border-white/5 rounded-2xl p-4">
+          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4">
             <p className="text-gray-500 text-xs mb-2">CA Total</p>
             <p className="text-2xl font-bold text-white">{totalRevenue.toFixed(0)}€</p>
           </div>
-          <div className="bg-[#161920] border border-white/5 rounded-2xl p-4">
+          <div className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4">
             <p className="text-gray-500 text-xs mb-2">Marge Nette</p>
             <p className={`text-2xl font-bold ${totalMargin >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
               {totalMargin.toFixed(0)}€
@@ -131,7 +131,7 @@ export default function SalesPage() {
             {filtered.map(s => {
               const margin = saleMargin(s.products, s)
               return (
-                <div key={s.id} className="bg-[#161920] border border-white/5 rounded-2xl p-4 flex items-center justify-between gap-3">
+                <div key={s.id} className="bg-[#161920] border border-white/5 rounded-2xl shadow-sm shadow-black/20 p-4 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-white truncate">{s.products?.name || 'Produit supprimé'}</p>
                     <p className="text-xs text-gray-500">{s.platform || 'Plateforme non précisée'} · {s.sale_date}</p>

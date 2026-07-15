@@ -2,16 +2,17 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { DashboardIcon, BoxIcon, PlusIcon, WalletIcon, LogoutIcon } from '@/components/icons'
 
 export default function Nav() {
   const router = useRouter()
   const path = usePathname()
 
   const links = [
-    { href: '/dashboard', icon: '▦', label: 'Dashboard' },
-    { href: '/products', icon: '📦', label: 'Stock' },
-    { href: '/products/new', icon: '＋', label: 'Ajouter' },
-    { href: '/sales', icon: '💰', label: 'Ventes' },
+    { href: '/dashboard', Icon: DashboardIcon, label: 'Dashboard' },
+    { href: '/products', Icon: BoxIcon, label: 'Stock' },
+    { href: '/products/new', Icon: PlusIcon, label: 'Ajouter' },
+    { href: '/sales', Icon: WalletIcon, label: 'Ventes' },
   ]
 
   const handleLogout = async () => {
@@ -39,7 +40,7 @@ export default function Nav() {
                   : 'text-gray-400 hover:bg-white/5 hover:text-white'
                 }`}
             >
-              <span>{l.icon}</span>
+              <l.Icon className="w-[18px] h-[18px]" />
               <span>{l.label}</span>
             </button>
           ))}
@@ -48,13 +49,13 @@ export default function Nav() {
           onClick={handleLogout}
           className="mt-auto mx-3 mb-5 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition text-left"
         >
-          <span>⏻</span>
+          <LogoutIcon className="w-[18px] h-[18px]" />
           <span>Déconnexion</span>
         </button>
       </aside>
 
       {/* Barre mobile bas */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-[#111318] border-t border-white/5 flex items-center justify-around px-2 py-3">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-[#111318] border-t border-white/5 flex items-center justify-around px-2 py-2.5">
         {links.map(l => (
           <button
             key={l.href}
@@ -62,7 +63,7 @@ export default function Nav() {
             className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition
               ${path === l.href ? 'text-emerald-400' : 'text-gray-500'}`}
           >
-            <span className="text-xl">{l.icon}</span>
+            <l.Icon className="w-5 h-5" />
             <span className="text-[10px] font-medium">{l.label}</span>
           </button>
         ))}
@@ -70,7 +71,7 @@ export default function Nav() {
           onClick={handleLogout}
           className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition text-gray-500"
         >
-          <span className="text-xl">⏻</span>
+          <LogoutIcon className="w-5 h-5" />
           <span className="text-[10px] font-medium">Sortir</span>
         </button>
       </nav>

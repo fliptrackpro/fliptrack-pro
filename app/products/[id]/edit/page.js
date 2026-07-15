@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import { CameraIcon } from '@/components/icons'
 
 export default function EditProduct() {
   const router = useRouter()
@@ -138,7 +139,9 @@ export default function EditProduct() {
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
-                <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-xl">📷</div>
+                <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center">
+                  <CameraIcon className="w-6 h-6 text-gray-500" />
+                </div>
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-gray-300">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
@@ -234,7 +237,7 @@ export default function EditProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

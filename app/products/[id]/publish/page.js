@@ -143,7 +143,7 @@ export default function PublishProduct() {
           <button
             onClick={handleGenerate}
             disabled={generating || !price}
-            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
+            className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] disabled:bg-white/5 disabled:text-gray-600 text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
           >
             {generating ? (
               <span className="flex items-center justify-center gap-2">
