@@ -72,6 +72,10 @@ export default function NewProduct() {
   const handleSubmit = async () => {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setLoading(false)
+      return router.push('/login')
+    }
     const { error } = await supabase.from('products').insert({
       user_id: user.id,
       name: form.name,
