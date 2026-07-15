@@ -11,6 +11,7 @@ create table if not exists products (
   purchase_fees numeric not null default 0,
   purchase_date date not null default current_date,
   status text not null default 'stock' check (status in ('stock', 'vendu')),
+  description text,
   created_at timestamptz not null default now()
 );
 

@@ -4,9 +4,23 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result.split(',')[1])
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function NewProduct() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [estimating, setEstimating] = useState(false)
+  const [estimateError, setEstimateError] = useState('')
+  const [photoPreview, setPhotoPreview] = useState(null)
+  const [aiEstimate, setAiEstimate] = useState(null)
+  const [description, setDescription] = useState('')
   const [form, setForm] = useState({
     name: '',
     category: '',
@@ -17,6 +31,42 @@ export default function NewProduct() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handlePhoto = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setPhotoPreview(URL.createObjectURL(file))
+    setAiEstimate(null)
+    setEstimateError('')
+    setEstimating(true)
+
+    try {
+      const base64 = await fileToBase64(file)
+      const res = await fetch('/api/estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64, mimeType: file.type }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setEstimateError(data.error || 'Erreur inconnue')
+      } else {
+        setAiEstimate(data)
+        setDescription(data.description || '')
+        setForm(f => ({
+          ...f,
+          name: f.name || data.name || '',
+          category: f.category || data.category || '',
+          condition: f.condition || data.condition || '',
+        }))
+      }
+    } catch (err) {
+      setEstimateError('Erreur lors de l\'analyse : ' + err.message)
+    } finally {
+      setEstimating(false)
+    }
   }
 
   const handleSubmit = async () => {
@@ -30,7 +80,8 @@ export default function NewProduct() {
       purchase_price: parseFloat(form.purchase_price),
       purchase_date: new Date().toISOString().split('T')[0],
       purchase_fees: parseFloat(form.purchase_fees) || 0,
-      status: 'stock'
+      status: 'stock',
+      description: description || null,
     })
     if (error) {
       alert('Erreur : ' + error.message)
@@ -77,6 +128,44 @@ export default function NewProduct() {
         </div>
 
         <div className="bg-[#161920] rounded-2xl border border-white/5 p-6 md:p-8 flex flex-col gap-6">
+
+          {/* Photo + estimation IA */}
+          <div className="flex flex-col gap-1.5">
+            <label className={labelClass}>Photo (estimation IA)</label>
+            <label className="flex items-center gap-4 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-emerald-400/50 transition">
+              {photoPreview ? (
+                <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
+              ) : (
+                <div className="w-14 h-14 rounded-lg bg-white/5 flex items-center justify-center text-xl">📷</div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-300">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
+                <p className="text-xs text-gray-600">L'IA remplit le nom, la catégorie et l'état pour toi</p>
+              </div>
+              <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
+            </label>
+
+            {estimating && (
+              <div className="flex items-center gap-2 text-xs text-emerald-400 mt-1">
+                <span className="w-3.5 h-3.5 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
+                Analyse de la photo en cours...
+              </div>
+            )}
+            {estimateError && (
+              <p className="text-xs text-red-400 mt-1">{estimateError}</p>
+            )}
+            {aiEstimate && !estimating && (
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-3 mt-1">
+                <p className="text-xs text-emerald-400 font-semibold uppercase tracking-wider">Valeur de revente estimée</p>
+                <p className="text-lg font-bold text-emerald-400 mt-0.5">
+                  {aiEstimate.estimated_price_min}€ – {aiEstimate.estimated_price_max}€
+                </p>
+                <p className="text-xs text-gray-400 mt-2">{aiEstimate.description}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t border-white/5" />
 
           {/* Nom */}
           <div className="flex flex-col gap-1.5">
