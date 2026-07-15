@@ -60,12 +60,6 @@ export default function Dashboard() {
           <h1 className="text-xl font-bold">Dashboard</h1>
           <p className="text-gray-500 text-xs mt-0.5">{user?.email}</p>
         </div>
-        <button
-          onClick={async () => { await supabase.auth.signOut(); router.push('/login') }}
-          className="text-xs text-gray-500 hover:text-white transition px-3 py-1.5 rounded-lg hover:bg-white/5"
-        >
-          Déconnexion
-        </button>
       </header>
 
       <main className="px-6 py-6 pb-24 md:pb-6 flex flex-col gap-6">

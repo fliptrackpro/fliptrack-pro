@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
+import { supabase } from '@/lib/supabase'
 
 export default function Nav() {
   const router = useRouter()
@@ -12,6 +13,11 @@ export default function Nav() {
     { href: '/products/new', icon: '＋', label: 'Ajouter' },
     { href: '/sales', icon: '💰', label: 'Ventes' },
   ]
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
 
   return (
     <>
@@ -38,6 +44,13 @@ export default function Nav() {
             </button>
           ))}
         </nav>
+        <button
+          onClick={handleLogout}
+          className="mt-auto mx-3 mb-5 flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition text-left"
+        >
+          <span>⏻</span>
+          <span>Déconnexion</span>
+        </button>
       </aside>
 
       {/* Barre mobile bas */}
@@ -53,6 +66,13 @@ export default function Nav() {
             <span className="text-[10px] font-medium">{l.label}</span>
           </button>
         ))}
+        <button
+          onClick={handleLogout}
+          className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition text-gray-500"
+        >
+          <span className="text-xl">⏻</span>
+          <span className="text-[10px] font-medium">Sortir</span>
+        </button>
       </nav>
     </>
   )
