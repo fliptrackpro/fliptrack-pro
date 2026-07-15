@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
 
+function daysSince(dateStr) {
+  const d = new Date(dateStr)
+  const now = new Date()
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24))
+}
+
 export default function ProductsPage() {
   const [user, setUser] = useState(null)
   const [products, setProducts] = useState([])
@@ -124,6 +130,11 @@ export default function ProductsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#241f2e] truncate">{p.name}</p>
                     <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
+                    {p.status === 'stock' && (
+                      <p className={`text-[11px] mt-0.5 ${!p.last_reposted_at || daysSince(p.last_reposted_at) >= 14 ? 'text-[#e0654a]' : 'text-[#b3aebf]'}`}>
+                        {p.last_reposted_at ? `Reposté il y a ${daysSince(p.last_reposted_at)}j` : 'Jamais reposté'}
+                      </p>
+                    )}
                   </div>
                   <p className="text-sm font-semibold text-[#241f2e] flex-shrink-0 sm:hidden">{p.purchase_price}€</p>
                 </div>

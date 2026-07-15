@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
-import { PlusIcon, TrendUpIcon, ClockIcon } from '@/components/icons'
+import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon } from '@/components/icons'
 import CountUp from '@/components/CountUp'
 
 const PERIODS = [
@@ -110,6 +110,16 @@ export default function Dashboard() {
     .slice(0, 5)
 
   const recentStock = products.filter(p => p.status === 'stock').slice(0, 3)
+
+  const toRepost = products
+    .filter(p => p.status === 'stock')
+    .filter(p => !p.last_reposted_at || daysSince(p.last_reposted_at) >= 14)
+    .sort((a, b) => {
+      const da = a.last_reposted_at ? daysSince(a.last_reposted_at) : Infinity
+      const db = b.last_reposted_at ? daysSince(b.last_reposted_at) : Infinity
+      return db - da
+    })
+    .slice(0, 5)
 
   const sparkline = last7DaysMargin(sales, products)
   const maxSpark = Math.max(...sparkline, 1)
@@ -243,6 +253,38 @@ export default function Dashboard() {
                     <p className="text-[10px] text-[#8b8496] mt-0.5 mb-2 truncate">{p.category || 'Sans catégorie'}</p>
                     <span className="inline-block bg-[#e7f3ee] text-[#4a8a6f] text-xs font-bold px-2.5 py-0.5 rounded-full">{p.purchase_price}€</span>
                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* À reposter */}
+        {toRepost.length > 0 && (
+          <section style={{ animationDelay: '200ms' }} className="animate-rise-in">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <RepostIcon className="w-4 h-4 text-[#6d5ce6]" />
+                <h2 className="text-sm font-bold">À reposter</h2>
+              </div>
+              <button onClick={() => router.push('/products')} className="text-xs text-[#6d5ce6] font-semibold hover:underline">
+                Voir tout →
+              </button>
+            </div>
+            <div className="bg-white rounded-2xl px-5">
+              {toRepost.map((p, i) => (
+                <div
+                  key={p.id}
+                  className={`flex items-center justify-between py-3 cursor-pointer ${i < toRepost.length - 1 ? 'border-b border-[#eae5f0]' : ''}`}
+                  onClick={() => router.push(`/products/${p.id}/publish`)}
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate max-w-[180px]">{p.name}</p>
+                    <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'}</p>
+                  </div>
+                  <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#efebfd] text-[#6d5ce6] flex-shrink-0">
+                    {p.last_reposted_at ? `${daysSince(p.last_reposted_at)}j` : 'Jamais'}
+                  </span>
                 </div>
               ))}
             </div>

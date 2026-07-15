@@ -13,6 +13,7 @@ create table if not exists products (
   status text not null default 'stock' check (status in ('stock', 'vendu')),
   description text,
   photo_url text,
+  last_reposted_at timestamptz,
   created_at timestamptz not null default now()
 );
 

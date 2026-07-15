@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
+import { useToast } from '@/components/Toast'
 
 const PLATFORMS = [
   { key: 'vinted', label: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', url: 'https://www.vinted.fr/items/new' },
@@ -10,15 +11,23 @@ const PLATFORMS = [
   { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', url: 'https://www.facebook.com/marketplace/create/item' },
 ]
 
+function daysSince(dateStr) {
+  const d = new Date(dateStr)
+  const now = new Date()
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24))
+}
+
 export default function PublishProduct() {
   const router = useRouter()
   const params = useParams()
+  const toast = useToast()
   const [product, setProduct] = useState(null)
   const [price, setPrice] = useState('')
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
   const [listings, setListings] = useState(null)
   const [copiedKey, setCopiedKey] = useState('')
+  const [marking, setMarking] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -74,6 +83,22 @@ export default function PublishProduct() {
     setTimeout(() => setCopiedKey(''), 2000)
   }
 
+  const handleMarkReposted = async () => {
+    setMarking(true)
+    const now = new Date().toISOString()
+    const { error } = await supabase
+      .from('products')
+      .update({ last_reposted_at: now })
+      .eq('id', product.id)
+    if (error) {
+      toast('Erreur : ' + error.message)
+    } else {
+      setProduct(p => ({ ...p, last_reposted_at: now }))
+      toast('Marqué comme reposté', 'success')
+    }
+    setMarking(false)
+  }
+
   const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
   const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
 
@@ -108,6 +133,13 @@ export default function PublishProduct() {
         <div className="mb-8">
           <h2 className="text-2xl font-serif italic text-[#241f2e]">Publier « {product.name} »</h2>
           <p className="text-[#8b8496] text-sm mt-1">Génère un titre et un descriptif adaptés à chaque plateforme</p>
+          <p className="text-xs mt-2">
+            {product.last_reposted_at ? (
+              <span className="text-[#8b8496]">Reposté il y a {daysSince(product.last_reposted_at)} jour{daysSince(product.last_reposted_at) > 1 ? 's' : ''}</span>
+            ) : (
+              <span className="text-[#e0654a] font-medium">Jamais reposté</span>
+            )}
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
@@ -191,8 +223,17 @@ export default function PublishProduct() {
               )
             })}
 
-            <div className="bg-white rounded-2xl p-5 text-sm text-[#655e72] shadow-sm shadow-[#241f2e]/5">
-              Colle ce texte directement sur le site de ton choix. Tu peux aussi me demander de remplir l'annonce à ta place en direct dans le navigateur, étape par étape.
+            <div className="bg-white rounded-2xl p-5 shadow-sm shadow-[#241f2e]/5 flex flex-col gap-3">
+              <p className="text-sm text-[#655e72]">
+                Colle ce texte directement sur le site de ton choix. Une fois l'annonce republiée (ou "bumpée") sur Vinted, marque-le ici pour garder trace de la fraîcheur de ton annonce.
+              </p>
+              <button
+                onClick={handleMarkReposted}
+                disabled={marking}
+                className="w-full bg-[#4a8a6f] hover:bg-[#3e7a5f] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+              >
+                {marking ? 'Enregistrement...' : '✓ Marquer comme reposté'}
+              </button>
             </div>
           </div>
         )}
