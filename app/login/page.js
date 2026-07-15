@@ -41,6 +41,22 @@ export default function LoginPage() {
                 colors: {
                   brand: '#34d399',
                   brandAccent: '#10b981',
+                  brandButtonText: '#0d0f14',
+                  defaultButtonBackground: '#161920',
+                  defaultButtonBackgroundHover: '#1e222b',
+                  defaultButtonBorder: 'rgba(255,255,255,0.1)',
+                  defaultButtonText: '#ffffff',
+                  inputBackground: '#0d0f14',
+                  inputBorder: 'rgba(255,255,255,0.1)',
+                  inputBorderHover: 'rgba(255,255,255,0.25)',
+                  inputBorderFocus: '#34d399',
+                  inputText: '#ffffff',
+                  inputLabelText: '#9ca3af',
+                  inputPlaceholder: '#6b7280',
+                  messageText: '#9ca3af',
+                  messageTextDanger: '#f87171',
+                  anchorTextColor: '#9ca3af',
+                  anchorTextHoverColor: '#ffffff',
                 }
               }
             }
