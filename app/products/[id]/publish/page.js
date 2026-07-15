@@ -83,9 +83,9 @@ export default function PublishProduct() {
     }
   }
 
-  const handleCopy = (key, title, description) => {
-    navigator.clipboard.writeText(`${title}\n\n${description}`)
-    setCopiedKey(key)
+  const handleCopy = (fieldKey, text) => {
+    navigator.clipboard.writeText(text)
+    setCopiedKey(fieldKey)
     setTimeout(() => setCopiedKey(''), 2000)
   }
 
@@ -202,31 +202,54 @@ export default function PublishProduct() {
             {PLATFORMS.map(p => {
               const listing = listings[p.key]
               if (!listing) return null
+              const hashtagLine = listing.hashtags?.length ? listing.hashtags.map(h => `#${h}`).join(' ') : null
               return (
                 <div key={p.key} className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border w-fit ${p.color}`}>
                       {p.label}
                     </span>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button
-                        onClick={() => handleCopy(p.key, listing.title, listing.description)}
-                        className="text-xs bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-3 py-1.5 rounded-full transition"
-                      >
-                        {copiedKey === p.key ? '✓ Copié' : 'Copier'}
-                      </button>
-                      <a
-                        href={p.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-medium px-3 py-1.5 rounded-full transition"
-                      >
-                        Ouvrir {p.label} ↗
-                      </a>
-                    </div>
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-medium px-3 py-1.5 rounded-full transition w-fit"
+                    >
+                      Ouvrir {p.label} ↗
+                    </a>
                   </div>
-                  <p className="text-sm font-semibold text-[#241f2e] mb-1.5">{listing.title}</p>
-                  <p className="text-sm text-[#655e72] whitespace-pre-line">{listing.description}</p>
+
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <p className="text-sm font-semibold text-[#241f2e]">{listing.title}</p>
+                    <button
+                      onClick={() => handleCopy(`${p.key}-title`, listing.title)}
+                      className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                    >
+                      {copiedKey === `${p.key}-title` ? '✓ Copié' : 'Copier le titre'}
+                    </button>
+                  </div>
+
+                  <div className="flex items-start justify-between gap-2 mt-2">
+                    <p className="text-sm text-[#655e72] whitespace-pre-line">{listing.description}</p>
+                    <button
+                      onClick={() => handleCopy(`${p.key}-desc`, listing.description)}
+                      className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                    >
+                      {copiedKey === `${p.key}-desc` ? '✓ Copié' : 'Copier le texte'}
+                    </button>
+                  </div>
+
+                  {hashtagLine && (
+                    <div className="flex items-start justify-between gap-2 mt-3 pt-3 border-t border-[#f0edf8]">
+                      <p className="text-xs text-[#6d5ce6]">{hashtagLine}</p>
+                      <button
+                        onClick={() => handleCopy(`${p.key}-tags`, hashtagLine)}
+                        className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                      >
+                        {copiedKey === `${p.key}-tags` ? '✓ Copié' : 'Copier les hashtags'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )
             })}
