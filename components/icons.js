@@ -65,6 +65,14 @@ export function TrendUpIcon(props) {
   )
 }
 
+export function BarcodeIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M4 5v14M8 5v14M11 5v14M13 5v14M16 5v14M20 5v14" />
+    </svg>
+  )
+}
+
 export function ClockIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>

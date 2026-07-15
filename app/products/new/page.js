@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
-import { CameraIcon } from '@/components/icons'
+import { CameraIcon, BarcodeIcon } from '@/components/icons'
 
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -13,6 +13,23 @@ function fileToBase64(file) {
     reader.onerror = reject
     reader.readAsDataURL(file)
   })
+}
+
+function guessCategory(text, categories) {
+  const t = (text || '').toLowerCase()
+  const map = {
+    'Vêtements': ['clothing', 'apparel', 'shirt', 'jacket', 'vêtement'],
+    'Chaussures': ['shoe', 'sneaker', 'boot', 'chaussure'],
+    'Électronique': ['electronic', 'phone', 'computer', 'audio', 'camera'],
+    'Jeux vidéo': ['video game', 'game', 'console', 'jeu'],
+    'Maison': ['home', 'kitchen', 'furniture', 'maison'],
+    'Sport': ['sport', 'fitness', 'outdoor'],
+  }
+  for (const cat of categories) {
+    const keywords = map[cat] || []
+    if (keywords.some(k => t.includes(k))) return cat
+  }
+  return ''
 }
 
 export default function NewProduct() {
@@ -25,6 +42,8 @@ export default function NewProduct() {
   const [photoPreview, setPhotoPreview] = useState(null)
   const [aiEstimate, setAiEstimate] = useState(null)
   const [description, setDescription] = useState('')
+  const [scanning, setScanning] = useState(false)
+  const [scanError, setScanError] = useState('')
   const [form, setForm] = useState({
     name: '',
     category: '',
@@ -71,6 +90,52 @@ export default function NewProduct() {
       setEstimateError('Erreur lors de l\'analyse : ' + err.message)
     } finally {
       setEstimating(false)
+    }
+  }
+
+  const handleScan = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (typeof window === 'undefined' || !('BarcodeDetector' in window)) {
+      setScanError("Le scan de code-barres n'est pas supporté par ce navigateur.")
+      return
+    }
+
+    setScanError('')
+    setScanning(true)
+
+    try {
+      const bitmap = await createImageBitmap(file)
+      const detector = new window.BarcodeDetector({
+        formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'],
+      })
+      const barcodes = await detector.detect(bitmap)
+
+      if (!barcodes.length) {
+        setScanError('Aucun code-barres détecté sur la photo, réessaie.')
+        return
+      }
+
+      const code = barcodes[0].rawValue
+      const res = await fetch(`/api/barcode?code=${encodeURIComponent(code)}`)
+      const data = await res.json()
+
+      if (!res.ok) {
+        setScanError(data.error || 'Produit non trouvé pour ce code-barres.')
+        return
+      }
+
+      setForm(f => ({
+        ...f,
+        name: f.name || data.name || '',
+        category: f.category || guessCategory(`${data.name} ${data.category}`, categories),
+      }))
+      toast('Produit trouvé via le code-barres', 'success')
+    } catch (err) {
+      setScanError('Erreur lors du scan : ' + err.message)
+    } finally {
+      setScanning(false)
     }
   }
 
@@ -189,6 +254,24 @@ export default function NewProduct() {
                 </p>
                 <p className="text-xs text-gray-400 mt-2">{aiEstimate.description}</p>
               </div>
+            )}
+          </div>
+
+          {/* Scanner code-barres */}
+          <div className="flex flex-col gap-1.5">
+            <label className="flex items-center gap-3 cursor-pointer bg-[#0d0f14] border border-dashed border-white/15 rounded-xl px-4 py-3 hover:border-indigo-400/50 transition">
+              <BarcodeIcon className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-300">Scanner un code-barres</p>
+                <p className="text-xs text-gray-600">Utile pour les objets encore emballés/scellés</p>
+              </div>
+              {scanning && (
+                <span className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              )}
+              <input type="file" accept="image/*" capture="environment" onChange={handleScan} className="hidden" />
+            </label>
+            {scanError && (
+              <p className="text-xs text-red-400 mt-1">{scanError}</p>
             )}
           </div>
 
