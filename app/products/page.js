@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import ImportCsvModal from '@/components/ImportCsvModal'
 
 function daysSince(dateStr) {
   const d = new Date(dateStr)
@@ -17,6 +18,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([])
   const [filter, setFilter] = useState('tous')
   const [search, setSearch] = useState('')
+  const [showImport, setShowImport] = useState(false)
   const router = useRouter()
   const toast = useToast()
 
@@ -66,13 +68,28 @@ export default function ProductsPage() {
           <h1 className="text-xl font-serif italic">Stock</h1>
           <p className="text-[#8b8496] text-xs mt-0.5">{products.length} produit{products.length > 1 ? 's' : ''}</p>
         </div>
-        <button
-          onClick={() => router.push('/products/new')}
-          className="text-xs bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-full transition"
-        >
-          + Ajouter
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowImport(true)}
+            className="text-xs bg-white hover:bg-[#f5f2ec] text-[#655e72] border border-[#eae5f0] font-medium px-4 py-2 rounded-full transition"
+          >
+            Importer CSV
+          </button>
+          <button
+            onClick={() => router.push('/products/new')}
+            className="text-xs bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-full transition"
+          >
+            + Ajouter
+          </button>
+        </div>
       </header>
+
+      {showImport && (
+        <ImportCsvModal
+          onClose={() => setShowImport(false)}
+          onImported={() => user && load(user.id)}
+        />
+      )}
 
       <main className="px-4 sm:px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4 max-w-3xl mx-auto w-full">
 
