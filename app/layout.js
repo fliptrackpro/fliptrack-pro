@@ -1,4 +1,4 @@
-import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
+import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 import ChatWidget from "@/components/ChatWidget";
@@ -8,9 +8,9 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
 });
 
-const instrumentSerif = Instrument_Serif({
+// Alternative gratuite au style proche de Canicule Display (display-serif élégant, flexible, moderne)
+const fraunces = Fraunces({
   variable: "--font-serif",
-  weight: "400",
   style: ["normal", "italic"],
   subsets: ["latin"],
 });
@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body
-        className={`${jakarta.variable} ${instrumentSerif.variable} antialiased`}
+        className={`${jakarta.variable} ${fraunces.variable} antialiased`}
       >
         <ToastProvider>
           {children}
