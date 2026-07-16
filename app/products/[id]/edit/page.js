@@ -13,6 +13,8 @@ export default function EditProduct() {
   const [loading, setLoading] = useState(false)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [existingExtraUrls, setExistingExtraUrls] = useState([])
+  const [newExtraPhotos, setNewExtraPhotos] = useState([])
   const [form, setForm] = useState(null)
 
   useEffect(() => {
@@ -37,6 +39,8 @@ export default function EditProduct() {
         photo_url: data.photo_url || null,
       })
       setPhotoPreview(data.photo_url || null)
+      const allUrls = Array.isArray(data.photo_urls) ? data.photo_urls : []
+      setExistingExtraUrls(allUrls.filter(u => u !== data.photo_url))
     }
     load()
   }, [params.id, router])
@@ -52,6 +56,21 @@ export default function EditProduct() {
     setPhotoPreview(URL.createObjectURL(file))
   }
 
+  const handleNewExtraPhotos = (e) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    setNewExtraPhotos(prev => [...prev, ...files.map(file => ({ file, preview: URL.createObjectURL(file) }))])
+    e.target.value = ''
+  }
+
+  const removeExistingExtra = (url) => {
+    setExistingExtraUrls(prev => prev.filter(u => u !== url))
+  }
+
+  const removeNewExtra = (index) => {
+    setNewExtraPhotos(prev => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async () => {
     setLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -60,17 +79,26 @@ export default function EditProduct() {
       return router.push('/login')
     }
 
-    let photo_url = form.photo_url
-    if (photoFile) {
-      const ext = photoFile.name.split('.').pop()
+    const uploadOne = async (file) => {
+      const ext = file.name.split('.').pop()
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`
-      const { error: uploadError } = await supabase.storage.from('products').upload(path, photoFile)
-      if (uploadError) {
-        toast('Erreur upload photo : ' + uploadError.message)
-        setLoading(false)
-        return
-      }
-      photo_url = supabase.storage.from('products').getPublicUrl(path).data.publicUrl
+      const { error: uploadError } = await supabase.storage.from('products').upload(path, file)
+      if (uploadError) throw uploadError
+      return supabase.storage.from('products').getPublicUrl(path).data.publicUrl
+    }
+
+    let photo_url = form.photo_url
+    let photo_urls
+    try {
+      if (photoFile) photo_url = await uploadOne(photoFile)
+      const newExtraUrls = newExtraPhotos.length
+        ? await Promise.all(newExtraPhotos.map(p => uploadOne(p.file)))
+        : []
+      photo_urls = [...(photo_url ? [photo_url] : []), ...existingExtraUrls, ...newExtraUrls]
+    } catch (uploadError) {
+      toast('Erreur upload photo : ' + uploadError.message)
+      setLoading(false)
+      return
     }
 
     const { error } = await supabase.from('products').update({
@@ -80,6 +108,7 @@ export default function EditProduct() {
       purchase_price: parseFloat(form.purchase_price),
       purchase_fees: parseFloat(form.purchase_fees) || 0,
       photo_url,
+      photo_urls,
     }).eq('id', params.id).eq('user_id', user.id)
 
     if (error) {
@@ -148,6 +177,38 @@ export default function EditProduct() {
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className={labelClass}>Photos supplémentaires ({existingExtraUrls.length + newExtraPhotos.length})</label>
+            <div className="flex flex-wrap gap-2">
+              {existingExtraUrls.map((url) => (
+                <div key={url} className="relative w-16 h-16">
+                  <img src={url} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <button
+                    onClick={() => removeExistingExtra(url)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              {newExtraPhotos.map((p, i) => (
+                <div key={i} className="relative w-16 h-16">
+                  <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <button
+                    onClick={() => removeNewExtra(i)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#f5f2ec] border border-dashed border-[#d6cfe8] hover:border-[#6d5ce6]/50 flex items-center justify-center cursor-pointer transition">
+                <span className="text-xl text-[#b3aebf]">+</span>
+                <input type="file" accept="image/*" multiple onChange={handleNewExtraPhotos} className="hidden" />
+              </label>
+            </div>
           </div>
 
           <div className="border-t border-[#eae5f0]" />

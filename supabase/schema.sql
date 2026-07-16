@@ -13,6 +13,7 @@ create table if not exists products (
   status text not null default 'stock' check (status in ('stock', 'vendu')),
   description text,
   photo_url text,
+  photo_urls jsonb not null default '[]'::jsonb,
   last_reposted_at timestamptz,
   estimated_price_min numeric,
   estimated_price_max numeric,

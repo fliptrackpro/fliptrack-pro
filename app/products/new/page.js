@@ -45,6 +45,7 @@ export default function NewProduct() {
   const [estimateError, setEstimateError] = useState('')
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [extraPhotos, setExtraPhotos] = useState([])
   const [aiEstimate, setAiEstimate] = useState(null)
   const [description, setDescription] = useState('')
   const [scanning, setScanning] = useState(false)
@@ -96,6 +97,17 @@ export default function NewProduct() {
     } finally {
       setEstimating(false)
     }
+  }
+
+  const handleExtraPhotos = (e) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    setExtraPhotos(prev => [...prev, ...files.map(file => ({ file, preview: URL.createObjectURL(file) }))])
+    e.target.value = ''
+  }
+
+  const removeExtraPhoto = (index) => {
+    setExtraPhotos(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleScan = async (e) => {
@@ -154,17 +166,27 @@ export default function NewProduct() {
       return router.push('/login')
     }
 
-    let photo_url = null
-    if (photoFile) {
-      const ext = photoFile.name.split('.').pop()
+    const uploadOne = async (file) => {
+      const ext = file.name.split('.').pop()
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`
-      const { error: uploadError } = await supabase.storage.from('products').upload(path, photoFile)
-      if (uploadError) {
-        toast('Erreur upload photo : ' + uploadError.message)
-        setLoading(false)
-        return
+      const { error: uploadError } = await supabase.storage.from('products').upload(path, file)
+      if (uploadError) throw uploadError
+      return supabase.storage.from('products').getPublicUrl(path).data.publicUrl
+    }
+
+    let photo_url = null
+    let photo_urls = []
+    try {
+      if (photoFile) photo_url = await uploadOne(photoFile)
+      if (extraPhotos.length) {
+        const extraUrls = await Promise.all(extraPhotos.map(p => uploadOne(p.file)))
+        photo_urls = extraUrls
       }
-      photo_url = supabase.storage.from('products').getPublicUrl(path).data.publicUrl
+      if (photo_url) photo_urls = [photo_url, ...photo_urls]
+    } catch (uploadError) {
+      toast('Erreur upload photo : ' + uploadError.message)
+      setLoading(false)
+      return
     }
 
     const { error } = await supabase.from('products').insert({
@@ -178,6 +200,7 @@ export default function NewProduct() {
       status: 'stock',
       description: description || null,
       photo_url,
+      photo_urls,
       estimated_price_min: aiEstimate?.estimated_price_min ?? null,
       estimated_price_max: aiEstimate?.estimated_price_max ?? null,
     })
@@ -277,6 +300,12 @@ export default function NewProduct() {
                     { label: 'eBay (vendus)', url: `https://www.ebay.fr/sch/i.html?_nkw=${encodeURIComponent(form.name || aiEstimate.name || '')}&LH_Sold=1&LH_Complete=1` },
                     { label: 'Vinted', url: `https://www.vinted.fr/catalog?search_text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
                     { label: 'Leboncoin', url: `https://www.leboncoin.fr/recherche?text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
+                    ...(['Vêtements', 'Chaussures'].includes(form.category || aiEstimate.category)
+                      ? [{ label: 'Vestiaire Collective', url: `https://fr.vestiairecollective.com/search/?q=${encodeURIComponent(form.name || aiEstimate.name || '')}` }]
+                      : []),
+                    ...(form.category === 'Jeux vidéo' || form.category === 'Électronique'
+                      ? [{ label: 'Rakuten', url: `https://fr.shopping.rakuten.com/search/${encodeURIComponent(form.name || aiEstimate.name || '')}` }]
+                      : []),
                   ].map(l => (
                     <a
                       key={l.label}
@@ -291,6 +320,29 @@ export default function NewProduct() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Photos supplémentaires */}
+          <div className="flex flex-col gap-1.5">
+            <label className={labelClass}>Photos supplémentaires ({extraPhotos.length})</label>
+            <div className="flex flex-wrap gap-2">
+              {extraPhotos.map((p, i) => (
+                <div key={i} className="relative w-16 h-16">
+                  <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <button
+                    onClick={() => removeExtraPhoto(i)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#f5f2ec] border border-dashed border-[#d6cfe8] hover:border-[#6d5ce6]/50 flex items-center justify-center cursor-pointer transition">
+                <span className="text-xl text-[#b3aebf]">+</span>
+                <input type="file" accept="image/*" multiple onChange={handleExtraPhotos} className="hidden" />
+              </label>
+            </div>
+            <p className="text-xs text-[#b3aebf]">Utile pour les annonces avec plusieurs angles (Vinted, Vestiaire Collective...)</p>
           </div>
 
           {/* Scanner code-barres */}

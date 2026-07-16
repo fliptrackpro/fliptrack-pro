@@ -154,18 +154,27 @@ export default function PublishProduct() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
-          {product.photo_url && (
-            <div className="flex items-center gap-4">
-              <img src={product.photo_url} alt="" className="w-16 h-16 rounded-xl object-cover" />
-              <a
-                href={product.photo_url}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-3 py-1.5 rounded-full transition"
-              >
-                Télécharger la photo
-              </a>
+          {(product.photo_urls?.length > 0 ? product.photo_urls : product.photo_url ? [product.photo_url] : []).length > 0 && (
+            <div className="flex flex-col gap-2">
+              <label className={labelClass}>
+                {(product.photo_urls?.length || (product.photo_url ? 1 : 0)) > 1 ? 'Photos' : 'Photo'}
+              </label>
+              <div className="flex flex-wrap gap-3">
+                {(product.photo_urls?.length > 0 ? product.photo_urls : [product.photo_url]).map((url, i) => (
+                  <div key={url} className="flex flex-col items-center gap-1.5">
+                    <img src={url} alt="" className="w-16 h-16 rounded-xl object-cover" />
+                    <a
+                      href={url}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2 py-1 rounded-full transition"
+                    >
+                      Télécharger
+                    </a>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           <div className="flex flex-col gap-1.5">
