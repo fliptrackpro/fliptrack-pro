@@ -35,8 +35,32 @@ export default function SellProduct() {
     load()
   }, [params.id, router])
 
+  // Taux de frais vendeur indicatifs par plateforme (Vinted/LBC/Facebook : payés par l'acheteur ou gratuits)
+  const FEE_RATES = {
+    'Vinted': 0,
+    'Leboncoin': 0,
+    'Facebook Marketplace': 0,
+    'eBay': 0.11,
+    'Vestiaire Collective': 0.18,
+  }
+
+  const suggestedFees = (platform, salePrice) => {
+    const rate = FEE_RATES[platform]
+    const price = parseFloat(salePrice)
+    if (rate == null || !price) return null
+    return (price * rate).toFixed(2)
+  }
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const next = { ...form, [e.target.name]: e.target.value }
+    if (e.target.name === 'platform' || e.target.name === 'sale_price') {
+      const fees = suggestedFees(
+        e.target.name === 'platform' ? e.target.value : next.platform,
+        e.target.name === 'sale_price' ? e.target.value : next.sale_price
+      )
+      if (fees != null) next.platform_fees = fees
+    }
+    setForm(next)
   }
 
   const handleSubmit = async () => {
@@ -167,6 +191,13 @@ export default function SellProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
               </div>
+              {form.platform && FEE_RATES[form.platform] != null && (
+                <p className="text-[11px] text-[#8b8496]">
+                  {FEE_RATES[form.platform] === 0
+                    ? `Pas de frais vendeur sur ${form.platform}, ajuste si besoin.`
+                    : `Estimé à ${(FEE_RATES[form.platform] * 100).toFixed(0)}% sur ${form.platform}, ajuste si besoin.`}
+                </p>
+              )}
             </div>
           </div>
 

@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/apiAuth'
+import { requireUser, checkAiQuota } from '@/lib/apiAuth'
 
 const CATEGORIES = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
 const CONDITIONS = ['Neuf avec étiquette', 'Très bon état', 'Bon état', 'État correct']
@@ -8,6 +8,9 @@ export async function POST(req) {
   if (!user) {
     return Response.json({ error: 'Non authentifié.' }, { status: 401 })
   }
+
+  const quotaError = await checkAiQuota(req)
+  if (quotaError) return quotaError
 
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {

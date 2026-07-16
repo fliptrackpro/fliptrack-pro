@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
+import { useToast } from '@/components/Toast'
 
 function exportCSV(sales) {
   const headers = ['Date', 'Produit', 'Plateforme', 'Prix achat', 'Frais achat', 'Prix vente', 'Frais plateforme', 'Marge']
@@ -40,6 +41,30 @@ export default function SalesPage() {
   const [sales, setSales] = useState([])
   const [search, setSearch] = useState('')
   const router = useRouter()
+  const toast = useToast()
+
+  const handleCancelSale = async (sale) => {
+    if (!confirm(`Annuler la vente de « ${sale.products?.name || 'cet article'} » ? Il repassera en stock.`)) return
+
+    const { error: deleteError } = await supabase
+      .from('sales')
+      .delete()
+      .eq('id', sale.id)
+      .eq('user_id', user.id)
+    if (deleteError) return toast('Erreur : ' + deleteError.message)
+
+    if (sale.product_id) {
+      const { error: productError } = await supabase
+        .from('products')
+        .update({ status: 'stock' })
+        .eq('id', sale.product_id)
+        .eq('user_id', user.id)
+      if (productError) return toast('Erreur : ' + productError.message)
+    }
+
+    setSales(s => s.filter(x => x.id !== sale.id))
+    toast('Vente annulée, article de retour en stock', 'success')
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -140,11 +165,20 @@ export default function SalesPage() {
                     <p className="text-sm font-medium text-[#241f2e] truncate">{s.products?.name || 'Produit supprimé'}</p>
                     <p className="text-xs text-[#8b8496]">{s.platform || 'Plateforme non précisée'} · {s.sale_date}</p>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-semibold text-[#241f2e]">{s.sale_price}€</p>
-                    <p className={`text-xs ${margin >= 0 ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>
-                      {margin >= 0 ? '+' : ''}{margin.toFixed(2)}€ marge
-                    </p>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-[#241f2e]">{s.sale_price}€</p>
+                      <p className={`text-xs ${margin >= 0 ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>
+                        {margin >= 0 ? '+' : ''}{margin.toFixed(2)}€ marge
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleCancelSale(s)}
+                      className="text-xs text-[#c3bcf0] hover:text-[#e0654a] px-2 py-1.5 rounded-full hover:bg-[#e0654a]/10 transition"
+                      title="Annuler la vente"
+                    >
+                      ↩
+                    </button>
                   </div>
                 </div>
               )

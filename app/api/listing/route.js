@@ -1,4 +1,4 @@
-import { requireUser } from '@/lib/apiAuth'
+import { requireUser, checkAiQuota } from '@/lib/apiAuth'
 import { generateListings } from '@/lib/listingGenerator'
 
 export async function POST(req) {
@@ -6,6 +6,9 @@ export async function POST(req) {
   if (!user) {
     return Response.json({ error: 'Non authentifié.' }, { status: 401 })
   }
+
+  const quotaError = await checkAiQuota(req)
+  if (quotaError) return quotaError
 
   const { name, category, condition, price, description, photo_url } = await req.json()
 

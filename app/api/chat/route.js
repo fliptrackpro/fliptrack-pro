@@ -1,4 +1,4 @@
-import { requireUser, authedClient } from '@/lib/apiAuth'
+import { requireUser, authedClient, checkAiQuota } from '@/lib/apiAuth'
 import { buildContextSummary } from '@/lib/margin'
 import { generateListings } from '@/lib/listingGenerator'
 
@@ -105,6 +105,9 @@ export async function POST(req) {
   if (!apiKey) {
     return Response.json({ error: 'Clé API Gemini manquante côté serveur.' }, { status: 500 })
   }
+
+  const quotaError = await checkAiQuota(req)
+  if (quotaError) return quotaError
 
   const { messages } = await req.json()
   if (!Array.isArray(messages) || messages.length === 0) {

@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { DashboardIcon, BoxIcon, PlusIcon, WalletIcon, LogoutIcon } from '@/components/icons'
+import { DashboardIcon, BoxIcon, PlusIcon, WalletIcon, LogoutIcon, UserIcon } from '@/components/icons'
 
 export default function Nav() {
   const router = useRouter()
@@ -13,6 +13,7 @@ export default function Nav() {
     { href: '/products', Icon: BoxIcon, label: 'Stock' },
     { href: '/products/new', Icon: PlusIcon, label: 'Ajouter' },
     { href: '/sales', Icon: WalletIcon, label: 'Ventes' },
+    { href: '/account', Icon: UserIcon, label: 'Compte' },
   ]
 
   const handleLogout = async () => {

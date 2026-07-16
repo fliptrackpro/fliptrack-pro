@@ -66,6 +66,26 @@ export default function ChatWidget() {
     return () => sub.subscription.unsubscribe()
   }, [])
 
+  // Restaure l'historique du chat propre à l'utilisateur connecté
+  useEffect(() => {
+    if (!user) return
+    try {
+      const saved = localStorage.getItem(`fliptrack-chat-${user.id}`)
+      if (saved) setMessages(JSON.parse(saved))
+    } catch {
+      // historique illisible, on repart de zéro
+    }
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!user || messages.length === 0) return
+    try {
+      localStorage.setItem(`fliptrack-chat-${user.id}`, JSON.stringify(messages.slice(-40)))
+    } catch {
+      // stockage plein ou indisponible, tant pis
+    }
+  }, [messages, user?.id])
+
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, open])
@@ -120,9 +140,22 @@ export default function ChatWidget() {
               <p className="text-sm font-semibold text-white">Flip</p>
               <p className="text-[11px] text-white/60">Ton assistant vente</p>
             </div>
-            <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 transition">
-              ✕
-            </button>
+            <div className="flex items-center gap-1">
+              {messages.length > 0 && (
+                <button
+                  onClick={() => {
+                    setMessages([])
+                    try { localStorage.removeItem(`fliptrack-chat-${user.id}`) } catch {}
+                  }}
+                  className="text-white/70 hover:text-white text-[11px] px-2 py-1 rounded-lg hover:bg-white/10 transition"
+                >
+                  Effacer
+                </button>
+              )}
+              <button onClick={() => setOpen(false)} className="text-white/70 hover:text-white w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 transition">
+                ✕
+              </button>
+            </div>
           </div>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-3">
