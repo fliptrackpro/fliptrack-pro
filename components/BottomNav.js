@@ -56,25 +56,18 @@ export default function Nav() {
       </aside>
 
       {/* Barre mobile bas */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-[#eae5f0] flex items-center justify-around px-2 py-2.5">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-[#eae5f0] flex items-center justify-around px-1 py-2.5">
         {links.map(l => (
           <button
             key={l.href}
             onClick={() => router.push(l.href)}
-            className={`flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition
+            className={`flex flex-col items-center gap-1 px-2 py-1 rounded-xl transition
               ${path === l.href ? 'text-[#6d5ce6]' : 'text-[#8b8496]'}`}
           >
             <l.Icon className="w-5 h-5" />
             <span className="text-[10px] font-medium">{l.label}</span>
           </button>
         ))}
-        <button
-          onClick={handleLogout}
-          className="flex flex-col items-center gap-1 px-3 py-1 rounded-xl transition text-[#8b8496]"
-        >
-          <LogoutIcon className="w-5 h-5" />
-          <span className="text-[10px] font-medium">Sortir</span>
-        </button>
       </nav>
     </>
   )

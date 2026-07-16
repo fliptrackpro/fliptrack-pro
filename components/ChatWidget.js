@@ -134,7 +134,7 @@ export default function ChatWidget() {
   return (
     <>
       {open && (
-        <div className="fixed bottom-24 md:bottom-24 right-4 md:right-6 z-40 w-[calc(100%-2rem)] max-w-sm h-[60vh] max-h-[480px] bg-white rounded-2xl shadow-2xl shadow-[#241f2e]/20 flex flex-col overflow-hidden animate-rise-in">
+        <div className="fixed bottom-40 md:bottom-24 right-4 md:right-6 z-40 w-[calc(100%-2rem)] max-w-sm h-[55dvh] max-h-[480px] bg-white rounded-2xl shadow-2xl shadow-[#241f2e]/20 flex flex-col overflow-hidden animate-rise-in">
           <div className="bg-[#241f2e] px-4 py-3.5 flex items-center justify-between flex-shrink-0">
             <div>
               <p className="text-sm font-semibold text-white">Flip</p>

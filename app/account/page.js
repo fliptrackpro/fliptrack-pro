@@ -121,6 +121,15 @@ export default function AccountPage() {
           </button>
         </div>
 
+        <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6" style={{ animationDelay: '40ms' }}>
+          <button
+            onClick={async () => { await supabase.auth.signOut(); router.push('/login') }}
+            className="w-full bg-[#f5f2ec] hover:bg-[#eae5f0] text-[#241f2e] font-semibold rounded-xl px-4 py-3 transition text-sm"
+          >
+            Se déconnecter
+          </button>
+        </div>
+
         <div className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 flex flex-col gap-3" style={{ animationDelay: '60ms' }}>
           <h2 className="text-sm font-bold text-[#e0654a]">Zone dangereuse</h2>
           <p className="text-xs text-[#8b8496]">
