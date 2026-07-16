@@ -8,6 +8,14 @@ import Nav from '@/components/BottomNav'
 import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon } from '@/components/icons'
 import CountUp from '@/components/CountUp'
 
+function maskEmail(email) {
+  if (!email) return ''
+  const [local, domain] = email.split('@')
+  if (!domain) return email
+  const visible = local.slice(0, 2)
+  return `${visible}${'•'.repeat(Math.max(local.length - 2, 3))}@${domain}`
+}
+
 const PERIODS = [
   { key: 'semaine', label: 'Cette semaine' },
   { key: 'mois', label: 'Ce mois' },
@@ -139,7 +147,7 @@ export default function Dashboard() {
       <header className="flex items-center justify-between px-4 sm:px-6 py-5">
         <div>
           <h1 className="text-xl font-serif italic">Dashboard</h1>
-          <p className="text-[#8b8496] text-xs mt-0.5">{user?.email}</p>
+          <p className="text-[#8b8496] text-xs mt-0.5">{maskEmail(user?.email)}</p>
         </div>
       </header>
 

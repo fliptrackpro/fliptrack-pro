@@ -214,9 +214,9 @@ export default function NewProduct() {
           <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
           <span className="text-sm font-medium text-[#4a4356] truncate">Nouveau produit</span>
         </div>
-        <span className="text-lg font-serif italic text-[#241f2e]">
+        <button onClick={() => router.push('/dashboard')} className="text-lg font-serif italic text-[#241f2e] hover:opacity-70 transition">
           Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
-        </span>
+        </button>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-10">
