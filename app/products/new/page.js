@@ -62,7 +62,7 @@ export default function NewProduct() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handlePhoto = async (e) => {
+  const handlePhoto = (e) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -70,14 +70,33 @@ export default function NewProduct() {
     setPhotoPreview(URL.createObjectURL(file))
     setAiEstimate(null)
     setEstimateError('')
+  }
+
+  const handleExtraPhotos = (e) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    setExtraPhotos(prev => [...prev, ...files.map(file => ({ file, preview: URL.createObjectURL(file) }))])
+    setAiEstimate(null)
+    setEstimateError('')
+    e.target.value = ''
+  }
+
+  const handleEstimate = async () => {
+    if (!photoFile) return
+    setAiEstimate(null)
+    setEstimateError('')
     setEstimating(true)
 
     try {
-      const base64 = await fileToBase64(file)
+      const allFiles = [photoFile, ...extraPhotos.map(p => p.file)]
+      const images = await Promise.all(allFiles.map(async file => ({
+        data: await fileToBase64(file),
+        mimeType: file.type,
+      })))
       const res = await fetch('/api/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ image: base64, mimeType: file.type }),
+        body: JSON.stringify({ images }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -97,13 +116,6 @@ export default function NewProduct() {
     } finally {
       setEstimating(false)
     }
-  }
-
-  const handleExtraPhotos = (e) => {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setExtraPhotos(prev => [...prev, ...files.map(file => ({ file, preview: URL.createObjectURL(file) }))])
-    e.target.value = ''
   }
 
   const removeExtraPhoto = (index) => {
@@ -265,10 +277,21 @@ export default function NewProduct() {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#4a4356]">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
-                <p className="text-xs text-[#b3aebf]">L'IA remplit le nom, la catégorie et l'état pour toi</p>
+                <p className="text-xs text-[#b3aebf]">Ajoute aussi des photos supplémentaires (étiquette, détails) puis lance l'analyse IA</p>
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
+
+            {photoFile && !estimating && !aiEstimate && (
+              <button
+                type="button"
+                onClick={handleEstimate}
+                className="flex items-center justify-center gap-2 bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-semibold rounded-xl px-4 py-2.5 mt-1 transition text-sm"
+              >
+                <SparkleIcon className="w-4 h-4" />
+                Analyser avec l'IA{extraPhotos.length > 0 ? ` (${extraPhotos.length + 1} photos)` : ''}
+              </button>
+            )}
 
             {estimating && (
               <div className="rounded-xl px-4 py-3 mt-1 border border-[#e2ddf5] bg-gradient-to-br from-[#f0edfb] via-[#f3ecf9] to-[#faf0f6]">
@@ -343,7 +366,7 @@ export default function NewProduct() {
                 <input type="file" accept="image/*" multiple onChange={handleExtraPhotos} className="hidden" />
               </label>
             </div>
-            <p className="text-xs text-[#b3aebf]">Utile pour les annonces avec plusieurs angles (Vinted, Vestiaire Collective...)</p>
+            <p className="text-xs text-[#b3aebf]">Améliore la précision de l'analyse IA et sert pour les annonces multi-angles (Vinted, Vestiaire Collective...)</p>
           </div>
 
           {/* Scanner code-barres */}
