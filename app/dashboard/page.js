@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
-import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon } from '@/components/icons'
+import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon, TargetIcon, CheckIcon, SparkleIcon } from '@/components/icons'
 import CountUp from '@/components/CountUp'
 
 function maskEmail(email) {
@@ -66,6 +66,9 @@ export default function Dashboard() {
   const [products, setProducts] = useState([])
   const [sales, setSales] = useState([])
   const [period, setPeriod] = useState('mois')
+  const [goal, setGoal] = useState(null)
+  const [goalInput, setGoalInput] = useState('')
+  const [editingGoal, setEditingGoal] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -73,6 +76,13 @@ export default function Dashboard() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return router.push('/login')
       setUser(user)
+
+      try {
+        const savedGoal = parseFloat(localStorage.getItem(`fliptrack-goal-${user.id}`))
+        if (savedGoal > 0) setGoal(savedGoal)
+      } catch {
+        // localStorage indisponible, pas d'objectif
+      }
 
       const { data: prods } = await supabase
         .from('products')
@@ -132,6 +142,30 @@ export default function Dashboard() {
   const sparkline = last7DaysMargin(sales, products)
   const maxSpark = Math.max(...sparkline, 1)
 
+  // Objectif de marge mensuel (toujours sur le mois en cours, indépendant du sélecteur de période)
+  const monthMargin = sales
+    .filter(s => isInPeriod(s.sale_date, 'mois'))
+    .reduce((acc, s) => acc + saleMargin(products.find(p => p.id === s.product_id), s), 0)
+  const goalProgress = goal ? Math.min((monthMargin / goal) * 100, 100) : 0
+  const goalReached = goal && monthMargin >= goal
+
+  const saveGoal = () => {
+    const value = parseFloat(goalInput)
+    if (!value || value <= 0) return
+    setGoal(value)
+    setEditingGoal(false)
+    try { localStorage.setItem(`fliptrack-goal-${user.id}`, String(value)) } catch {}
+  }
+
+  const onboardingSteps = [
+    { label: 'Ajoute ton premier article', done: products.length > 0, href: '/products/new' },
+    { label: "Prends une photo et laisse l'IA estimer le prix", done: products.some(p => p.photo_url), href: '/products/new' },
+    { label: 'Fixe ton objectif de marge du mois', done: !!goal, action: () => setEditingGoal(true) },
+    { label: 'Enregistre ta première vente', done: sales.length > 0, href: '/products' },
+  ]
+  const onboardingDone = onboardingSteps.filter(s => s.done).length
+  const showOnboarding = onboardingDone < onboardingSteps.length
+
   if (!user) return (
     <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
       <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
@@ -152,6 +186,45 @@ export default function Dashboard() {
       </header>
 
       <main className="px-4 sm:px-6 py-2 pb-24 md:pb-6 flex flex-col gap-6 max-w-3xl mx-auto w-full">
+
+        {/* Checklist bien démarrer */}
+        {showOnboarding && (
+          <section className="animate-rise-in bg-white rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <SparkleIcon className="w-4 h-4 text-[#6d5ce6]" />
+                <h2 className="text-sm font-bold">Bien démarrer</h2>
+              </div>
+              <span className="text-xs font-bold text-[#6d5ce6]">{onboardingDone}/{onboardingSteps.length}</span>
+            </div>
+            <div className="w-full bg-[#eae5f0] rounded-full h-1.5 mb-3">
+              <div
+                className="h-1.5 rounded-full bg-gradient-to-r from-[#6d5ce6] to-[#a893f5] transition-all duration-700"
+                style={{ width: `${Math.max((onboardingDone / onboardingSteps.length) * 100, 4)}%` }}
+              />
+            </div>
+            <div className="flex flex-col">
+              {onboardingSteps.map((step, i) => (
+                <button
+                  key={step.label}
+                  onClick={() => step.done ? null : (step.href ? router.push(step.href) : step.action?.())}
+                  disabled={step.done}
+                  className={`flex items-center gap-3 py-2.5 text-left transition ${i < onboardingSteps.length - 1 ? 'border-b border-[#f5f2ec]' : ''} ${step.done ? 'cursor-default' : 'hover:opacity-70'}`}
+                >
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition ${
+                    step.done ? 'bg-[#4a8a6f] text-white' : 'border-[1.5px] border-[#d6cfe8]'
+                  }`}>
+                    {step.done && <CheckIcon className="w-3 h-3" />}
+                  </span>
+                  <span className={`text-sm ${step.done ? 'text-[#b3aebf] line-through' : 'text-[#4a4356] font-medium'}`}>
+                    {step.label}
+                  </span>
+                  {!step.done && <span className="ml-auto text-[#b3aebf] text-xs">→</span>}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Sélecteur de période */}
         <div className="flex gap-2">
@@ -204,6 +277,85 @@ export default function Dashboard() {
           <p className="text-sm text-[#8b8496]">Articles vendus sur la période</p>
           <p className="font-serif text-xl"><CountUp value={soldInPeriod} /></p>
         </div>
+
+        {/* Objectif de marge du mois */}
+        <section className="animate-rise-in bg-white rounded-2xl p-5" style={{ animationDelay: '120ms' }}>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <TargetIcon className={`w-4 h-4 ${goalReached ? 'text-[#4a8a6f]' : 'text-[#6d5ce6]'}`} />
+              <h2 className="text-sm font-bold">Objectif du mois</h2>
+            </div>
+            {goal && !editingGoal && (
+              <button
+                onClick={() => { setGoalInput(String(goal)); setEditingGoal(true) }}
+                className="text-xs text-[#8b8496] hover:text-[#6d5ce6] font-medium transition"
+              >
+                Modifier
+              </button>
+            )}
+          </div>
+
+          {(!goal || editingGoal) ? (
+            <div>
+              <p className="text-xs text-[#8b8496] mb-3">
+                Fixe-toi une marge à atteindre ce mois-ci, la progression se met à jour à chaque vente.
+              </p>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <input
+                    type="number"
+                    value={goalInput}
+                    onChange={(e) => setGoalInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && saveGoal()}
+                    placeholder="Ex: 300"
+                    className="w-full bg-[#f5f2ec] border border-transparent focus:border-[#6d5ce6] rounded-xl px-4 py-2.5 pr-8 text-sm text-[#241f2e] placeholder-[#b3aebf] focus:outline-none transition"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                </div>
+                <button
+                  onClick={saveGoal}
+                  disabled={!parseFloat(goalInput)}
+                  className="bg-[#241f2e] hover:bg-[#3a3347] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-2.5 transition text-sm"
+                >
+                  {goal ? 'Enregistrer' : 'Définir'}
+                </button>
+                {editingGoal && goal && (
+                  <button
+                    onClick={() => setEditingGoal(false)}
+                    className="bg-[#f5f2ec] hover:bg-[#eae5f0] text-[#655e72] font-semibold rounded-xl px-3 py-2.5 transition text-sm"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className="flex items-end justify-between mb-2">
+                <p className="font-serif text-2xl">
+                  <span className={goalReached ? 'text-[#4a8a6f]' : ''}><CountUp value={monthMargin} />€</span>
+                  <span className="text-sm text-[#b3aebf] font-sans"> / {goal}€</span>
+                </p>
+                <span className={`text-xs font-bold ${goalReached ? 'text-[#4a8a6f]' : 'text-[#6d5ce6]'}`}>
+                  {Math.round(goalProgress)}%
+                </span>
+              </div>
+              <div className="w-full bg-[#eae5f0] rounded-full h-2.5">
+                <div
+                  className={`h-2.5 rounded-full transition-all duration-700 ${
+                    goalReached ? 'bg-gradient-to-r from-[#4a8a6f] to-[#6fb593]' : 'bg-gradient-to-r from-[#6d5ce6] to-[#a893f5]'
+                  }`}
+                  style={{ width: `${Math.max(goalProgress, 2)}%` }}
+                />
+              </div>
+              <p className={`text-xs mt-2 ${goalReached ? 'text-[#4a8a6f] font-semibold' : 'text-[#8b8496]'}`}>
+                {goalReached
+                  ? 'Objectif atteint, bravo ! Tu peux viser plus haut.'
+                  : `Plus que ${(goal - monthMargin).toFixed(0)}€ de marge pour atteindre ton objectif.`}
+              </p>
+            </div>
+          )}
+        </section>
 
         {/* Meilleures catégories */}
         <section style={{ animationDelay: '140ms' }} className="animate-rise-in">

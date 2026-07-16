@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import SaleCelebration from '@/components/SaleCelebration'
 
 export default function SellProduct() {
   const router = useRouter()
@@ -11,6 +12,7 @@ export default function SellProduct() {
   const toast = useToast()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [celebration, setCelebration] = useState(null)
   const [form, setForm] = useState({
     sale_price: '',
     platform_fees: '',
@@ -98,8 +100,12 @@ export default function SellProduct() {
       return
     }
 
-    toast('Vente enregistrée', 'success')
-    router.push('/sales')
+    setLoading(false)
+    setCelebration({
+      productName: product.name,
+      platform: form.platform,
+      margin: parseFloat(form.sale_price) - product.purchase_price - product.purchase_fees - (parseFloat(form.platform_fees) || 0),
+    })
   }
 
   const platforms = ['Vinted', 'Leboncoin', 'eBay', 'Facebook Marketplace', 'Vestiaire Collective', 'Autre']
@@ -119,6 +125,16 @@ export default function SellProduct() {
 
   return (
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
+
+      {celebration && (
+        <SaleCelebration
+          productName={celebration.productName}
+          platform={celebration.platform}
+          margin={celebration.margin}
+          onViewSales={() => router.push('/sales')}
+          onBackToStock={() => router.push('/products')}
+        />
+      )}
 
       <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
