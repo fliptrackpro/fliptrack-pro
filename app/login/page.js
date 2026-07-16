@@ -1,14 +1,25 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { LogoMark } from '@/components/Logo'
+import { isDisposableEmail } from '@/lib/disposableEmails'
+
+const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
+const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
 
 export default function LoginPage() {
   const router = useRouter()
+  const [mode, setMode] = useState('sign_in') // sign_in | sign_up | forgot
+  const [identifier, setIdentifier] = useState('')
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -19,6 +30,104 @@ export default function LoginPage() {
     })
     return () => sub.subscription.unsubscribe()
   }, [router])
+
+  const switchMode = (next) => {
+    setMode(next)
+    setError('')
+    setMessage('')
+  }
+
+  const handleSignIn = async () => {
+    if (!identifier.trim() || !password) return
+    setError('')
+    setLoading(true)
+    try {
+      if (identifier.includes('@')) {
+        const { error } = await supabase.auth.signInWithPassword({ email: identifier.trim(), password })
+        if (error) throw new Error('Identifiants invalides.')
+      } else {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: identifier.trim(), password }),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Identifiants invalides.')
+        const { error } = await supabase.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token })
+        if (error) throw error
+      }
+      // La redirection est gérée par onAuthStateChange (SIGNED_IN)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSignUp = async () => {
+    setError('')
+    setMessage('')
+
+    const cleanUsername = username.trim().toLowerCase()
+    if (!/^[a-z0-9_]{3,20}$/.test(cleanUsername)) {
+      return setError('Le pseudo doit faire 3 à 20 caractères : lettres, chiffres, underscore.')
+    }
+    if (!email.includes('@')) {
+      return setError('Adresse email invalide.')
+    }
+    if (isDisposableEmail(email)) {
+      return setError("Merci d'utiliser une adresse email permanente (les adresses jetables ne sont pas acceptées).")
+    }
+    if (password.length < 6) {
+      return setError('Le mot de passe doit faire au moins 6 caractères.')
+    }
+
+    setLoading(true)
+    try {
+      const { data: existing } = await supabase.from('profiles').select('user_id').eq('username', cleanUsername).maybeSingle()
+      if (existing) throw new Error('Ce pseudo est déjà pris.')
+
+      const { error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+          data: { username: cleanUsername },
+        },
+      })
+      if (error) throw error
+
+      setMessage('Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de te connecter.')
+      switchMode('sign_in')
+      setIdentifier(email.trim())
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleForgot = async () => {
+    if (!forgotEmail.includes('@')) return setError('Adresse email invalide.')
+    setError('')
+    setMessage('')
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+        redirectTo: `${window.location.origin}/account`,
+      })
+      if (error) throw error
+      setMessage('Si un compte existe avec cet email, un lien de réinitialisation vient de lui être envoyé.')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleKeyDown = (e, submit) => {
+    if (e.key === 'Enter') { e.preventDefault(); submit() }
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center p-4">
@@ -34,59 +143,129 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <Auth
-          supabaseClient={supabase}
-          redirectTo={typeof window !== 'undefined' ? `${window.location.origin}/login` : undefined}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#6d5ce6',
-                  brandAccent: '#5d4dd6',
-                  brandButtonText: '#ffffff',
-                  defaultButtonBackground: '#ffffff',
-                  defaultButtonBackgroundHover: '#f5f2ec',
-                  defaultButtonBorder: '#eae5f0',
-                  defaultButtonText: '#241f2e',
-                  inputBackground: '#ffffff',
-                  inputBorder: '#eae5f0',
-                  inputBorderHover: '#c3bcf0',
-                  inputBorderFocus: '#6d5ce6',
-                  inputText: '#241f2e',
-                  inputLabelText: '#8b8496',
-                  inputPlaceholder: '#b3aebf',
-                  messageText: '#8b8496',
-                  messageTextDanger: '#e0654a',
-                  anchorTextColor: '#8b8496',
-                  anchorTextHoverColor: '#6d5ce6',
-                }
-              }
-            }
-          }}
-          providers={[]}
-          localization={{
-            variables: {
-              sign_in: {
-                email_label: 'Email',
-                password_label: 'Mot de passe',
-                button_label: 'Se connecter',
-                link_text: 'Déjà un compte ? Se connecter',
-              },
-              sign_up: {
-                email_label: 'Email',
-                password_label: 'Mot de passe',
-                button_label: "S'inscrire",
-                link_text: "Pas de compte ? S'inscrire",
-              },
-              forgotten_password: {
-                email_label: 'Email',
-                button_label: 'Envoyer les instructions',
-                link_text: 'Mot de passe oublié ?',
-              },
-            },
-          }}
-        />
+        {error && (
+          <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2 mb-4">{error}</p>
+        )}
+        {message && (
+          <p className="text-xs text-[#4a8a6f] bg-[#4a8a6f]/10 rounded-xl px-3 py-2 mb-4">{message}</p>
+        )}
+
+        {mode === 'sign_in' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Email ou pseudo</label>
+              <input
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, handleSignIn)}
+                placeholder="toi@exemple.com ou pseudo"
+                className={inputClass}
+                autoComplete="username"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Mot de passe</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, handleSignIn)}
+                placeholder="••••••••"
+                className={inputClass}
+                autoComplete="current-password"
+              />
+            </div>
+            <button
+              onClick={handleSignIn}
+              disabled={loading || !identifier.trim() || !password}
+              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+            >
+              {loading ? 'Connexion...' : 'Se connecter'}
+            </button>
+            <div className="flex items-center justify-between text-xs">
+              <button onClick={() => switchMode('forgot')} className="text-[#8b8496] hover:text-[#6d5ce6] transition">
+                Mot de passe oublié ?
+              </button>
+              <button onClick={() => switchMode('sign_up')} className="text-[#8b8496] hover:text-[#6d5ce6] transition">
+                Pas de compte ? S'inscrire
+              </button>
+            </div>
+          </div>
+        )}
+
+        {mode === 'sign_up' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Pseudo</label>
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="ex: flipmaster"
+                className={inputClass}
+                autoComplete="username"
+              />
+              <p className="text-[11px] text-[#b3aebf]">3 à 20 caractères : lettres, chiffres, underscore. Servira aussi à te connecter.</p>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Email</label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="toi@exemple.com"
+                className={inputClass}
+                autoComplete="email"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Mot de passe</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, handleSignUp)}
+                placeholder="Au moins 6 caractères"
+                className={inputClass}
+                autoComplete="new-password"
+              />
+            </div>
+            <button
+              onClick={handleSignUp}
+              disabled={loading || !username.trim() || !email.trim() || !password}
+              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+            >
+              {loading ? 'Création...' : "S'inscrire"}
+            </button>
+            <button onClick={() => switchMode('sign_in')} className="text-xs text-[#8b8496] hover:text-[#6d5ce6] transition text-center">
+              Déjà un compte ? Se connecter
+            </button>
+          </div>
+        )}
+
+        {mode === 'forgot' && (
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass}>Email</label>
+              <input
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, handleForgot)}
+                placeholder="toi@exemple.com"
+                className={inputClass}
+                autoComplete="email"
+              />
+            </div>
+            <button
+              onClick={handleForgot}
+              disabled={loading || !forgotEmail.trim()}
+              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+            >
+              {loading ? 'Envoi...' : 'Envoyer les instructions'}
+            </button>
+            <button onClick={() => switchMode('sign_in')} className="text-xs text-[#8b8496] hover:text-[#6d5ce6] transition text-center">
+              Retour à la connexion
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

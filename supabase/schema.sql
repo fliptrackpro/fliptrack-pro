@@ -72,3 +72,41 @@ create policy "Users update own product photos" on storage.objects
 
 create policy "Users delete own product photos" on storage.objects
   for delete using (bucket_id = 'products' and auth.uid()::text = (storage.foldername(name))[1]);
+
+-- Profils publics minimaux : pseudo unique par utilisateur, pour la connexion par pseudo
+create table if not exists public.profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  username text unique not null check (username ~ '^[a-z0-9_]{3,20}$'),
+  created_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+create policy "Pseudos lisibles publiquement" on public.profiles
+  for select using (true);
+
+create policy "Un utilisateur peut créer son propre profil" on public.profiles
+  for insert with check (auth.uid() = user_id);
+
+create policy "Un utilisateur peut modifier son propre profil" on public.profiles
+  for update using (auth.uid() = user_id);
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if new.raw_user_meta_data ? 'username' and new.raw_user_meta_data->>'username' <> '' then
+    insert into public.profiles (user_id, username)
+    values (new.id, lower(new.raw_user_meta_data->>'username'))
+    on conflict (user_id) do nothing;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();

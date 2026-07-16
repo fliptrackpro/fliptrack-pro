@@ -5,7 +5,7 @@ Application de suivi d'achat/revente ("flip") d'articles d'occasion : stock, ven
 ## Stack
 
 - **Next.js 16 (App Router, Turbopack)** — JavaScript, pas de TypeScript
-- **Supabase** — auth (email/mdp), Postgres avec RLS par `user_id`, Storage (bucket public `products` pour les photos)
+- **Supabase** — auth (email/mdp + pseudo), Postgres avec RLS par `user_id`, Storage (bucket public `products` pour les photos)
 - **Google Gemini** (`gemini-flash-lite-latest`, tier gratuit) — estimation prix depuis photo, génération d'annonces, chatbot-agent "Flip"
 - **Tailwind CSS v3** — config `tailwind.config.js`, PostCSS via `postcss.config.mjs` (ne PAS recréer de `postcss.config.js`, ça casse le build)
 - **Vercel** — déploiement auto à chaque push sur `main` → https://fliptrack-pro-9ziq.vercel.app
@@ -22,18 +22,19 @@ Application de suivi d'achat/revente ("flip") d'articles d'occasion : stock, ven
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — projet Supabase `nbfsciusnxdnxvrlxiwo`
 - `GEMINI_API_KEY` — clé API Gemini (serveur uniquement)
 - `DAILY_AI_LIMIT` (optionnel, défaut 100) — plafond d'appels IA par utilisateur/jour
+- `SUPABASE_SERVICE_ROLE_KEY` — clé service role (Supabase dashboard → Settings → API), serveur uniquement, utilisée par `app/api/auth/login` pour résoudre un pseudo en email sans l'exposer au client
 
 Les mêmes variables doivent exister dans les settings Vercel.
 
 ## Architecture
 
-- `app/login` — Supabase Auth UI ; redirige vers `/dashboard` si connecté
+- `app/login` — formulaire custom (connexion/inscription/mot de passe oublié) ; connexion par email OU pseudo (résolu côté serveur via `app/api/auth/login` + `SUPABASE_SERVICE_ROLE_KEY`), inscription bloque les emails jetables (`lib/disposableEmails.js`) et stocke le pseudo dans `profiles` via trigger Postgres ; redirige vers `/dashboard` si connecté
 - `app/dashboard` — KPIs (carte héro marge + sparkline 7j), meilleures catégories, stock récent, "à reposter", stock qui stagne
 - `app/products` — liste stock/vendus, recherche, filtres, boutons Modifier/Publier/Vendre/Supprimer
 - `app/products/new` — ajout produit : photo → estimation IA (préremplit nom/catégorie/état + fourchette prix sauvegardée), scanner code-barres (BarcodeDetector natif + UPCItemDB)
 - `app/products/[id]/edit|sell|publish` — édition, vente (frais plateforme pré-remplis par taux), génération d'annonces 5 plateformes avec hashtags (Vinted/Facebook) + suivi de repost
 - `app/sales` — historique, marge par vente, annulation de vente (retour en stock), export CSV
-- `app/account` — changement de mot de passe, suppression de toutes les données
+- `app/account` — pseudo (défini/modifié, notamment pour les comptes créés avant l'ajout de cette fonctionnalité), changement de mot de passe, suppression de toutes les données
 - `app/api/estimate|listing|chat|barcode` — routes serveur ; toutes exigent un Bearer token Supabase (`lib/apiAuth.js:requireUser`), les routes Gemini passent par `checkAiQuota`
 - `components/ChatWidget.js` — chatbot-agent "Flip" flottant (function calling : générer annonce, marquer reposté), historique en localStorage
 - `lib/margin.js` — calcul de marge + résumé de contexte pour le chat
@@ -43,7 +44,7 @@ Les mêmes variables doivent exister dans les settings Vercel.
 
 Schéma complet dans `supabase/schema.sql` ; migrations incrémentales dans `supabase/migration_00X_*.sql`. **Les migrations doivent être exécutées à la main dans le SQL Editor Supabase** (pas de CLI configurée). Après toute modification de schéma : mettre à jour `schema.sql` ET créer une migration.
 
-Tables : `products` (avec `photo_url`, `estimated_price_min/max`, `last_reposted_at`), `sales`, `ai_usage` (quota IA/jour). RLS activée partout, scope `auth.uid() = user_id`. Bucket Storage `products` : lecture publique, écriture limitée au dossier de l'utilisateur.
+Tables : `products` (avec `photo_url`, `estimated_price_min/max`, `last_reposted_at`), `sales`, `ai_usage` (quota IA/jour), `profiles` (`user_id` ↔ `username` unique, lecture publique du pseudo uniquement, remplie automatiquement à l'inscription par un trigger sur `auth.users`). RLS activée partout, scope `auth.uid() = user_id`. Bucket Storage `products` : lecture publique, écriture limitée au dossier de l'utilisateur.
 
 ## Conventions et pièges
 
