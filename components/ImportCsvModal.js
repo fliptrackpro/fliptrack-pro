@@ -2,7 +2,14 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { parseCSV, normalizeHeader } from '@/lib/csv'
+import {
+  parseCSV,
+  normalizeHeader,
+  readFileAsText,
+  findHeaderRowIndex,
+  detectLedgerColumns,
+  buildLedgerImport,
+} from '@/lib/csv'
 import { useToast } from '@/components/Toast'
 
 const CATEGORIES = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
@@ -26,6 +33,8 @@ function downloadTemplate() {
 export default function ImportCsvModal({ onClose, onImported }) {
   const toast = useToast()
   const [rows, setRows] = useState([])
+  const [mode, setMode] = useState(null) // 'simple' | 'ledger'
+  const [unmatchedSales, setUnmatchedSales] = useState(0)
   const [fileError, setFileError] = useState('')
   const [fileName, setFileName] = useState('')
   const [importing, setImporting] = useState(false)
@@ -36,6 +45,8 @@ export default function ImportCsvModal({ onClose, onImported }) {
     setFileName(file.name)
     setFileError('')
     setRows([])
+    setMode(null)
+    setUnmatchedSales(0)
 
     const isExcel = /\.(xlsx|xlsm|xls)$/i.test(file.name)
     let table
@@ -49,7 +60,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
         const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' })
         table = raw.map(row => row.map(cell => String(cell ?? '').trim())).filter(r => r.some(c => c !== ''))
       } else {
-        const text = await file.text()
+        const text = await readFileAsText(file)
         table = parseCSV(text)
       }
     } catch (err) {
@@ -62,7 +73,18 @@ export default function ImportCsvModal({ onClose, onImported }) {
       return
     }
 
-    const headers = table[0].map(normalizeHeader)
+    const headerRowIdx = findHeaderRowIndex(table)
+    const headers = table[headerRowIdx].map(normalizeHeader)
+
+    const ledgerIdx = detectLedgerColumns(headers)
+    if (ledgerIdx) {
+      const { results, unmatchedSales: skipped } = buildLedgerImport(table, headerRowIdx, ledgerIdx)
+      setMode('ledger')
+      setRows(results)
+      setUnmatchedSales(skipped)
+      return
+    }
+
     const idx = {
       name: headers.findIndex(h => h.includes('nom')),
       category: headers.findIndex(h => h.includes('categorie')),
@@ -77,7 +99,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
       return
     }
 
-    const parsedRows = table.slice(1).map(r => {
+    const parsedRows = table.slice(headerRowIdx + 1).map(r => {
       const name = r[idx.name] || ''
       const priceRaw = (r[idx.price] || '').replace(',', '.').replace(/[^\d.]/g, '')
       const price = parseFloat(priceRaw)
@@ -89,9 +111,10 @@ export default function ImportCsvModal({ onClose, onImported }) {
       const condition = CONDITIONS.find(c => normalizeHeader(c) === normalizeHeader(rawCondition)) || ''
       const description = idx.description !== -1 ? (r[idx.description] || '') : ''
       const valid = name.trim() !== '' && !isNaN(price) && price > 0
-      return { name: name.trim(), category, condition, purchase_price: price, purchase_fees: fees, description, valid }
+      return { kind: 'simple', name: name.trim(), category, condition, purchase_price: price, purchase_fees: fees, description, valid }
     })
 
+    setMode('simple')
     setRows(parsedRows)
   }
 
@@ -107,31 +130,99 @@ export default function ImportCsvModal({ onClose, onImported }) {
       return toast('Session expirée, reconnecte-toi.')
     }
 
-    const payload = validRows.map(r => ({
-      user_id: user.id,
-      name: r.name,
-      category: r.category,
-      condition: r.condition,
-      purchase_price: r.purchase_price,
-      purchase_date: new Date().toISOString().split('T')[0],
-      purchase_fees: r.purchase_fees,
-      status: 'stock',
-      description: r.description || null,
-      photo_url: null,
-      photo_urls: [],
-    }))
+    if (mode === 'simple') {
+      const payload = validRows.map(r => ({
+        user_id: user.id,
+        name: r.name,
+        category: r.category,
+        condition: r.condition,
+        purchase_price: r.purchase_price,
+        purchase_fees: r.purchase_fees,
+        status: 'stock',
+        description: r.description || null,
+        photo_url: null,
+        photo_urls: [],
+      }))
 
-    const { error } = await supabase.from('products').insert(payload)
-    setImporting(false)
+      const { error } = await supabase.from('products').insert(payload)
+      setImporting(false)
 
-    if (error) {
-      toast('Erreur import : ' + error.message)
+      if (error) {
+        toast('Erreur import : ' + error.message)
+        return
+      }
+
+      toast(`${validRows.length} produit${validRows.length > 1 ? 's' : ''} importé${validRows.length > 1 ? 's' : ''}`, 'success')
+      onImported()
+      onClose()
       return
     }
 
-    toast(`${validRows.length} produit${validRows.length > 1 ? 's' : ''} importé${validRows.length > 1 ? 's' : ''}`, 'success')
-    onImported()
-    onClose()
+    // Mode "historique" : les lignes "stock" s'insèrent en une fois, les lignes "vendu"
+    // nécessitent l'id du produit créé pour ensuite créer la vente associée.
+    const stockRows = validRows.filter(r => r.kind === 'stock')
+    const venduRows = validRows.filter(r => r.kind === 'vendu')
+    let imported = 0
+    let failed = 0
+
+    if (stockRows.length) {
+      const payload = stockRows.map(r => ({
+        user_id: user.id,
+        name: r.name,
+        category: '',
+        condition: '',
+        purchase_price: r.purchase_price,
+        ...(r.purchase_date ? { purchase_date: r.purchase_date } : {}),
+        status: 'stock',
+        photo_url: null,
+        photo_urls: [],
+      }))
+      const { error, count } = await supabase.from('products').insert(payload, { count: 'exact' })
+      if (error) failed += stockRows.length
+      else imported += count ?? stockRows.length
+    }
+
+    for (const r of venduRows) {
+      const { data: product, error: productError } = await supabase
+        .from('products')
+        .insert({
+          user_id: user.id,
+          name: r.name,
+          category: '',
+          condition: '',
+          purchase_price: r.purchase_price,
+          ...(r.purchase_date ? { purchase_date: r.purchase_date } : {}),
+          status: 'vendu',
+          photo_url: null,
+          photo_urls: [],
+        })
+        .select('id')
+        .single()
+
+      if (productError || !product) { failed++; continue }
+
+      const { error: saleError } = await supabase.from('sales').insert({
+        product_id: product.id,
+        user_id: user.id,
+        sale_price: r.sale_price,
+        ...(r.sale_date ? { sale_date: r.sale_date } : {}),
+      })
+
+      if (saleError) failed++
+      else imported++
+    }
+
+    setImporting(false)
+
+    if (failed) {
+      toast(`${imported} importé${imported > 1 ? 's' : ''}, ${failed} en erreur`, imported ? 'success' : undefined)
+    } else {
+      toast(`${imported} produit${imported > 1 ? 's' : ''} importé${imported > 1 ? 's' : ''}`, 'success')
+    }
+    if (imported) {
+      onImported()
+      onClose()
+    }
   }
 
   return (
@@ -140,7 +231,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
         <div className="px-6 py-5 border-b border-[#eae5f0] flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-lg font-serif italic">Importer des produits</h2>
-            <p className="text-xs text-[#8b8496] mt-0.5">Depuis un fichier CSV ou Excel (nom, catégorie, état, prix)</p>
+            <p className="text-xs text-[#8b8496] mt-0.5">Depuis un fichier CSV ou Excel (stock, ou historique achats/ventes)</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition">
             ✕
@@ -151,7 +242,9 @@ export default function ImportCsvModal({ onClose, onImported }) {
           <label className="flex items-center gap-3 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
             <div className="flex-1 min-w-0">
               <p className="text-sm text-[#4a4356]">{fileName || 'Choisir un fichier .csv, .xlsx ou .xlsm'}</p>
-              <p className="text-xs text-[#b3aebf]">Colonnes attendues : Nom, Catégorie, État, Prix d'achat, Frais d'achat, Description</p>
+              <p className="text-xs text-[#b3aebf]">
+                Soit une liste simple (Nom, Catégorie, État, Prix d'achat...), soit un historique avec colonnes Date/Produit/Opérations (Achat/Vente)/Prix/Quantité
+              </p>
             </div>
             <input
               type="file"
@@ -167,6 +260,18 @@ export default function ImportCsvModal({ onClose, onImported }) {
 
           {fileError && (
             <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2">{fileError}</p>
+          )}
+
+          {mode === 'ledger' && (
+            <p className="text-xs text-[#6d5ce6] bg-[#6d5ce6]/10 rounded-xl px-3 py-2">
+              Historique détecté : les achats revendus arriveront directement dans tes ventes avec leur vraie marge, les autres en stock.
+            </p>
+          )}
+
+          {unmatchedSales > 0 && (
+            <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2">
+              {unmatchedSales} vente{unmatchedSales > 1 ? 's' : ''} n'{unmatchedSales > 1 ? 'ont' : 'a'} pas pu être associée{unmatchedSales > 1 ? 's' : ''} à un achat du même nom et {unmatchedSales > 1 ? 'ont' : 'a'} été ignorée{unmatchedSales > 1 ? 's' : ''}.
+            </p>
           )}
 
           {rows.length > 0 && (
@@ -186,12 +291,24 @@ export default function ImportCsvModal({ onClose, onImported }) {
                       <p className={`font-medium truncate ${r.valid ? 'text-[#241f2e]' : 'text-[#e0654a]'}`}>
                         {r.name || '(nom manquant)'}
                       </p>
-                      <p className="text-[#8b8496] truncate">
-                        {r.category || 'Sans catégorie'} · {r.condition || 'État non précisé'}
-                      </p>
+                      {mode === 'simple' ? (
+                        <p className="text-[#8b8496] truncate">
+                          {r.category || 'Sans catégorie'} · {r.condition || 'État non précisé'}
+                        </p>
+                      ) : (
+                        <p className="text-[#8b8496] truncate">
+                          {r.kind === 'vendu' ? 'Vendu' : 'Stock'} · achat {r.purchase_price ?? '?'}€{r.kind === 'vendu' ? ` → vente ${r.sale_price ?? '?'}€` : ''}
+                        </p>
+                      )}
                     </div>
-                    <span className={`flex-shrink-0 font-semibold ${r.valid ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>
-                      {r.valid ? `${r.purchase_price}€` : 'ignorée'}
+                    <span className={`flex-shrink-0 font-semibold ${r.valid ? (r.kind === 'vendu' ? 'text-[#4a8a6f]' : 'text-[#6d5ce6]') : 'text-[#e0654a]'}`}>
+                      {!r.valid
+                        ? 'ignorée'
+                        : mode === 'simple'
+                          ? `${r.purchase_price}€`
+                          : r.kind === 'vendu'
+                            ? `+${(r.sale_price - r.purchase_price).toFixed(2)}€`
+                            : `${r.purchase_price}€`}
                     </span>
                   </div>
                 ))}
