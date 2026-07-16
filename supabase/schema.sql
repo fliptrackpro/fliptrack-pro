@@ -17,6 +17,7 @@ create table if not exists products (
   last_reposted_at timestamptz,
   estimated_price_min numeric,
   estimated_price_max numeric,
+  is_luxury boolean not null default false,
   created_at timestamptz not null default now()
 );
 

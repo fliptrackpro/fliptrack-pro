@@ -214,7 +214,7 @@ export default function PublishProduct() {
 
         {listings && (
           <div className="flex flex-col gap-4 mt-6">
-            {PLATFORMS.map(p => {
+            {PLATFORMS.filter(p => p.key !== 'vestiaire' || product.is_luxury).map(p => {
               const listing = listings[p.key]
               if (!listing) return null
               const hashtagLine = listing.hashtags?.length ? listing.hashtags.map(h => `#${h}`).join(' ') : null

@@ -203,6 +203,7 @@ export default function NewProduct() {
       photo_urls,
       estimated_price_min: aiEstimate?.estimated_price_min ?? null,
       estimated_price_max: aiEstimate?.estimated_price_max ?? null,
+      is_luxury: aiEstimate?.is_luxury ?? false,
     })
     if (error) {
       toast('Erreur : ' + error.message)
@@ -300,7 +301,7 @@ export default function NewProduct() {
                     { label: 'eBay (vendus)', url: `https://www.ebay.fr/sch/i.html?_nkw=${encodeURIComponent(form.name || aiEstimate.name || '')}&LH_Sold=1&LH_Complete=1` },
                     { label: 'Vinted', url: `https://www.vinted.fr/catalog?search_text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
                     { label: 'Leboncoin', url: `https://www.leboncoin.fr/recherche?text=${encodeURIComponent(form.name || aiEstimate.name || '')}` },
-                    ...(['Vêtements', 'Chaussures'].includes(form.category || aiEstimate.category)
+                    ...(aiEstimate.is_luxury
                       ? [{ label: 'Vestiaire Collective', url: `https://fr.vestiairecollective.com/search/?q=${encodeURIComponent(form.name || aiEstimate.name || '')}` }]
                       : []),
                     ...(form.category === 'Jeux vidéo' || form.category === 'Électronique'

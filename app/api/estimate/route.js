@@ -30,7 +30,8 @@ Analyse la photo du produit et réponds UNIQUEMENT avec un objet JSON valide (pa
   "condition": "une valeur EXACTE parmi ${JSON.stringify(CONDITIONS)}",
   "estimated_price_min": nombre (prix de revente bas, en euros),
   "estimated_price_max": nombre (prix de revente haut, en euros),
-  "description": "descriptif de 2-3 phrases prêt à publier sur une petite annonce, en français, ton vendeur particulier"
+  "description": "descriptif de 2-3 phrases prêt à publier sur une petite annonce, en français, ton vendeur particulier",
+  "is_luxury": true ou false (true UNIQUEMENT si tu identifies une marque de luxe/designer reconnue : Chanel, Louis Vuitton, Hermès, Gucci, Dior, Prada, Rolex, Cartier, Balenciaga, Saint Laurent, etc. false pour toute marque grand public comme Nike, Zara, H&M, Uniqlo, même en très bon état)
 }
 Base ton estimation de prix sur le marché français de la seconde main actuel.`
 
