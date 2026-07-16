@@ -26,26 +26,32 @@ export async function POST(req) {
       ? [{ data: body.image, mimeType: body.mimeType }]
       : []
 
-  if (!images.length) {
-    return Response.json({ error: 'Aucune image reçue.' }, { status: 400 })
+  const note = typeof body.note === 'string' ? body.note.trim().slice(0, 500) : ''
+
+  if (!images.length && !note) {
+    return Response.json({ error: 'Aucune image ni description reçue.' }, { status: 400 })
   }
 
   const multiPhotoNote = images.length > 1
-    ? `\nPlusieurs photos du même article sont fournies (angles différents, étiquette, détails). Croise les informations entre toutes les photos avant de répondre : ne te limite pas à la première.`
+    ? `\nPlusieurs photos du même article sont fournies (angles différents, étiquette, boîte, notice, détails). Croise les informations entre toutes les photos avant de répondre : ne te limite pas à la première.`
+    : ''
+
+  const userNote = note
+    ? `\nL'utilisateur donne cette précision sur l'article : "${note}". Traite-la comme fiable pour l'identification (nom exact, version/édition) mais vérifie et complète le reste (état, prix) à partir de la ou des photo(s) si disponibles.`
     : ''
 
   const prompt = `Tu es un expert en revente d'articles d'occasion (Vinted, Leboncoin, Facebook Marketplace) en France.
-Analyse la ou les photo(s) du produit et réponds UNIQUEMENT avec un objet JSON valide (pas de texte autour, pas de markdown) avec exactement ces champs :
+Analyse la ou les photo(s) du produit${note ? ' et la précision de l\'utilisateur ci-dessous' : ''}, puis réponds UNIQUEMENT avec un objet JSON valide (pas de texte autour, pas de markdown) avec exactement ces champs :
 {
-  "name": "nom court et précis du produit (marque + modèle si identifiable). Si la marque/le modèle exact n'est pas clairement lisible sur la photo, utilise une description générique honnête plutôt que d'inventer une marque ou un modèle précis.",
+  "name": "nom court et précis du produit (marque + modèle si identifiable). Pour un jeu vidéo, un objet de collection ou tout article dont la VERSION/ÉDITION précise change fortement la valeur (ex: Pokémon Version Rouge vs Version Bleue, édition limitée, région PAL/NTSC/JP, langue), identifie et indique cette version exacte dans le nom si elle est lisible sur la photo ou précisée par l'utilisateur. Si la marque/le modèle/la version exacte n'est pas clairement identifiable, utilise une description générique honnête plutôt que d'inventer un détail précis.",
   "category": "une valeur EXACTE parmi ${JSON.stringify(CATEGORIES)}",
   "condition": "une valeur EXACTE parmi ${JSON.stringify(CONDITIONS)}",
   "estimated_price_min": nombre (prix de revente bas, en euros),
   "estimated_price_max": nombre (prix de revente haut, en euros),
-  "description": "descriptif de 2-3 phrases prêt à publier sur une petite annonce, en français, ton vendeur particulier",
+  "description": "descriptif de 2-3 phrases prêt à publier sur une petite annonce, en français, ton vendeur particulier. Pour un jeu vidéo/objet de collection, précise la complétude si visible ou mentionnée (cartouche/disque seul, avec boîte, avec notice, complet CIB) car cela impacte fortement le prix.",
   "is_luxury": true ou false (true UNIQUEMENT si tu identifies une marque de luxe/designer reconnue : Chanel, Louis Vuitton, Hermès, Gucci, Dior, Prada, Rolex, Cartier, Balenciaga, Saint Laurent, etc. false pour toute marque grand public comme Nike, Zara, H&M, Uniqlo, même en très bon état)
 }
-Base ton estimation de prix sur le marché français de la seconde main actuel. Si tu es incertain sur l'identification exacte de l'article ou son état, élargis la fourchette de prix plutôt que de donner une fourchette étroite mais possiblement fausse.${multiPhotoNote}`
+Base ton estimation de prix sur le marché français de la seconde main actuel. Si tu es incertain sur l'identification exacte de l'article ou son état, élargis la fourchette de prix plutôt que de donner une fourchette étroite mais possiblement fausse.${multiPhotoNote}${userNote}`
 
   const parts = [{ text: prompt }]
   for (const img of images) {

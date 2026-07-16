@@ -51,6 +51,9 @@ export default function NewProduct() {
   const [description, setDescription] = useState('')
   const [scanning, setScanning] = useState(false)
   const [scanError, setScanError] = useState('')
+  const [assistMessages, setAssistMessages] = useState([])
+  const [assistInput, setAssistInput] = useState('')
+  const [assistSending, setAssistSending] = useState(false)
   const [form, setForm] = useState({
     name: '',
     category: '',
@@ -94,10 +97,11 @@ export default function NewProduct() {
         data: await fileToBase64(file),
         mimeType: file.type,
       })))
+      const note = assistMessages.filter(m => m.role === 'user').map(m => m.content).join('. ')
       const res = await fetch('/api/estimate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
-        body: JSON.stringify({ images }),
+        body: JSON.stringify({ images, note }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -116,6 +120,53 @@ export default function NewProduct() {
       setEstimateError('Erreur lors de l\'analyse : ' + err.message)
     } finally {
       setEstimating(false)
+    }
+  }
+
+  const handleAssistSend = async () => {
+    const text = assistInput.trim()
+    if (!text || assistSending) return
+
+    const nextMessages = [...assistMessages, { role: 'user', content: text }]
+    setAssistMessages(nextMessages)
+    setAssistInput('')
+    setAssistSending(true)
+
+    try {
+      const res = await fetch('/api/estimate/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+        body: JSON.stringify({ messages: nextMessages, currentForm: form }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setAssistMessages(m => [...m, { role: 'assistant', content: data.error || 'Erreur, réessaie.' }])
+      } else {
+        setAssistMessages(m => [...m, { role: 'assistant', content: data.reply || 'Noté.' }])
+        const fields = data.fields || {}
+        if (fields.name || fields.category || fields.condition) {
+          setForm(f => ({
+            ...f,
+            name: fields.name ?? f.name,
+            category: fields.category ?? f.category,
+            condition: fields.condition ?? f.condition,
+          }))
+        }
+        if (fields.description) setDescription(fields.description)
+        if (fields.estimated_price_min != null || fields.estimated_price_max != null || fields.description || fields.name) {
+          setAiEstimate(prev => ({
+            estimated_price_min: fields.estimated_price_min ?? prev?.estimated_price_min ?? null,
+            estimated_price_max: fields.estimated_price_max ?? prev?.estimated_price_max ?? null,
+            description: fields.description || prev?.description || '',
+            name: fields.name || prev?.name || '',
+            is_luxury: prev?.is_luxury ?? false,
+          }))
+        }
+      }
+    } catch (err) {
+      setAssistMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
+    } finally {
+      setAssistSending(false)
     }
   }
 
@@ -345,6 +396,59 @@ export default function NewProduct() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Assistant IA conversationnel */}
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <SparkleIcon className="w-3.5 h-3.5 text-[#6d5ce6]" />
+              <label className={labelClass}>Assistant Flip (optionnel)</label>
+            </div>
+            <p className="text-xs text-[#b3aebf] -mt-0.5">
+              Décris l'article en quelques mots, ex : « Pokémon Version Rouge complet en boîte » — Flip complète nom, catégorie, état et prix pour toi.
+            </p>
+
+            {assistMessages.length > 0 && (
+              <div className="flex flex-col gap-2 bg-[#f5f2ec] rounded-xl p-3 max-h-56 overflow-y-auto">
+                {assistMessages.map((m, i) => (
+                  <div
+                    key={i}
+                    className={`max-w-[85%] px-3 py-2 rounded-xl text-xs whitespace-pre-line ${
+                      m.role === 'user'
+                        ? 'self-end bg-[#6d5ce6] text-white rounded-br-sm'
+                        : 'self-start bg-white text-[#241f2e] rounded-bl-sm'
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                ))}
+                {assistSending && (
+                  <div className="self-start bg-white px-3 py-2 rounded-xl rounded-bl-sm flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" style={{ animationDelay: '300ms' }} />
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center gap-2">
+              <input
+                value={assistInput}
+                onChange={(e) => setAssistInput(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAssistSend() } }}
+                placeholder='Ex : "Pokémon Rouge complet, cartouche + boîte"'
+                className={inputClass}
+              />
+              <button
+                type="button"
+                onClick={handleAssistSend}
+                disabled={assistSending || !assistInput.trim()}
+                className="w-11 h-11 flex-shrink-0 bg-[#241f2e] disabled:bg-[#eae5f0] rounded-xl flex items-center justify-center text-white transition"
+              >
+                →
+              </button>
+            </div>
           </div>
 
           {/* Photos supplémentaires */}
