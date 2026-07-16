@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { DashboardIcon, BoxIcon, PlusIcon, WalletIcon, LogoutIcon, UserIcon } from '@/components/icons'
+import Logo from '@/components/Logo'
 
 export default function Nav() {
   const router = useRouter()
@@ -26,9 +27,7 @@ export default function Nav() {
       {/* Sidebar PC */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-[#eae5f0] z-20">
         <div className="px-5 py-6 mb-2">
-          <span className="text-lg font-serif italic text-[#241f2e]">
-            Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
-          </span>
+          <Logo markClass="w-7 h-7" textClass="text-lg" />
         </div>
         <nav className="flex flex-col gap-1 px-3">
           {links.map(l => (

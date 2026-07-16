@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
+import { LogoMark } from '@/components/Logo'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -24,6 +25,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white border border-[#eae5f0] rounded-2xl p-8 shadow-xl shadow-[#241f2e]/5">
 
         <div className="text-center mb-8">
+          <LogoMark className="w-14 h-14 mx-auto mb-4 rounded-[28%] shadow-lg shadow-[#6d5ce6]/25" />
           <h1 className="text-3xl font-serif italic text-[#241f2e]">
             Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
           </h1>

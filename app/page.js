@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { SparkleIcon, TrendUpIcon, RepostIcon, WalletIcon, BoxIcon } from '@/components/icons'
+import Logo from '@/components/Logo'
 
 const FEATURES = [
   {
@@ -57,9 +58,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
 
       <header className="flex items-center justify-between px-6 py-6 max-w-5xl mx-auto">
-        <span className="text-xl font-serif italic text-[#241f2e]">
-          Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
-        </span>
+        <Logo markClass="w-8 h-8" textClass="text-xl" />
         <button
           onClick={() => router.push('/login')}
           className="text-sm font-medium text-[#655e72] hover:text-[#241f2e] transition"

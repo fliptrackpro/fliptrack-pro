@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import Logo from '@/components/Logo'
 import { CameraIcon, BarcodeIcon, SparkleIcon } from '@/components/icons'
 
 async function authHeaders() {
@@ -250,8 +251,8 @@ export default function NewProduct() {
           <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
           <span className="text-sm font-medium text-[#4a4356] truncate">Nouveau produit</span>
         </div>
-        <button onClick={() => router.push('/dashboard')} className="text-lg font-serif italic text-[#241f2e] hover:opacity-70 transition">
-          Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
+        <button onClick={() => router.push('/dashboard')} className="hover:opacity-70 transition">
+          <Logo markClass="w-6 h-6" textClass="text-lg" />
         </button>
       </header>
 
