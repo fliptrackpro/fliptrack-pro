@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 import ChatWidget from "@/components/ChatWidget";
+import PageTransition from "@/components/PageTransition";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -38,7 +39,7 @@ export default function RootLayout({ children }) {
         className={`${jakarta.variable} ${fraunces.variable} antialiased`}
       >
         <ToastProvider>
-          {children}
+          <PageTransition>{children}</PageTransition>
           <ChatWidget />
         </ToastProvider>
       </body>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
@@ -69,7 +69,14 @@ export default function Dashboard() {
   const [goal, setGoal] = useState(null)
   const [goalInput, setGoalInput] = useState('')
   const [editingGoal, setEditingGoal] = useState(false)
+  const [periodPill, setPeriodPill] = useState({ left: 0, width: 0 })
+  const periodBtnRefs = useRef({})
   const router = useRouter()
+
+  useEffect(() => {
+    const btn = periodBtnRefs.current[period]
+    if (btn) setPeriodPill({ left: btn.offsetLeft, width: btn.offsetWidth })
+  }, [period])
 
   useEffect(() => {
     const load = async () => {
@@ -227,13 +234,18 @@ export default function Dashboard() {
         )}
 
         {/* Sélecteur de période */}
-        <div className="flex gap-2">
+        <div className="relative flex gap-2">
+          <div
+            className="absolute top-0 bottom-0 bg-[#6d5ce6]/10 rounded-full transition-all duration-300 ease-out"
+            style={{ left: periodPill.left, width: periodPill.width }}
+          />
           {PERIODS.map(p => (
             <button
               key={p.key}
+              ref={(el) => { periodBtnRefs.current[p.key] = el }}
               onClick={() => setPeriod(p.key)}
-              className={`text-xs font-medium px-3 py-1.5 rounded-full transition ${
-                period === p.key ? 'bg-[#6d5ce6]/10 text-[#6d5ce6]' : 'text-[#8b8496] hover:bg-[#6d5ce6]/5'
+              className={`relative z-10 text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${
+                period === p.key ? 'text-[#6d5ce6]' : 'text-[#8b8496] hover:text-[#241f2e]'
               }`}
             >
               {p.label}
