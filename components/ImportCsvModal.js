@@ -37,8 +37,26 @@ export default function ImportCsvModal({ onClose, onImported }) {
     setFileError('')
     setRows([])
 
-    const text = await file.text()
-    const table = parseCSV(text)
+    const isExcel = /\.(xlsx|xlsm|xls)$/i.test(file.name)
+    let table
+
+    try {
+      if (isExcel) {
+        const XLSX = await import('xlsx')
+        const buffer = await file.arrayBuffer()
+        const workbook = XLSX.read(buffer, { type: 'array' })
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' })
+        table = raw.map(row => row.map(cell => String(cell ?? '').trim())).filter(r => r.some(c => c !== ''))
+      } else {
+        const text = await file.text()
+        table = parseCSV(text)
+      }
+    } catch (err) {
+      setFileError('Impossible de lire ce fichier : ' + err.message)
+      return
+    }
+
     if (table.length < 2) {
       setFileError('Fichier vide ou illisible.')
       return
@@ -122,7 +140,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
         <div className="px-6 py-5 border-b border-[#eae5f0] flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-lg font-serif italic">Importer des produits</h2>
-            <p className="text-xs text-[#8b8496] mt-0.5">Depuis un fichier CSV (nom, catégorie, état, prix)</p>
+            <p className="text-xs text-[#8b8496] mt-0.5">Depuis un fichier CSV ou Excel (nom, catégorie, état, prix)</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition">
             ✕
@@ -132,10 +150,15 @@ export default function ImportCsvModal({ onClose, onImported }) {
         <div className="px-6 py-5 overflow-y-auto flex-1 flex flex-col gap-4">
           <label className="flex items-center gap-3 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-[#4a4356]">{fileName || 'Choisir un fichier .csv'}</p>
+              <p className="text-sm text-[#4a4356]">{fileName || 'Choisir un fichier .csv, .xlsx ou .xlsm'}</p>
               <p className="text-xs text-[#b3aebf]">Colonnes attendues : Nom, Catégorie, État, Prix d'achat, Frais d'achat, Description</p>
             </div>
-            <input type="file" accept=".csv,text/csv" onChange={handleFile} className="hidden" />
+            <input
+              type="file"
+              accept=".csv,.xlsx,.xlsm,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12,application/vnd.ms-excel"
+              onChange={handleFile}
+              className="hidden"
+            />
           </label>
 
           <button onClick={downloadTemplate} className="text-xs text-[#6d5ce6] hover:underline self-start">
