@@ -11,6 +11,45 @@ function ChatIcon(props) {
   )
 }
 
+const PLATFORM_LABELS = {
+  vinted: 'Vinted',
+  leboncoin: 'Leboncoin',
+  facebook: 'Facebook Marketplace',
+  ebay: 'eBay',
+  vestiaire: 'Vestiaire Collective',
+}
+
+function ListingActionCard({ action }) {
+  const [copiedKey, setCopiedKey] = useState('')
+
+  const copy = (key, text) => {
+    navigator.clipboard.writeText(text)
+    setCopiedKey(key)
+    setTimeout(() => setCopiedKey(''), 1500)
+  }
+
+  return (
+    <div className="self-start max-w-[92%] bg-white border border-[#eae5f0] rounded-2xl p-3 flex flex-col gap-2">
+      <p className="text-xs font-semibold text-[#6d5ce6]">Annonce générée · {action.product_name}</p>
+      {Object.entries(action.listings || {}).map(([key, listing]) => (
+        <div key={key} className="bg-[#f5f2ec] rounded-xl p-2.5">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <span className="text-[10px] font-semibold text-[#8b8496] uppercase tracking-wide">{PLATFORM_LABELS[key] || key}</span>
+            <button
+              onClick={() => copy(key, `${listing.title}\n\n${listing.description}`)}
+              className="text-[10px] bg-white hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2 py-0.5 rounded-full transition"
+            >
+              {copiedKey === key ? '✓ Copié' : 'Copier'}
+            </button>
+          </div>
+          <p className="text-xs font-semibold text-[#241f2e]">{listing.title}</p>
+          <p className="text-xs text-[#655e72] mt-0.5">{listing.description}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function ChatWidget() {
   const [user, setUser] = useState(null)
   const [open, setOpen] = useState(false)
@@ -56,7 +95,7 @@ export default function ChatWidget() {
       if (!res.ok) {
         setMessages(m => [...m, { role: 'assistant', content: data.error || "Erreur, réessaie." }])
       } else {
-        setMessages(m => [...m, { role: 'assistant', content: data.reply }])
+        setMessages(m => [...m, { role: 'assistant', content: data.reply, action: data.action }])
       }
     } catch (err) {
       setMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
@@ -104,12 +143,15 @@ export default function ChatWidget() {
               </div>
             )}
             {messages.map((m, i) => (
-              <div key={i} className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm whitespace-pre-line ${
-                m.role === 'user'
-                  ? 'self-end bg-[#6d5ce6] text-white rounded-br-md'
-                  : 'self-start bg-[#f5f2ec] text-[#241f2e] rounded-bl-md'
-              }`}>
-                {m.content}
+              <div key={i} className="flex flex-col gap-2">
+                <div className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl text-sm whitespace-pre-line ${
+                  m.role === 'user'
+                    ? 'self-end bg-[#6d5ce6] text-white rounded-br-md'
+                    : 'self-start bg-[#f5f2ec] text-[#241f2e] rounded-bl-md'
+                }`}>
+                  {m.content}
+                </div>
+                {m.action?.type === 'generate_listing' && <ListingActionCard action={m.action} />}
               </div>
             ))}
             {sending && (
