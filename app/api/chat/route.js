@@ -4,7 +4,7 @@ import { generateListings } from '@/lib/listingGenerator'
 
 const BASE_SYSTEM_PROMPT = `Tu t'appelles Flip. Tu es un conseiller expert en revente d'articles d'occasion (Vinted, Leboncoin, Facebook Marketplace, eBay, Vestiaire Collective) en France. Tu aides un particulier qui fait du "flip" (achat/revente pour dégager une marge) à travers l'application FlipTrack. Si on te demande ton nom, réponds "Flip".
 
-Ton rôle : donner des conseils concrets et actionnables sur la fixation des prix, la rédaction d'annonces, les stratégies pour débloquer un article qui ne se vend pas, la négociation avec les acheteurs, le choix de la bonne plateforme selon le type d'article, et l'optimisation de la marge. Tu peux aussi AGIR directement pour l'utilisateur via deux outils : générer une annonce prête à publier pour un article de son stock, et marquer un article comme reposté. Utilise ces outils quand l'utilisateur te le demande explicitement ou clairement (ex: "génère une annonce pour mes Nike", "marque le sac en cuir comme reposté"). Ne les utilise jamais sans demande claire de l'utilisateur.
+Ton rôle : donner des conseils concrets et actionnables sur la fixation des prix, la rédaction d'annonces, les stratégies pour débloquer un article qui ne se vend pas, la négociation avec les acheteurs, le choix de la bonne plateforme selon le type d'article, et l'optimisation de la marge. Tu peux aussi PROPOSER une action pour l'utilisateur via deux outils : générer une annonce prête à publier pour un article de son stock, et marquer un article comme reposté. Utilise ces outils quand l'utilisateur te le demande explicitement ou clairement (ex: "génère une annonce pour mes Nike", "marque le sac en cuir comme reposté"). Ne les utilise jamais sans demande claire. L'action n'est PAS encore exécutée quand tu appelles l'outil — l'utilisateur devra confirmer via un bouton avant que ça se fasse réellement, donc formule ta réponse comme une proposition ("je te propose de...", "veux-tu que je...") plutôt qu'une confirmation que c'est fait.
 
 Tu as accès à un aperçu des données réelles actuelles de l'utilisateur (stock, ventes, articles qui stagnent). Utilise-les activement : cite les articles concrets par leur nom quand c'est pertinent, base tes conseils sur ses vrais chiffres plutôt que de rester générique.
 
@@ -50,46 +50,22 @@ function findStockProduct(products, query) {
   return { error: 'ambiguous', candidates: matches.map(p => p.name) }
 }
 
-async function runTool(name, args, { products, supabase, user }) {
-  if (name === 'generate_listing') {
-    const { match, error, candidates } = findStockProduct(products, args.product_name)
-    if (error === 'not_found') return { success: false, reason: `Aucun article en stock ne correspond à "${args.product_name}".` }
-    if (error === 'ambiguous') return { success: false, reason: `Plusieurs articles correspondent : ${candidates.join(', ')}. Précise lequel.` }
+// Résout la cible (fuzzy match + prix) SANS exécuter d'action — pas d'écriture DB, pas d'appel de génération.
+function resolveTool(name, args, products) {
+  const { match, error, candidates } = findStockProduct(products, args.product_name)
+  if (error === 'not_found') return { success: false, reason: `Aucun article en stock ne correspond à "${args.product_name}".` }
+  if (error === 'ambiguous') return { success: false, reason: `Plusieurs articles correspondent : ${candidates.join(', ')}. Précise lequel.` }
 
+  if (name === 'generate_listing') {
     const price = args.price ?? (match.estimated_price_min != null && match.estimated_price_max != null
       ? Math.round((match.estimated_price_min + match.estimated_price_max) / 2)
       : null)
     if (!price) return { success: false, reason: `Aucun prix disponible pour "${match.name}". Demande à l'utilisateur un prix de vente visé.` }
-
-    try {
-      const listings = await generateListings({
-        name: match.name,
-        category: match.category,
-        condition: match.condition,
-        price,
-        description: match.description,
-        photo_url: match.photo_url,
-      })
-      return { success: true, product_name: match.name, price, listings }
-    } catch (err) {
-      return { success: false, reason: 'Erreur lors de la génération : ' + err.message }
-    }
+    return { success: true, proposed: true, product_id: match.id, product_name: match.name, price }
   }
 
   if (name === 'mark_reposted') {
-    const { match, error, candidates } = findStockProduct(products, args.product_name)
-    if (error === 'not_found') return { success: false, reason: `Aucun article en stock ne correspond à "${args.product_name}".` }
-    if (error === 'ambiguous') return { success: false, reason: `Plusieurs articles correspondent : ${candidates.join(', ')}. Précise lequel.` }
-
-    const now = new Date().toISOString()
-    const { error: updateError } = await supabase
-      .from('products')
-      .update({ last_reposted_at: now })
-      .eq('id', match.id)
-      .eq('user_id', user.id)
-
-    if (updateError) return { success: false, reason: updateError.message }
-    return { success: true, product_name: match.name }
+    return { success: true, proposed: true, product_id: match.id, product_name: match.name }
   }
 
   return { success: false, reason: 'Outil inconnu.' }
@@ -106,15 +82,65 @@ export async function POST(req) {
     return Response.json({ error: 'Clé API Gemini manquante côté serveur.' }, { status: 500 })
   }
 
+  const body = await req.json()
+  const supabase = authedClient(req)
+
+  // --- Exécution d'une action confirmée par l'utilisateur (bouton "Confirmer") ---
+  if (body.confirmAction) {
+    const { name, args } = body.confirmAction
+    const { data: products } = await supabase.from('products').select('*').eq('user_id', user.id)
+    const product = (products || []).find(p => p.id === args.product_id && p.status === 'stock')
+    if (!product) {
+      return Response.json({ error: "Cet article n'est plus disponible en stock (déjà vendu ou supprimé)." }, { status: 400 })
+    }
+
+    if (name === 'mark_reposted') {
+      const now = new Date().toISOString()
+      const { error } = await supabase
+        .from('products')
+        .update({ last_reposted_at: now })
+        .eq('id', product.id)
+        .eq('user_id', user.id)
+      if (error) return Response.json({ error: error.message }, { status: 500 })
+      return Response.json({
+        reply: `C'est fait, « ${product.name} » est marqué comme reposté.`,
+        action: { type: 'mark_reposted', product_name: product.name },
+      })
+    }
+
+    if (name === 'generate_listing') {
+      const quotaError = await checkAiQuota(req)
+      if (quotaError) return quotaError
+      try {
+        const listings = await generateListings({
+          name: product.name,
+          category: product.category,
+          condition: product.condition,
+          price: args.price,
+          description: product.description,
+          photo_url: product.photo_url,
+        })
+        return Response.json({
+          reply: `Voilà l'annonce pour « ${product.name} » à ${args.price}€.`,
+          action: { type: 'generate_listing', product_name: product.name, listings },
+        })
+      } catch (err) {
+        return Response.json({ error: err.message }, { status: 500 })
+      }
+    }
+
+    return Response.json({ error: 'Action inconnue.' }, { status: 400 })
+  }
+
+  // --- Flux conversationnel normal (propose une action, ne l'exécute pas) ---
   const quotaError = await checkAiQuota(req)
   if (quotaError) return quotaError
 
-  const { messages } = await req.json()
+  const { messages } = body
   if (!Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: 'Messages requis.' }, { status: 400 })
   }
 
-  const supabase = authedClient(req)
   let products = []
   let contextBlock = ''
   try {
@@ -164,11 +190,11 @@ export async function POST(req) {
     }
 
     const { name, args } = functionCallPart.functionCall
-    const result = await runTool(name, args || {}, { products, supabase, user })
+    const resolved = resolveTool(name, args || {}, products)
 
     const secondRes = await callGemini([
       { role: 'model', parts: [functionCallPart] },
-      { role: 'function', parts: [{ functionResponse: { name, response: result } }] },
+      { role: 'function', parts: [{ functionResponse: { name, response: resolved } }] },
     ])
 
     if (!secondRes.ok) {
@@ -177,15 +203,20 @@ export async function POST(req) {
     }
     const secondData = await secondRes.json()
     const finalText = secondData?.candidates?.[0]?.content?.parts?.find(p => p.text)?.text
-      || (result.success ? 'C\'est fait.' : result.reason)
+      || (resolved.success ? `Je te propose : ${name === 'generate_listing' ? 'générer une annonce pour' : 'marquer comme reposté'} « ${resolved.product_name} ». Confirme ?` : resolved.reason)
 
-    const action = name === 'generate_listing' && result.success
-      ? { type: 'generate_listing', product_name: result.product_name, listings: result.listings }
-      : name === 'mark_reposted' && result.success
-      ? { type: 'mark_reposted', product_name: result.product_name }
+    const pendingAction = resolved.success
+      ? {
+        name,
+        args: name === 'generate_listing'
+          ? { product_id: resolved.product_id, price: resolved.price }
+          : { product_id: resolved.product_id },
+        product_name: resolved.product_name,
+        price: resolved.price,
+      }
       : undefined
 
-    return Response.json({ reply: finalText, action })
+    return Response.json({ reply: finalText, pendingAction })
   } catch (err) {
     return Response.json({ error: 'Erreur : ' + err.message }, { status: 500 })
   }

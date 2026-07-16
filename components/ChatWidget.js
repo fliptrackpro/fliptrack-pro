@@ -50,12 +50,17 @@ function ListingActionCard({ action }) {
   )
 }
 
+function authHeader(session) {
+  return session ? { Authorization: `Bearer ${session.access_token}` } : {}
+}
+
 export default function ChatWidget() {
   const [user, setUser] = useState(null)
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
+  const [confirmingIndex, setConfirmingIndex] = useState(null)
   const scrollRef = useRef(null)
 
   useEffect(() => {
@@ -115,13 +120,42 @@ export default function ChatWidget() {
       if (!res.ok) {
         setMessages(m => [...m, { role: 'assistant', content: data.error || "Erreur, réessaie." }])
       } else {
-        setMessages(m => [...m, { role: 'assistant', content: data.reply, action: data.action }])
+        setMessages(m => [...m, { role: 'assistant', content: data.reply, pendingAction: data.pendingAction }])
       }
     } catch (err) {
       setMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
     } finally {
       setSending(false)
     }
+  }
+
+  const handleConfirm = async (index, pendingAction) => {
+    setConfirmingIndex(index)
+    setMessages(m => m.map((msg, i) => i === index ? { ...msg, pendingAction: { ...msg.pendingAction, resolved: true } } : msg))
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeader(session) },
+        body: JSON.stringify({ confirmAction: pendingAction }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setMessages(m => [...m, { role: 'assistant', content: data.error || "Erreur, réessaie." }])
+      } else {
+        setMessages(m => [...m, { role: 'assistant', content: data.reply, action: data.action }])
+      }
+    } catch (err) {
+      setMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
+    } finally {
+      setConfirmingIndex(null)
+    }
+  }
+
+  const handleCancel = (index) => {
+    setMessages(m => m.map((msg, i) => i === index ? { ...msg, pendingAction: { ...msg.pendingAction, resolved: true } } : msg))
+    setMessages(m => [...m, { role: 'assistant', content: 'Pas de souci, annulé.' }])
   }
 
   const handleKeyDown = (e) => {
@@ -185,6 +219,24 @@ export default function ChatWidget() {
                   {m.content}
                 </div>
                 {m.action?.type === 'generate_listing' && <ListingActionCard action={m.action} />}
+                {m.pendingAction && !m.pendingAction.resolved && (
+                  <div className="self-start flex items-center gap-2">
+                    <button
+                      onClick={() => handleConfirm(i, m.pendingAction)}
+                      disabled={confirmingIndex === i}
+                      className="text-xs bg-[#241f2e] hover:bg-[#3a3347] disabled:opacity-50 text-white font-medium px-3 py-1.5 rounded-full transition"
+                    >
+                      {confirmingIndex === i ? 'Un instant...' : '✓ Confirmer'}
+                    </button>
+                    <button
+                      onClick={() => handleCancel(i)}
+                      disabled={confirmingIndex === i}
+                      className="text-xs bg-[#f5f2ec] hover:bg-[#eae5f0] disabled:opacity-50 text-[#655e72] font-medium px-3 py-1.5 rounded-full transition"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
             {sending && (
