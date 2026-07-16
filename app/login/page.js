@@ -36,6 +36,7 @@ export default function LoginPage() {
 
         <Auth
           supabaseClient={supabase}
+          redirectTo={typeof window !== 'undefined' ? `${window.location.origin}/dashboard` : undefined}
           appearance={{
             theme: ThemeSupa,
             variables: {

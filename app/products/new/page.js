@@ -115,6 +115,14 @@ export default function NewProduct() {
           category: f.category || data.category || '',
           condition: f.condition || data.condition || '',
         }))
+
+        const priceText = (data.estimated_price_min != null && data.estimated_price_max != null)
+          ? ` Estimation : ${data.estimated_price_min}€ – ${data.estimated_price_max}€.`
+          : ''
+        setAssistMessages(m => [...m, {
+          role: 'assistant',
+          content: `J'ai identifié « ${data.name || 'ton article'} » (${data.category || 'catégorie incertaine'}, ${data.condition || 'état à confirmer'}).${priceText} Si je me suis trompé sur la version, l'édition ou l'état, dis-le-moi ici et je corrige la fiche.`,
+        }])
       }
     } catch (err) {
       setEstimateError('Erreur lors de l\'analyse : ' + err.message)
