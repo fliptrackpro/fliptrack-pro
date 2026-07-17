@@ -40,7 +40,7 @@ const themeInit = `(function(){try{var t=localStorage.getItem('fliptrack-theme')
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning>
       <body
         className={`${jakarta.variable} ${fraunces.variable} antialiased`}
       >

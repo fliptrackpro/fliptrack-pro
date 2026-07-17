@@ -159,7 +159,7 @@ export default function ProductsPage() {
                   {p.photo_url ? (
                     <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                   ) : (
-                    <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#4a8a6f' : '#c3bcf0' }} />
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ml-1 ${p.status === 'stock' ? 'bg-sage' : 'bg-disabled'}`} />
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-ink truncate">{p.name}</p>

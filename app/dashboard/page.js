@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
-import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon, TargetIcon, CheckIcon, SparkleIcon } from '@/components/icons'
+import { PlusIcon, TrendUpIcon, ClockIcon, RepostIcon, TargetIcon, CheckIcon, SparkleIcon, TruckIcon } from '@/components/icons'
 import CountUp from '@/components/CountUp'
 
 function maskEmail(email) {
@@ -155,6 +155,9 @@ export default function Dashboard() {
     })
     .slice(0, 5)
 
+  const ordersInTransit = products.filter(p => p.status === 'commande').length
+  const toShip = sales.filter(s => s.shipping_status === 'to_ship' || s.shipping_status === 'shipped').length
+
   const sparkline = last7DaysMargin(sales, products)
   const maxSpark = Math.max(...sparkline, 1)
 
@@ -298,6 +301,28 @@ export default function Dashboard() {
           <p className="text-sm text-muted">Articles vendus sur la période</p>
           <p className="font-serif text-xl"><CountUp value={soldInPeriod} /></p>
         </div>
+
+        {/* Accès Commandes (achats en route + ventes à expédier) */}
+        {(ordersInTransit > 0 || toShip > 0) && (
+          <button
+            onClick={() => router.push('/commandes')}
+            className="animate-rise-in bg-surface rounded-2xl p-4 flex items-center justify-between text-left hover:-translate-y-0.5 transition"
+            style={{ animationDelay: '110ms' }}
+          >
+            <div className="flex items-center gap-2">
+              <TruckIcon className="w-4 h-4 text-accent" />
+              <div>
+                <p className="text-sm font-bold">Commandes</p>
+                <p className="text-xs text-muted">
+                  {ordersInTransit > 0 && `${ordersInTransit} achat${ordersInTransit > 1 ? 's' : ''} en route`}
+                  {ordersInTransit > 0 && toShip > 0 && ' · '}
+                  {toShip > 0 && `${toShip} à expédier`}
+                </p>
+              </div>
+            </div>
+            <span className="text-accent text-sm">→</span>
+          </button>
+        )}
 
         {/* Objectif de marge du mois */}
         <section className="animate-rise-in bg-surface rounded-2xl p-5" style={{ animationDelay: '120ms' }}>
