@@ -66,22 +66,38 @@ export default function SalesPage() {
     toast('Vente annulée, article de retour en stock', 'success')
   }
 
+  const loadSales = async (userId) => {
+    const { data } = await supabase
+      .from('sales')
+      .select('*, products(*)')
+      .eq('user_id', userId)
+      .order('sale_date', { ascending: false })
+    setSales(data || [])
+  }
+
   useEffect(() => {
-    const load = async () => {
+    const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return router.push('/login')
       setUser(user)
-
-      const { data } = await supabase
-        .from('sales')
-        .select('*, products(*)')
-        .eq('user_id', user.id)
-        .order('sale_date', { ascending: false })
-
-      setSales(data || [])
+      await loadSales(user.id)
     }
-    load()
+    init()
   }, [router])
+
+  // Cf. app/products/page.js : le bouton "retour" du navigateur peut restaurer cette page
+  // depuis le cache (bfcache) avec une recherche et des données figées.
+  useEffect(() => {
+    const handlePageShow = (e) => {
+      if (!e.persisted) return
+      setSearch('')
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) loadSales(user.id)
+      })
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
 
   const filtered = sales.filter(s => (s.products?.name || '').toLowerCase().includes(search.toLowerCase()))
 

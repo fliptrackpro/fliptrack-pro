@@ -41,6 +41,22 @@ export default function ProductsPage() {
     init()
   }, [router])
 
+  // Le bouton "retour" du navigateur peut restaurer cette page depuis le cache (bfcache) sans
+  // ré-exécuter le JS : la recherche et la liste restent figées telles qu'avant de partir
+  // ajouter un produit. On force un rafraîchissement dans ce cas précis.
+  useEffect(() => {
+    const handlePageShow = (e) => {
+      if (!e.persisted) return
+      setSearch('')
+      setFilter('tous')
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) load(user.id)
+      })
+    }
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
+
   const handleDelete = async (id) => {
     if (!confirm('Supprimer ce produit et ses ventes associées ?')) return
     const { error } = await supabase.from('products').delete().eq('id', id)
