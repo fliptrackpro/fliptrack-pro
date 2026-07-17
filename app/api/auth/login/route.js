@@ -21,9 +21,11 @@ export async function POST(req) {
   if (!identifier.includes('@')) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
     if (!serviceKey) {
+      // Ne pas exposer le détail de la config interne au client
+      console.error('SUPABASE_SERVICE_ROLE_KEY absente : connexion par pseudo indisponible.')
       return Response.json(
-        { error: "Connexion par pseudo indisponible : SUPABASE_SERVICE_ROLE_KEY n'est pas configurée côté serveur." },
-        { status: 500 }
+        { error: 'La connexion par pseudo est momentanément indisponible. Utilise ton email.' },
+        { status: 503 }
       )
     }
 

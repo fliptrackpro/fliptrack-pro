@@ -32,6 +32,12 @@ export async function POST(req) {
     return Response.json({ error: 'Aucune image ni description reçue.' }, { status: 400 })
   }
 
+  // Garde-fou anti-abus/coût : ~10 Mo de données base64 par image (≈ 7,5 Mo de fichier)
+  const MAX_IMAGE_B64 = 10 * 1024 * 1024
+  if (images.some(img => typeof img?.data === 'string' && img.data.length > MAX_IMAGE_B64)) {
+    return Response.json({ error: 'Image trop volumineuse (10 Mo max par photo).' }, { status: 413 })
+  }
+
   const multiPhotoNote = images.length > 1
     ? `\nPlusieurs photos du même article sont fournies (angles différents, étiquette, boîte, notice, détails). Croise les informations entre toutes les photos avant de répondre : ne te limite pas à la première.`
     : ''

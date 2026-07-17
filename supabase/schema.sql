@@ -89,7 +89,7 @@ create policy "Un utilisateur peut créer son propre profil" on public.profiles
   for insert with check (auth.uid() = user_id);
 
 create policy "Un utilisateur peut modifier son propre profil" on public.profiles
-  for update using (auth.uid() = user_id);
+  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create or replace function public.handle_new_user()
 returns trigger
