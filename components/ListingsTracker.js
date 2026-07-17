@@ -5,13 +5,17 @@ import { supabase } from '@/lib/supabase'
 import { useToast } from '@/components/Toast'
 
 const PLATFORMS = [
-  { key: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200' },
-  { key: 'Leboncoin', color: 'bg-orange-50 text-orange-700 border-orange-200' },
-  { key: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-  { key: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-  { key: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-  { key: 'Autre', color: 'bg-[#f5f2ec] text-[#655e72] border-[#eae5f0]' },
+  { key: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', create: 'https://www.vinted.fr/items/new' },
+  { key: 'Leboncoin', color: 'bg-orange-50 text-orange-700 border-orange-200', create: 'https://www.leboncoin.fr/deposer-une-annonce' },
+  { key: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', create: 'https://www.facebook.com/marketplace/create/item' },
+  { key: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', create: 'https://www.ebay.fr/sl/sell' },
+  { key: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200', create: 'https://www.vestiairecollective.com/' },
+  { key: 'Autre', color: 'bg-[#f5f2ec] text-[#655e72] border-[#eae5f0]', create: null },
 ]
+
+function createUrl(name) {
+  return PLATFORMS.find(p => p.key === name)?.create || null
+}
 
 function platformStyle(name) {
   return (PLATFORMS.find(p => p.key === name)?.color) || 'bg-[#f5f2ec] text-[#655e72] border-[#eae5f0]'
@@ -35,6 +39,8 @@ export default function ListingsTracker({ productId, defaultPrice }) {
   const [platform, setPlatform] = useState('Vinted')
   const [price, setPrice] = useState(defaultPrice ? String(defaultPrice) : '')
   const [url, setUrl] = useState('')
+  const [editingUrlId, setEditingUrlId] = useState(null)
+  const [editUrlValue, setEditUrlValue] = useState('')
 
   const load = async () => {
     const { data } = await supabase
@@ -73,6 +79,15 @@ export default function ListingsTracker({ productId, defaultPrice }) {
     load()
   }
 
+  const saveUrl = async (id) => {
+    const clean = editUrlValue.trim()
+    const { error } = await supabase.from('listings').update({ url: clean || null }).eq('id', id)
+    if (error) return toast('Erreur : ' + error.message)
+    setEditingUrlId(null)
+    setEditUrlValue('')
+    load()
+  }
+
   const setStatus = async (id, status) => {
     const { error } = await supabase.from('listings').update({ status }).eq('id', id)
     if (error) return toast('Erreur : ' + error.message)
@@ -94,7 +109,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
         <p className="text-xs text-[#8b8496] mt-0.5">Note où tu as publié cet article pour suivre la fraîcheur de chaque annonce.</p>
       </div>
 
-      {/* Formulaire d'ajout */}
+      {/* Formulaire d'ajout — flux guidé : publier sur la plateforme, puis coller le lien */}
       <div className="flex flex-col gap-2">
         <div className="flex gap-2">
           <select value={platform} onChange={(e) => setPlatform(e.target.value)} className={inputClass}>
@@ -111,10 +126,22 @@ export default function ListingsTracker({ productId, defaultPrice }) {
             <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
           </div>
         </div>
+
+        {createUrl(platform) && (
+          <a
+            href={createUrl(platform)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-semibold rounded-xl px-4 py-2.5 transition text-sm"
+          >
+            1. Publier sur {platform} ↗
+          </a>
+        )}
+
         <input
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="Lien de l'annonce (optionnel)"
+          placeholder={createUrl(platform) ? "2. Colle ici le lien de ton annonce (optionnel)" : "Lien de l'annonce (optionnel)"}
           className={inputClass}
         />
         <button
@@ -122,8 +149,11 @@ export default function ListingsTracker({ productId, defaultPrice }) {
           disabled={adding}
           className="bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-2.5 transition text-sm"
         >
-          {adding ? 'Ajout...' : '+ Ajouter au suivi'}
+          {adding ? 'Ajout...' : `${createUrl(platform) ? '3. ' : ''}+ Ajouter au suivi`}
         </button>
+        <p className="text-[11px] text-[#b3aebf]">
+          FlipTrack ne peut pas récupérer le lien automatiquement (les plateformes ne l'exposent pas) : ouvre la plateforme, publie, puis colle l'URL de ton annonce ici.
+        </p>
       </div>
 
       {/* Liste des annonces */}
@@ -151,7 +181,16 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                   <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#6d5ce6] hover:underline truncate max-w-[45%]">
                     Voir l'annonce ↗
                   </a>
-                ) : <span />}
+                ) : editingUrlId === l.id ? (
+                  <span />
+                ) : (
+                  <button
+                    onClick={() => { setEditingUrlId(l.id); setEditUrlValue('') }}
+                    className="text-[11px] text-[#8b8496] hover:text-[#6d5ce6] transition"
+                  >
+                    + Ajouter le lien
+                  </button>
+                )}
                 <div className="flex items-center gap-1">
                   {l.status === 'active' && (
                     <>
@@ -173,6 +212,25 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                   </button>
                 </div>
               </div>
+
+              {editingUrlId === l.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <input
+                    autoFocus
+                    value={editUrlValue}
+                    onChange={(e) => setEditUrlValue(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') saveUrl(l.id) }}
+                    placeholder="Colle le lien de l'annonce"
+                    className="flex-1 bg-white border border-[#eae5f0] rounded-lg px-2.5 py-1.5 text-xs text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition"
+                  />
+                  <button onClick={() => saveUrl(l.id)} className="text-[11px] bg-[#241f2e] text-white font-medium px-2.5 py-1.5 rounded-lg">
+                    OK
+                  </button>
+                  <button onClick={() => { setEditingUrlId(null); setEditUrlValue('') }} className="text-[11px] text-[#8b8496] px-1.5 py-1.5">
+                    ✕
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
