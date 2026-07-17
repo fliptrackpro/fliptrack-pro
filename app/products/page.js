@@ -71,30 +71,30 @@ export default function ProductsPage() {
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
   if (!user) return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e] md:pl-56">
+    <div className="min-h-screen bg-canvas text-ink md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-[#eae5f0]">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-line">
         <div>
           <h1 className="text-xl font-serif italic">Stock</h1>
-          <p className="text-[#8b8496] text-xs mt-0.5">{products.filter(p => p.status !== 'commande').length} produit{products.filter(p => p.status !== 'commande').length > 1 ? 's' : ''}</p>
+          <p className="text-muted text-xs mt-0.5">{products.filter(p => p.status !== 'commande').length} produit{products.filter(p => p.status !== 'commande').length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowImport(true)}
-            className="text-xs bg-white hover:bg-[#f5f2ec] text-[#655e72] border border-[#eae5f0] font-medium px-4 py-2 rounded-full transition"
+            className="text-xs bg-surface hover:bg-canvas text-muted2 border border-line font-medium px-4 py-2 rounded-full transition"
           >
             Importer CSV
           </button>
           <button
             onClick={() => router.push('/products/new')}
-            className="text-xs bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-full transition"
+            className="text-xs bg-inkd hover:bg-inkdh active:scale-[0.98] text-white font-semibold px-4 py-2 rounded-full transition"
           >
             + Ajouter
           </button>
@@ -115,7 +115,7 @@ export default function ProductsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un produit..."
-          className="w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-2.5 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
+          className="w-full bg-surface border border-line rounded-xl px-4 py-2.5 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
         />
 
         {/* Filtres */}
@@ -129,7 +129,7 @@ export default function ProductsPage() {
               key={f.key}
               onClick={() => setFilter(f.key)}
               className={`text-xs font-medium px-3 py-1.5 rounded-full transition ${
-                filter === f.key ? 'bg-[#6d5ce6]/10 text-[#6d5ce6]' : 'text-[#8b8496] hover:bg-[#6d5ce6]/5'
+                filter === f.key ? 'bg-accent/10 text-accent' : 'text-muted hover:bg-accent/5'
               }`}
             >
               {f.label}
@@ -139,10 +139,10 @@ export default function ProductsPage() {
 
         {filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-[#b3aebf] text-sm">Aucun produit dans cette catégorie</p>
+            <p className="text-faint text-sm">Aucun produit dans cette catégorie</p>
             <button
               onClick={() => router.push('/products/new')}
-              className="mt-3 text-xs text-[#6d5ce6] hover:underline"
+              className="mt-3 text-xs text-accent hover:underline"
             >
               Ajouter un produit →
             </button>
@@ -153,7 +153,7 @@ export default function ProductsPage() {
               <div
                 key={p.id}
                 style={{ animationDelay: `${Math.min(i, 12) * 35}ms` }}
-                className="animate-rise-in bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#241f2e]/10 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                className="animate-rise-in bg-surface rounded-2xl shadow-sm shadow-inkd/5 transition-all hover:-translate-y-0.5 hover:shadow-lg hover:shadow-inkd/10 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
@@ -162,28 +162,28 @@ export default function ProductsPage() {
                     <div className="w-2 h-2 rounded-full flex-shrink-0 ml-1" style={{ backgroundColor: p.status === 'stock' ? '#4a8a6f' : '#c3bcf0' }} />
                   )}
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#241f2e] truncate">{p.name}</p>
-                    <p className="text-xs text-[#8b8496]">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
+                    <p className="text-sm font-medium text-ink truncate">{p.name}</p>
+                    <p className="text-xs text-muted">{p.category || 'Sans catégorie'} · {p.condition || 'État non précisé'}</p>
                     <div className="flex items-center gap-2 flex-wrap mt-0.5">
                       {p.status === 'stock' && (
-                        <p className={`text-[11px] ${!p.last_reposted_at || daysSince(p.last_reposted_at) >= 14 ? 'text-[#e0654a]' : 'text-[#b3aebf]'}`}>
+                        <p className={`text-[11px] ${!p.last_reposted_at || daysSince(p.last_reposted_at) >= 14 ? 'text-coral' : 'text-faint'}`}>
                           {p.last_reposted_at ? `Reposté il y a ${daysSince(p.last_reposted_at)}j` : 'Jamais reposté'}
                         </p>
                       )}
                       {p.estimated_price_min != null && (
-                        <span className="text-[11px] bg-[#e7f3ee] text-[#4a8a6f] font-medium px-1.5 py-0.5 rounded-full">
+                        <span className="text-[11px] bg-sagebg text-sage font-medium px-1.5 py-0.5 rounded-full">
                           Est. {p.estimated_price_min}–{p.estimated_price_max}€
                         </span>
                       )}
                     </div>
                   </div>
-                  <p className="text-sm font-semibold text-[#241f2e] flex-shrink-0 sm:hidden">{p.purchase_price}€</p>
+                  <p className="text-sm font-semibold text-ink flex-shrink-0 sm:hidden">{p.purchase_price}€</p>
                 </div>
                 <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap flex-shrink-0">
-                  <p className="hidden sm:block text-sm font-semibold text-[#241f2e]">{p.purchase_price}€</p>
+                  <p className="hidden sm:block text-sm font-semibold text-ink">{p.purchase_price}€</p>
                   <button
                     onClick={() => router.push(`/products/${p.id}/edit`)}
-                    className="text-xs bg-[#f5f2ec] text-[#655e72] hover:bg-[#e5e0f7] font-medium px-3 py-1.5 rounded-full transition"
+                    className="text-xs bg-canvas text-muted2 hover:bg-violetbg2 font-medium px-3 py-1.5 rounded-full transition"
                   >
                     Modifier
                   </button>
@@ -191,23 +191,23 @@ export default function ProductsPage() {
                     <>
                       <button
                         onClick={() => router.push(`/products/${p.id}/publish`)}
-                        className="text-xs bg-[#f5f2ec] text-[#655e72] hover:bg-[#e5e0f7] font-medium px-3 py-1.5 rounded-full transition"
+                        className="text-xs bg-canvas text-muted2 hover:bg-violetbg2 font-medium px-3 py-1.5 rounded-full transition"
                       >
                         Publier
                       </button>
                       <button
                         onClick={() => router.push(`/products/${p.id}/sell`)}
-                        className="text-xs bg-[#6d5ce6]/10 text-[#6d5ce6] hover:bg-[#6d5ce6]/20 font-medium px-3 py-1.5 rounded-full transition"
+                        className="text-xs bg-accent/10 text-accent hover:bg-accent/20 font-medium px-3 py-1.5 rounded-full transition"
                       >
                         Vendre
                       </button>
                     </>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-[#eae5f0] text-[#8b8496]">Vendu</span>
+                    <span className="text-xs px-2 py-1 rounded-full bg-line text-muted">Vendu</span>
                   )}
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="text-xs text-[#c3bcf0] hover:text-[#e0654a] px-2 py-1.5 rounded-full hover:bg-[#e0654a]/10 transition"
+                    className="text-xs text-disabled hover:text-coral px-2 py-1.5 rounded-full hover:bg-coral/10 transition"
                   >
                     ✕
                   </button>

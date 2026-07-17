@@ -226,23 +226,23 @@ export default function ImportCsvModal({ onClose, onImported }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#241f2e]/60 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="animate-pop-in bg-white rounded-3xl shadow-2xl shadow-[#241f2e]/30 w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
-        <div className="px-6 py-5 border-b border-[#eae5f0] flex items-center justify-between flex-shrink-0">
+    <div className="fixed inset-0 z-50 bg-inkd/60 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="animate-pop-in bg-surface rounded-3xl shadow-2xl shadow-inkd/30 w-full max-w-lg max-h-[85vh] flex flex-col overflow-hidden">
+        <div className="px-6 py-5 border-b border-line flex items-center justify-between flex-shrink-0">
           <div>
             <h2 className="text-lg font-serif italic">Importer des produits</h2>
-            <p className="text-xs text-[#8b8496] mt-0.5">Depuis un fichier CSV ou Excel (stock, ou historique achats/ventes)</p>
+            <p className="text-xs text-muted mt-0.5">Depuis un fichier CSV ou Excel (stock, ou historique achats/ventes)</p>
           </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition">
+          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-canvas flex items-center justify-center text-muted transition">
             ✕
           </button>
         </div>
 
         <div className="px-6 py-5 overflow-y-auto flex-1 flex flex-col gap-4">
-          <label className="flex items-center gap-3 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
+          <label className="flex items-center gap-3 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-[#4a4356]">{fileName || 'Choisir un fichier .csv, .xlsx ou .xlsm'}</p>
-              <p className="text-xs text-[#b3aebf]">
+              <p className="text-sm text-ink2">{fileName || 'Choisir un fichier .csv, .xlsx ou .xlsm'}</p>
+              <p className="text-xs text-faint">
                 Soit une liste simple (Nom, Catégorie, État, Prix d'achat...), soit un historique avec colonnes Date/Produit/Opérations (Achat/Vente)/Prix/Quantité
               </p>
             </div>
@@ -254,29 +254,29 @@ export default function ImportCsvModal({ onClose, onImported }) {
             />
           </label>
 
-          <button onClick={downloadTemplate} className="text-xs text-[#6d5ce6] hover:underline self-start">
+          <button onClick={downloadTemplate} className="text-xs text-accent hover:underline self-start">
             Télécharger un modèle CSV ↓
           </button>
 
           {fileError && (
-            <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2">{fileError}</p>
+            <p className="text-xs text-coral bg-coral/10 rounded-xl px-3 py-2">{fileError}</p>
           )}
 
           {mode === 'ledger' && (
-            <p className="text-xs text-[#6d5ce6] bg-[#6d5ce6]/10 rounded-xl px-3 py-2">
+            <p className="text-xs text-accent bg-accent/10 rounded-xl px-3 py-2">
               Historique détecté : les achats revendus arriveront directement dans tes ventes avec leur vraie marge, les autres en stock.
             </p>
           )}
 
           {unmatchedSales > 0 && (
-            <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2">
+            <p className="text-xs text-coral bg-coral/10 rounded-xl px-3 py-2">
               {unmatchedSales} vente{unmatchedSales > 1 ? 's' : ''} n'{unmatchedSales > 1 ? 'ont' : 'a'} pas pu être associée{unmatchedSales > 1 ? 's' : ''} à un achat du même nom et {unmatchedSales > 1 ? 'ont' : 'a'} été ignorée{unmatchedSales > 1 ? 's' : ''}.
             </p>
           )}
 
           {rows.length > 0 && (
             <div className="flex flex-col gap-2">
-              <p className="text-xs font-semibold text-[#8b8496] uppercase tracking-wider">
+              <p className="text-xs font-semibold text-muted uppercase tracking-wider">
                 {validRows.length} ligne{validRows.length > 1 ? 's' : ''} valide{validRows.length > 1 ? 's' : ''} sur {rows.length}
               </p>
               <div className="flex flex-col gap-1.5 max-h-56 overflow-y-auto">
@@ -284,24 +284,24 @@ export default function ImportCsvModal({ onClose, onImported }) {
                   <div
                     key={i}
                     className={`flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs ${
-                      r.valid ? 'bg-[#f5f2ec]' : 'bg-[#e0654a]/10'
+                      r.valid ? 'bg-canvas' : 'bg-coral/10'
                     }`}
                   >
                     <div className="min-w-0">
-                      <p className={`font-medium truncate ${r.valid ? 'text-[#241f2e]' : 'text-[#e0654a]'}`}>
+                      <p className={`font-medium truncate ${r.valid ? 'text-ink' : 'text-coral'}`}>
                         {r.name || '(nom manquant)'}
                       </p>
                       {mode === 'simple' ? (
-                        <p className="text-[#8b8496] truncate">
+                        <p className="text-muted truncate">
                           {r.category || 'Sans catégorie'} · {r.condition || 'État non précisé'}
                         </p>
                       ) : (
-                        <p className="text-[#8b8496] truncate">
+                        <p className="text-muted truncate">
                           {r.kind === 'vendu' ? 'Vendu' : 'Stock'} · achat {r.purchase_price ?? '?'}€{r.kind === 'vendu' ? ` → vente ${r.sale_price ?? '?'}€` : ''}
                         </p>
                       )}
                     </div>
-                    <span className={`flex-shrink-0 font-semibold ${r.valid ? (r.kind === 'vendu' ? 'text-[#4a8a6f]' : 'text-[#6d5ce6]') : 'text-[#e0654a]'}`}>
+                    <span className={`flex-shrink-0 font-semibold ${r.valid ? (r.kind === 'vendu' ? 'text-sage' : 'text-accent') : 'text-coral'}`}>
                       {!r.valid
                         ? 'ignorée'
                         : mode === 'simple'
@@ -317,17 +317,17 @@ export default function ImportCsvModal({ onClose, onImported }) {
           )}
         </div>
 
-        <div className="px-6 py-4 border-t border-[#eae5f0] flex items-center gap-2 flex-shrink-0">
+        <div className="px-6 py-4 border-t border-line flex items-center gap-2 flex-shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 bg-[#f5f2ec] hover:bg-[#eae5f0] text-[#655e72] font-semibold rounded-xl px-4 py-3 transition text-sm"
+            className="flex-1 bg-canvas hover:bg-line text-muted2 font-semibold rounded-xl px-4 py-3 transition text-sm"
           >
             Annuler
           </button>
           <button
             onClick={handleImport}
             disabled={!validRows.length || importing}
-            className="flex-1 bg-[#241f2e] hover:bg-[#3a3347] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+            className="flex-1 bg-inkd hover:bg-inkdh disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
           >
             {importing ? 'Import...' : `Importer${validRows.length ? ` (${validRows.length})` : ''}`}
           </button>

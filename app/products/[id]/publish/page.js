@@ -112,29 +112,29 @@ export default function PublishProduct() {
     setMarking(false)
   }
 
-  const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
-  const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
+  const inputClass = "w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
+  const labelClass = "text-xs font-semibold text-muted uppercase tracking-wider"
 
   if (!product) return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
+    <div className="min-h-screen bg-canvas text-ink">
 
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur border-b border-line px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/products')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
+            className="w-8 h-8 rounded-lg hover:bg-canvas flex items-center justify-center text-muted transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="hidden sm:inline text-sm text-[#8b8496]">Stock</span>
-          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356] truncate">Publier</span>
+          <span className="hidden sm:inline text-sm text-muted">Stock</span>
+          <span className="hidden sm:inline text-sm text-line2">/</span>
+          <span className="text-sm font-medium text-ink2 truncate">Publier</span>
         </div>
         <button onClick={() => router.push('/dashboard')} className="hover:opacity-70 transition">
           <Logo markClass="w-6 h-6" textClass="text-lg" />
@@ -144,18 +144,18 @@ export default function PublishProduct() {
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-serif italic text-[#241f2e]">Publier « {product.name} »</h2>
-          <p className="text-[#8b8496] text-sm mt-1">Génère un titre et un descriptif adaptés à chaque plateforme</p>
+          <h2 className="text-2xl font-serif italic text-ink">Publier « {product.name} »</h2>
+          <p className="text-muted text-sm mt-1">Génère un titre et un descriptif adaptés à chaque plateforme</p>
           <p className="text-xs mt-2">
             {product.last_reposted_at ? (
-              <span className="text-[#8b8496]">Reposté il y a {daysSince(product.last_reposted_at)} jour{daysSince(product.last_reposted_at) > 1 ? 's' : ''}</span>
+              <span className="text-muted">Reposté il y a {daysSince(product.last_reposted_at)} jour{daysSince(product.last_reposted_at) > 1 ? 's' : ''}</span>
             ) : (
-              <span className="text-[#e0654a] font-medium">Jamais reposté</span>
+              <span className="text-coral font-medium">Jamais reposté</span>
             )}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
           {(product.photo_urls?.length > 0 ? product.photo_urls : product.photo_url ? [product.photo_url] : []).length > 0 && (
             <div className="flex flex-col gap-2">
               <label className={labelClass}>
@@ -170,7 +170,7 @@ export default function PublishProduct() {
                       download
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[10px] bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2 py-1 rounded-full transition"
+                      className="text-[10px] bg-canvas hover:bg-violetbg2 text-muted2 font-medium px-2 py-1 rounded-full transition"
                     >
                       Télécharger
                     </a>
@@ -189,19 +189,19 @@ export default function PublishProduct() {
                 placeholder="0"
                 className={`${inputClass} pr-8`}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
             </div>
             {product.estimated_price_min != null && (
-              <p className="text-xs text-[#4a8a6f]">Préremplis avec l'estimation IA ({product.estimated_price_min}–{product.estimated_price_max}€), ajuste si besoin.</p>
+              <p className="text-xs text-sage">Préremplis avec l'estimation IA ({product.estimated_price_min}–{product.estimated_price_max}€), ajuste si besoin.</p>
             )}
           </div>
 
-          {error && <p className="text-xs text-[#e0654a]">{error}</p>}
+          {error && <p className="text-xs text-coral">{error}</p>}
 
           <button
             onClick={handleGenerate}
             disabled={generating || !price}
-            className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
+            className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm"
           >
             {generating ? (
               <span className="flex items-center justify-center gap-2">
@@ -225,7 +225,7 @@ export default function PublishProduct() {
               if (!listing) return null
               const hashtagLine = listing.hashtags?.length ? listing.hashtags.map(h => `#${h}`).join(' ') : null
               return (
-                <div key={p.key} className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-5">
+                <div key={p.key} className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border w-fit ${p.color}`}>
                       {p.label}
@@ -234,38 +234,38 @@ export default function PublishProduct() {
                       href={p.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-medium px-3 py-1.5 rounded-full transition w-fit"
+                      className="text-xs bg-accent/10 hover:bg-accent/20 text-accent font-medium px-3 py-1.5 rounded-full transition w-fit"
                     >
                       Ouvrir {p.label} ↗
                     </a>
                   </div>
 
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <p className="text-sm font-semibold text-[#241f2e]">{listing.title}</p>
+                    <p className="text-sm font-semibold text-ink">{listing.title}</p>
                     <button
                       onClick={() => handleCopy(`${p.key}-title`, listing.title)}
-                      className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                      className="text-[11px] flex-shrink-0 bg-canvas hover:bg-violetbg2 text-muted2 font-medium px-2.5 py-1 rounded-full transition"
                     >
                       {copiedKey === `${p.key}-title` ? '✓ Copié' : 'Copier le titre'}
                     </button>
                   </div>
 
                   <div className="flex items-start justify-between gap-2 mt-2">
-                    <p className="text-sm text-[#655e72] whitespace-pre-line">{listing.description}</p>
+                    <p className="text-sm text-muted2 whitespace-pre-line">{listing.description}</p>
                     <button
                       onClick={() => handleCopy(`${p.key}-desc`, listing.description)}
-                      className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                      className="text-[11px] flex-shrink-0 bg-canvas hover:bg-violetbg2 text-muted2 font-medium px-2.5 py-1 rounded-full transition"
                     >
                       {copiedKey === `${p.key}-desc` ? '✓ Copié' : 'Copier le texte'}
                     </button>
                   </div>
 
                   {hashtagLine && (
-                    <div className="flex items-start justify-between gap-2 mt-3 pt-3 border-t border-[#f0edf8]">
-                      <p className="text-xs text-[#6d5ce6]">{hashtagLine}</p>
+                    <div className="flex items-start justify-between gap-2 mt-3 pt-3 border-t border-violetbg3">
+                      <p className="text-xs text-accent">{hashtagLine}</p>
                       <button
                         onClick={() => handleCopy(`${p.key}-tags`, hashtagLine)}
-                        className="text-[11px] flex-shrink-0 bg-[#f5f2ec] hover:bg-[#e5e0f7] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition"
+                        className="text-[11px] flex-shrink-0 bg-canvas hover:bg-violetbg2 text-muted2 font-medium px-2.5 py-1 rounded-full transition"
                       >
                         {copiedKey === `${p.key}-tags` ? '✓ Copié' : 'Copier les hashtags'}
                       </button>
@@ -275,14 +275,14 @@ export default function PublishProduct() {
               )
             })}
 
-            <div className="bg-white rounded-2xl p-5 shadow-sm shadow-[#241f2e]/5 flex flex-col gap-3">
-              <p className="text-sm text-[#655e72]">
+            <div className="bg-surface rounded-2xl p-5 shadow-sm shadow-inkd/5 flex flex-col gap-3">
+              <p className="text-sm text-muted2">
                 Colle ce texte directement sur le site de ton choix. Une fois l'annonce republiée (ou "bumpée") sur Vinted, marque-le ici pour garder trace de la fraîcheur de ton annonce.
               </p>
               <button
                 onClick={handleMarkReposted}
                 disabled={marking}
-                className="w-full bg-[#4a8a6f] hover:bg-[#3e7a5f] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+                className="w-full bg-sage hover:bg-sageh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
               >
                 {marking ? 'Enregistrement...' : '✓ Marquer comme reposté'}
               </button>

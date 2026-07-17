@@ -2,6 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Palette "Dashboard Beau" — valeurs claires (identiques à l'ancienne palette en dur) */
+:root {
+  /* Indique au navigateur de rendre les contrôles natifs (inputs, scrollbars) en clair,
+     sinon un navigateur en mode sombre les teinte automatiquement. */
+  color-scheme: light;
+  --accent: 109 92 230;
+  --accenth: 93 77 214;
+  --accent2: 139 123 240;
+  --accent3: 168 147 245;
+  --ink: 36 31 46;
+  --inkd: 36 31 46;
+  --inkdh: 58 51 71;
+  --ink2: 74 67 86;
+  --muted: 139 132 150;
+  --muted2: 101 94 114;
+  --faint: 179 174 191;
+  --disabled: 195 188 240;
+  --canvas: 245 242 236;
+  --surface: 255 255 255;
+  --line: 234 229 240;
+  --line2: 214 207 232;
+  --sage: 74 138 111;
+  --sage2: 111 181 147;
+  --sageh: 62 122 95;
+  --sagebg: 231 243 238;
+  --coral: 224 101 74;
+  --coralbg: 251 238 233;
+  --gold: 232 182 76;
+  --violetbg: 239 235 253;
+  --violetbg2: 229 224 247;
+  --violetbg3: 240 237 248;
+  --violetbdr: 226 221 245;
+  --estim1: 240 237 251;
+  --estim2: 243 236 249;
+  --estim3: 250 240 246;
+}
+
+/* Mode sombre — appliqué via data-theme="dark" sur <html> */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --accent: 125 108 240;
+  --accenth: 109 92 230;
+  --accent2: 139 123 240;
+  --accent3: 168 147 245;
+  --ink: 236 232 242;
+  --inkd: 47 40 57;
+  --inkdh: 59 52 71;
+  --ink2: 207 200 219;
+  --muted: 155 147 169;
+  --muted2: 180 172 194;
+  --faint: 107 100 128;
+  --disabled: 74 67 86;
+  --canvas: 23 20 27;
+  --surface: 34 29 43;
+  --line: 51 46 61;
+  --line2: 58 52 70;
+  --sage: 95 160 130;
+  --sage2: 111 181 147;
+  --sageh: 79 143 114;
+  --sagebg: 23 39 31;
+  --coral: 239 115 87;
+  --coralbg: 51 33 28;
+  --gold: 232 182 76;
+  --violetbg: 42 35 64;
+  --violetbg2: 44 37 66;
+  --violetbg3: 42 35 64;
+  --violetbdr: 53 44 74;
+  --estim1: 37 31 56;
+  --estim2: 39 31 54;
+  --estim3: 43 31 48;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,11 +82,12 @@
 
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: rgb(var(--canvas));
 }
 
 select option {
-  background-color: #ffffff;
-  color: #241f2e;
+  background-color: rgb(var(--surface));
+  color: rgb(var(--ink));
 }
 
 @keyframes riseIn {

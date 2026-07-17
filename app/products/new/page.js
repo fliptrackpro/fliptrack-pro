@@ -294,24 +294,24 @@ export default function NewProduct() {
 
   const totalCost = (parseFloat(form.purchase_price || 0) + parseFloat(form.purchase_fees || 0)).toFixed(2)
 
-  const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
-  const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
+  const inputClass = "w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
+  const labelClass = "text-xs font-semibold text-muted uppercase tracking-wider"
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
+    <div className="min-h-screen bg-canvas text-ink">
 
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur border-b border-line px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/dashboard')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
+            className="w-8 h-8 rounded-lg hover:bg-canvas flex items-center justify-center text-muted transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="hidden sm:inline text-sm text-[#8b8496]">Dashboard</span>
-          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356] truncate">Nouveau produit</span>
+          <span className="hidden sm:inline text-sm text-muted">Dashboard</span>
+          <span className="hidden sm:inline text-sm text-line2">/</span>
+          <span className="text-sm font-medium text-ink2 truncate">Nouveau produit</span>
         </div>
         <button onClick={() => router.push('/dashboard')} className="hover:opacity-70 transition">
           <Logo markClass="w-6 h-6" textClass="text-lg" />
@@ -321,26 +321,26 @@ export default function NewProduct() {
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-serif italic text-[#241f2e]">Ajouter un produit</h2>
-          <p className="text-[#8b8496] text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
+          <h2 className="text-2xl font-serif italic text-ink">Ajouter un produit</h2>
+          <p className="text-muted text-sm mt-1">Renseigne les informations pour suivre ta marge automatiquement</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
 
           {/* Photo + estimation IA */}
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Photo (estimation IA)</label>
-            <label className="flex items-center gap-4 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
+            <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
-                <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center">
-                  <CameraIcon className="w-6 h-6 text-[#b3aebf]" />
+                <div className="w-14 h-14 rounded-lg bg-surface flex items-center justify-center">
+                  <CameraIcon className="w-6 h-6 text-faint" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#4a4356]">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
-                <p className="text-xs text-[#b3aebf]">Ajoute aussi des photos supplémentaires (étiquette, détails) puis lance l'analyse IA</p>
+                <p className="text-sm text-ink2">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
+                <p className="text-xs text-faint">Ajoute aussi des photos supplémentaires (étiquette, détails) puis lance l'analyse IA</p>
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
@@ -349,7 +349,7 @@ export default function NewProduct() {
               <button
                 type="button"
                 onClick={handleEstimate}
-                className="flex items-center justify-center gap-2 bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-semibold rounded-xl px-4 py-2.5 mt-1 transition text-sm"
+                className="flex items-center justify-center gap-2 bg-accent/10 hover:bg-accent/20 text-accent font-semibold rounded-xl px-4 py-2.5 mt-1 transition text-sm"
               >
                 <SparkleIcon className="w-4 h-4" />
                 Analyser avec l'IA{extraPhotos.length > 0 ? ` (${extraPhotos.length + 1} photos)` : ''}
@@ -357,8 +357,8 @@ export default function NewProduct() {
             )}
 
             {estimating && (
-              <div className="rounded-xl px-4 py-3 mt-1 border border-[#e2ddf5] bg-gradient-to-br from-[#f0edfb] via-[#f3ecf9] to-[#faf0f6]">
-                <div className="flex items-center gap-2 text-xs text-[#6d5ce6] mb-3">
+              <div className="rounded-xl px-4 py-3 mt-1 border border-violetbdr bg-gradient-to-br from-estim1 via-estim2 to-estim3">
+                <div className="flex items-center gap-2 text-xs text-accent mb-3">
                   <SparkleIcon className="w-3.5 h-3.5 animate-pulse" />
                   Analyse de la photo en cours...
                 </div>
@@ -369,18 +369,18 @@ export default function NewProduct() {
               </div>
             )}
             {estimateError && (
-              <p className="text-xs text-[#e0654a] mt-1">{estimateError}</p>
+              <p className="text-xs text-coral mt-1">{estimateError}</p>
             )}
             {aiEstimate && !estimating && (
-              <div className="animate-rise-in rounded-xl px-4 py-3 mt-1 border border-[#e2ddf5] bg-gradient-to-br from-[#f0edfb] via-[#f3ecf9] to-[#faf0f6]">
-                <div className="flex items-center gap-1.5 text-xs text-[#6d5ce6] font-semibold uppercase tracking-wider">
+              <div className="animate-rise-in rounded-xl px-4 py-3 mt-1 border border-violetbdr bg-gradient-to-br from-estim1 via-estim2 to-estim3">
+                <div className="flex items-center gap-1.5 text-xs text-accent font-semibold uppercase tracking-wider">
                   <SparkleIcon className="w-3.5 h-3.5" />
                   Valeur de revente estimée
                 </div>
-                <p className="text-lg font-serif text-[#4a8a6f] mt-1">
+                <p className="text-lg font-serif text-sage mt-1">
                   {aiEstimate.estimated_price_min}€ – {aiEstimate.estimated_price_max}€
                 </p>
-                <p className="text-xs text-[#655e72] mt-2">{aiEstimate.description}</p>
+                <p className="text-xs text-muted2 mt-2">{aiEstimate.description}</p>
 
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {[
@@ -399,7 +399,7 @@ export default function NewProduct() {
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[11px] bg-white hover:bg-[#f5f2ec] text-[#655e72] font-medium px-2.5 py-1 rounded-full transition border border-[#eae5f0]"
+                      className="text-[11px] bg-surface hover:bg-canvas text-muted2 font-medium px-2.5 py-1 rounded-full transition border border-line"
                     >
                       Vérifier sur {l.label} ↗
                     </a>
@@ -412,32 +412,32 @@ export default function NewProduct() {
           {/* Assistant IA conversationnel */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5">
-              <SparkleIcon className="w-3.5 h-3.5 text-[#6d5ce6]" />
+              <SparkleIcon className="w-3.5 h-3.5 text-accent" />
               <label className={labelClass}>Assistant Flip (optionnel)</label>
             </div>
-            <p className="text-xs text-[#b3aebf] -mt-0.5">
+            <p className="text-xs text-faint -mt-0.5">
               Décris l'article en quelques mots, ex : « Pokémon Version Rouge complet en boîte » — Flip complète nom, catégorie, état et prix pour toi.
             </p>
 
             {assistMessages.length > 0 && (
-              <div className="flex flex-col gap-2 bg-[#f5f2ec] rounded-xl p-3 max-h-56 overflow-y-auto">
+              <div className="flex flex-col gap-2 bg-canvas rounded-xl p-3 max-h-56 overflow-y-auto">
                 {assistMessages.map((m, i) => (
                   <div
                     key={i}
                     className={`max-w-[85%] px-3 py-2 rounded-xl text-xs whitespace-pre-line ${
                       m.role === 'user'
-                        ? 'self-end bg-[#6d5ce6] text-white rounded-br-sm'
-                        : 'self-start bg-white text-[#241f2e] rounded-bl-sm'
+                        ? 'self-end bg-accent text-white rounded-br-sm'
+                        : 'self-start bg-surface text-ink rounded-bl-sm'
                     }`}
                   >
                     {m.content}
                   </div>
                 ))}
                 {assistSending && (
-                  <div className="self-start bg-white px-3 py-2 rounded-xl rounded-bl-sm flex gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#b3aebf] animate-pulse" style={{ animationDelay: '300ms' }} />
+                  <div className="self-start bg-surface px-3 py-2 rounded-xl rounded-bl-sm flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-faint animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-faint animate-pulse" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-faint animate-pulse" style={{ animationDelay: '300ms' }} />
                   </div>
                 )}
               </div>
@@ -455,7 +455,7 @@ export default function NewProduct() {
                 type="button"
                 onClick={handleAssistSend}
                 disabled={assistSending || !assistInput.trim()}
-                className="w-11 h-11 flex-shrink-0 bg-[#241f2e] disabled:bg-[#eae5f0] rounded-xl flex items-center justify-center text-white transition"
+                className="w-11 h-11 flex-shrink-0 bg-inkd disabled:bg-line rounded-xl flex items-center justify-center text-white transition"
               >
                 →
               </button>
@@ -471,39 +471,39 @@ export default function NewProduct() {
                   <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeExtraPhoto(i)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
                   >
                     ✕
                   </button>
                 </div>
               ))}
-              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#f5f2ec] border border-dashed border-[#d6cfe8] hover:border-[#6d5ce6]/50 flex items-center justify-center cursor-pointer transition">
-                <span className="text-xl text-[#b3aebf]">+</span>
+              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-canvas border border-dashed border-line2 hover:border-accent/50 flex items-center justify-center cursor-pointer transition">
+                <span className="text-xl text-faint">+</span>
                 <input type="file" accept="image/*" multiple onChange={handleExtraPhotos} className="hidden" />
               </label>
             </div>
-            <p className="text-xs text-[#b3aebf]">Améliore la précision de l'analyse IA et sert pour les annonces multi-angles (Vinted, Vestiaire Collective...)</p>
+            <p className="text-xs text-faint">Améliore la précision de l'analyse IA et sert pour les annonces multi-angles (Vinted, Vestiaire Collective...)</p>
           </div>
 
           {/* Scanner code-barres */}
           <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-3 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
-              <BarcodeIcon className="w-5 h-5 text-[#b3aebf] flex-shrink-0" />
+            <label className="flex items-center gap-3 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
+              <BarcodeIcon className="w-5 h-5 text-faint flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#4a4356]">Scanner un code-barres</p>
-                <p className="text-xs text-[#b3aebf]">Utile pour les objets encore emballés/scellés</p>
+                <p className="text-sm text-ink2">Scanner un code-barres</p>
+                <p className="text-xs text-faint">Utile pour les objets encore emballés/scellés</p>
               </div>
               {scanning && (
-                <span className="w-4 h-4 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin flex-shrink-0" />
               )}
               <input type="file" accept="image/*" capture="environment" onChange={handleScan} className="hidden" />
             </label>
             {scanError && (
-              <p className="text-xs text-[#e0654a] mt-1">{scanError}</p>
+              <p className="text-xs text-coral mt-1">{scanError}</p>
             )}
           </div>
 
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           {/* Nom */}
           <div className="flex flex-col gap-1.5">
@@ -550,7 +550,7 @@ export default function NewProduct() {
           </div>
 
           {/* Separateur */}
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           {/* Prix + Frais */}
           <div className="grid grid-cols-2 gap-4">
@@ -565,7 +565,7 @@ export default function NewProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -579,24 +579,24 @@ export default function NewProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
             </div>
           </div>
 
           {/* Apercu cout total */}
           {form.purchase_price && (
-            <div className="bg-[#4a8a6f]/10 border border-[#4a8a6f]/20 rounded-xl px-4 py-3 flex items-center justify-between">
+            <div className="bg-sage/10 border border-sage/20 rounded-xl px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-[#4a8a6f] font-semibold uppercase tracking-wider">Coût total</p>
-                <p className="text-xs text-[#4a8a6f]/70 mt-0.5">Prix achat + frais</p>
+                <p className="text-xs text-sage font-semibold uppercase tracking-wider">Coût total</p>
+                <p className="text-xs text-sage/70 mt-0.5">Prix achat + frais</p>
               </div>
-              <span className="text-xl font-serif text-[#4a8a6f]">{totalCost} €</span>
+              <span className="text-xl font-serif text-sage">{totalCost} €</span>
             </div>
           )}
 
           {/* Separateur */}
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           {/* En commande (pas encore reçu) */}
           <div className="flex flex-col gap-3">
@@ -604,14 +604,14 @@ export default function NewProduct() {
               <button
                 type="button"
                 onClick={() => setIsOrder(v => !v)}
-                className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${isOrder ? 'bg-[#6d5ce6]' : 'bg-[#eae5f0]'}`}
+                className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${isOrder ? 'bg-accent' : 'bg-line'}`}
                 aria-pressed={isOrder}
               >
-                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${isOrder ? 'left-[18px]' : 'left-0.5'}`} />
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-surface shadow transition-all ${isOrder ? 'left-[18px]' : 'left-0.5'}`} />
               </button>
               <div>
-                <p className="text-sm font-medium text-[#241f2e]">Article encore en commande</p>
-                <p className="text-xs text-[#8b8496]">Payé mais pas encore reçu — il ira dans « Commandes », pas dans le stock.</p>
+                <p className="text-sm font-medium text-ink">Article encore en commande</p>
+                <p className="text-xs text-muted">Payé mais pas encore reçu — il ira dans « Commandes », pas dans le stock.</p>
               </div>
             </label>
 
@@ -632,7 +632,7 @@ export default function NewProduct() {
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

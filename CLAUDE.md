@@ -49,7 +49,7 @@ Tables : `products` (avec `photo_url`, `estimated_price_min/max`, `last_reposted
 
 ## Conventions et pièges
 
-- Palette "Dashboard Beau" : fond `#f5f2ec`, encre `#241f2e`, accent violet `#6d5ce6`, vert argent `#4a8a6f`, corail alertes `#e0654a`. Couleurs en dur dans les classes Tailwind (pas de tokens).
+- Palette "Dashboard Beau" pilotée par variables CSS (mode clair/sombre) : couleurs nommées dans `tailwind.config.js` (`canvas`, `surface`, `ink`, `inkd` fond bouton sombre, `muted`, `line`, `accent` violet, `sage` vert, `coral` alertes, `estim*`/`violetbg*` tints...) → variables `--x` définies dans `app/globals.css` (`:root` clair, `:root[data-theme="dark"]` sombre, format RGB `R G B` pour l'opacité Tailwind). NE PAS remettre de couleurs hex en dur dans les classes : utiliser les noms. Le thème est appliqué avant rendu par un script inline dans `app/layout.js` (lit `localStorage['fliptrack-theme']` = light|dark|system) et se change via `components/ThemeToggle.js` (page Compte → Apparence). `color-scheme` est déclaré par thème pour les contrôles natifs.
 - Les réponses IA doivent être en texte brut (pas de markdown) — c'est imposé dans les prompts.
 - Gemini function calling : renvoyer le part complet avec `thoughtSignature` dans l'historique, sinon erreur 400.
 - Modèle Gemini : seul `gemini-flash-lite-latest` a du quota sur le tier gratuit de cette clé.

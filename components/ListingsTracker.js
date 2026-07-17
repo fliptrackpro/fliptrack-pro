@@ -10,7 +10,7 @@ const PLATFORMS = [
   { key: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', create: 'https://www.facebook.com/marketplace/create/item' },
   { key: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', create: 'https://www.ebay.fr/sl/sell' },
   { key: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200', create: 'https://www.vestiairecollective.com/' },
-  { key: 'Autre', color: 'bg-[#f5f2ec] text-[#655e72] border-[#eae5f0]', create: null },
+  { key: 'Autre', color: 'bg-canvas text-muted2 border-line', create: null },
 ]
 
 function createUrl(name) {
@@ -18,7 +18,7 @@ function createUrl(name) {
 }
 
 function platformStyle(name) {
-  return (PLATFORMS.find(p => p.key === name)?.color) || 'bg-[#f5f2ec] text-[#655e72] border-[#eae5f0]'
+  return (PLATFORMS.find(p => p.key === name)?.color) || 'bg-canvas text-muted2 border-line'
 }
 
 function daysSince(dateStr) {
@@ -100,13 +100,13 @@ export default function ListingsTracker({ productId, defaultPrice }) {
     load()
   }
 
-  const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-3 py-2.5 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
+  const inputClass = "w-full bg-surface border border-line rounded-xl px-3 py-2.5 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-5 flex flex-col gap-4">
+    <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-5 flex flex-col gap-4">
       <div>
         <h3 className="text-sm font-bold">Suivi des annonces</h3>
-        <p className="text-xs text-[#8b8496] mt-0.5">Note où tu as publié cet article pour suivre la fraîcheur de chaque annonce.</p>
+        <p className="text-xs text-muted mt-0.5">Note où tu as publié cet article pour suivre la fraîcheur de chaque annonce.</p>
       </div>
 
       {/* Formulaire d'ajout — flux guidé : publier sur la plateforme, puis coller le lien */}
@@ -123,7 +123,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
               placeholder="Prix"
               className={`${inputClass} pr-6`}
             />
-            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
             href={createUrl(platform)}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 bg-[#6d5ce6]/10 hover:bg-[#6d5ce6]/20 text-[#6d5ce6] font-semibold rounded-xl px-4 py-2.5 transition text-sm"
+            className="flex items-center justify-center gap-2 bg-accent/10 hover:bg-accent/20 text-accent font-semibold rounded-xl px-4 py-2.5 transition text-sm"
           >
             1. Publier sur {platform} ↗
           </a>
@@ -147,11 +147,11 @@ export default function ListingsTracker({ productId, defaultPrice }) {
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-2.5 transition text-sm"
+          className="bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-2.5 transition text-sm"
         >
           {adding ? 'Ajout...' : `${createUrl(platform) ? '3. ' : ''}+ Ajouter au suivi`}
         </button>
-        <p className="text-[11px] text-[#b3aebf]">
+        <p className="text-[11px] text-faint">
           FlipTrack ne peut pas récupérer le lien automatiquement (les plateformes ne l'exposent pas) : ouvre la plateforme, publie, puis colle l'URL de ton annonce ici.
         </p>
       </div>
@@ -160,17 +160,17 @@ export default function ListingsTracker({ productId, defaultPrice }) {
       {!loading && listings.length > 0 && (
         <div className="flex flex-col gap-2 pt-1">
           {listings.map(l => (
-            <div key={l.id} className={`rounded-xl border px-3 py-2.5 ${l.status === 'active' ? 'bg-[#f5f2ec] border-[#eae5f0]' : 'bg-white border-[#eae5f0] opacity-70'}`}>
+            <div key={l.id} className={`rounded-xl border px-3 py-2.5 ${l.status === 'active' ? 'bg-canvas border-line' : 'bg-surface border-line opacity-70'}`}>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full border ${platformStyle(l.platform)}`}>{l.platform}</span>
-                  {l.listed_price != null && <span className="text-xs font-semibold text-[#241f2e]">{l.listed_price}€</span>}
+                  {l.listed_price != null && <span className="text-xs font-semibold text-ink">{l.listed_price}€</span>}
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {l.status === 'active' ? (
-                    <span className="text-[11px] text-[#8b8496]">{ageLabel(l.listed_at)}</span>
+                    <span className="text-[11px] text-muted">{ageLabel(l.listed_at)}</span>
                   ) : (
-                    <span className={`text-[11px] font-medium ${l.status === 'sold' ? 'text-[#4a8a6f]' : 'text-[#b3aebf]'}`}>
+                    <span className={`text-[11px] font-medium ${l.status === 'sold' ? 'text-sage' : 'text-faint'}`}>
                       {l.status === 'sold' ? 'Vendue' : 'Retirée'}
                     </span>
                   )}
@@ -178,7 +178,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
               </div>
               <div className="flex items-center justify-between gap-2 mt-2">
                 {l.url ? (
-                  <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#6d5ce6] hover:underline truncate max-w-[45%]">
+                  <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-[11px] text-accent hover:underline truncate max-w-[45%]">
                     Voir l'annonce ↗
                   </a>
                 ) : editingUrlId === l.id ? (
@@ -186,7 +186,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                 ) : (
                   <button
                     onClick={() => { setEditingUrlId(l.id); setEditUrlValue('') }}
-                    className="text-[11px] text-[#8b8496] hover:text-[#6d5ce6] transition"
+                    className="text-[11px] text-muted hover:text-accent transition"
                   >
                     + Ajouter le lien
                   </button>
@@ -194,20 +194,20 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                 <div className="flex items-center gap-1">
                   {l.status === 'active' && (
                     <>
-                      <button onClick={() => setStatus(l.id, 'sold')} className="text-[11px] bg-[#4a8a6f]/10 text-[#4a8a6f] hover:bg-[#4a8a6f]/20 font-medium px-2 py-1 rounded-full transition">
+                      <button onClick={() => setStatus(l.id, 'sold')} className="text-[11px] bg-sage/10 text-sage hover:bg-sage/20 font-medium px-2 py-1 rounded-full transition">
                         Vendue
                       </button>
-                      <button onClick={() => setStatus(l.id, 'expired')} className="text-[11px] bg-white border border-[#eae5f0] text-[#655e72] hover:bg-[#f5f2ec] font-medium px-2 py-1 rounded-full transition">
+                      <button onClick={() => setStatus(l.id, 'expired')} className="text-[11px] bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-2 py-1 rounded-full transition">
                         Retirer
                       </button>
                     </>
                   )}
                   {l.status !== 'active' && (
-                    <button onClick={() => setStatus(l.id, 'active')} className="text-[11px] bg-white border border-[#eae5f0] text-[#655e72] hover:bg-[#f5f2ec] font-medium px-2 py-1 rounded-full transition">
+                    <button onClick={() => setStatus(l.id, 'active')} className="text-[11px] bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-2 py-1 rounded-full transition">
                       Réactiver
                     </button>
                   )}
-                  <button onClick={() => remove(l.id)} className="text-[11px] text-[#c3bcf0] hover:text-[#e0654a] px-1.5 py-1 rounded-full hover:bg-[#e0654a]/10 transition">
+                  <button onClick={() => remove(l.id)} className="text-[11px] text-disabled hover:text-coral px-1.5 py-1 rounded-full hover:bg-coral/10 transition">
                     ✕
                   </button>
                 </div>
@@ -221,12 +221,12 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                     onChange={(e) => setEditUrlValue(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter') saveUrl(l.id) }}
                     placeholder="Colle le lien de l'annonce"
-                    className="flex-1 bg-white border border-[#eae5f0] rounded-lg px-2.5 py-1.5 text-xs text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition"
+                    className="flex-1 bg-surface border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink placeholder-faint focus:outline-none focus:border-accent transition"
                   />
-                  <button onClick={() => saveUrl(l.id)} className="text-[11px] bg-[#241f2e] text-white font-medium px-2.5 py-1.5 rounded-lg">
+                  <button onClick={() => saveUrl(l.id)} className="text-[11px] bg-inkd text-white font-medium px-2.5 py-1.5 rounded-lg">
                     OK
                   </button>
-                  <button onClick={() => { setEditingUrlId(null); setEditUrlValue('') }} className="text-[11px] text-[#8b8496] px-1.5 py-1.5">
+                  <button onClick={() => { setEditingUrlId(null); setEditUrlValue('') }} className="text-[11px] text-muted px-1.5 py-1.5">
                     ✕
                   </button>
                 </div>

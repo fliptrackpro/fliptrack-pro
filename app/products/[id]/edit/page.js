@@ -124,31 +124,31 @@ export default function EditProduct() {
   const categories = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
   const conditions = ['Neuf avec étiquette', 'Très bon état', 'Bon état', 'État correct']
 
-  const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
-  const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
+  const inputClass = "w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
+  const labelClass = "text-xs font-semibold text-muted uppercase tracking-wider"
 
   if (!form) return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   const totalCost = (parseFloat(form.purchase_price || 0) + parseFloat(form.purchase_fees || 0)).toFixed(2)
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
+    <div className="min-h-screen bg-canvas text-ink">
 
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur border-b border-line px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/products')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
+            className="w-8 h-8 rounded-lg hover:bg-canvas flex items-center justify-center text-muted transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="hidden sm:inline text-sm text-[#8b8496]">Stock</span>
-          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356] truncate">Modifier</span>
+          <span className="hidden sm:inline text-sm text-muted">Stock</span>
+          <span className="hidden sm:inline text-sm text-line2">/</span>
+          <span className="text-sm font-medium text-ink2 truncate">Modifier</span>
         </div>
         <button onClick={() => router.push('/dashboard')} className="hover:opacity-70 transition">
           <Logo markClass="w-6 h-6" textClass="text-lg" />
@@ -158,23 +158,23 @@ export default function EditProduct() {
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-serif italic text-[#241f2e]">Modifier le produit</h2>
+          <h2 className="text-2xl font-serif italic text-ink">Modifier le produit</h2>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
 
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Photo</label>
-            <label className="flex items-center gap-4 cursor-pointer bg-[#f5f2ec] border border-dashed border-[#d6cfe8] rounded-xl px-4 py-3 hover:border-[#6d5ce6]/50 transition">
+            <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
-                <div className="w-14 h-14 rounded-lg bg-white flex items-center justify-center">
-                  <CameraIcon className="w-6 h-6 text-[#b3aebf]" />
+                <div className="w-14 h-14 rounded-lg bg-surface flex items-center justify-center">
+                  <CameraIcon className="w-6 h-6 text-faint" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#4a4356]">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
+                <p className="text-sm text-ink2">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
@@ -188,7 +188,7 @@ export default function EditProduct() {
                   <img src={url} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeExistingExtra(url)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
                   >
                     ✕
                   </button>
@@ -199,20 +199,20 @@ export default function EditProduct() {
                   <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeNewExtra(i)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#241f2e] text-white text-xs flex items-center justify-center"
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
                   >
                     ✕
                   </button>
                 </div>
               ))}
-              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-[#f5f2ec] border border-dashed border-[#d6cfe8] hover:border-[#6d5ce6]/50 flex items-center justify-center cursor-pointer transition">
-                <span className="text-xl text-[#b3aebf]">+</span>
+              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-canvas border border-dashed border-line2 hover:border-accent/50 flex items-center justify-center cursor-pointer transition">
+                <span className="text-xl text-faint">+</span>
                 <input type="file" accept="image/*" multiple onChange={handleNewExtraPhotos} className="hidden" />
               </label>
             </div>
           </div>
 
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Nom du produit</label>
@@ -255,7 +255,7 @@ export default function EditProduct() {
             </div>
           </div>
 
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
@@ -268,7 +268,7 @@ export default function EditProduct() {
                   type="number"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -281,25 +281,25 @@ export default function EditProduct() {
                   type="number"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
             </div>
           </div>
 
           {form.purchase_price && (
-            <div className="bg-[#4a8a6f]/10 border border-[#4a8a6f]/20 rounded-xl px-4 py-3 flex items-center justify-between">
+            <div className="bg-sage/10 border border-sage/20 rounded-xl px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-[#4a8a6f] font-semibold uppercase tracking-wider">Coût total</p>
-                <p className="text-xs text-[#4a8a6f]/70 mt-0.5">Prix achat + frais</p>
+                <p className="text-xs text-sage font-semibold uppercase tracking-wider">Coût total</p>
+                <p className="text-xs text-sage/70 mt-0.5">Prix achat + frais</p>
               </div>
-              <span className="text-xl font-serif text-[#4a8a6f]">{totalCost} €</span>
+              <span className="text-xl font-serif text-sage">{totalCost} €</span>
             </div>
           )}
 
           <button
             onClick={handleSubmit}
             disabled={loading || !form.name || !form.purchase_price}
-            className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

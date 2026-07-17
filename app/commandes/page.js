@@ -14,8 +14,8 @@ function fmtDate(dateStr) {
 
 // Étapes d'expédition d'une vente et libellé du bouton pour passer à la suivante
 const SHIP_FLOW = {
-  to_ship: { label: 'À expédier', next: 'shipped', nextLabel: "Marquer expédié", color: 'bg-[#e0654a]/10 text-[#e0654a]' },
-  shipped: { label: 'Expédié', next: 'delivered', nextLabel: 'Marquer livré', color: 'bg-[#6d5ce6]/10 text-[#6d5ce6]' },
+  to_ship: { label: 'À expédier', next: 'shipped', nextLabel: "Marquer expédié", color: 'bg-coral/10 text-coral' },
+  shipped: { label: 'Expédié', next: 'delivered', nextLabel: 'Marquer livré', color: 'bg-accent/10 text-accent' },
 }
 
 export default function CommandesPage() {
@@ -78,21 +78,21 @@ export default function CommandesPage() {
   }
 
   if (!user || loading) return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   const empty = purchases.length === 0 && shipments.length === 0
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e] md:pl-56">
+    <div className="min-h-screen bg-canvas text-ink md:pl-56">
       <Nav />
 
-      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-[#eae5f0]">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-line">
         <div>
           <h1 className="text-xl font-serif italic">Commandes</h1>
-          <p className="text-[#8b8496] text-xs mt-0.5">Achats en route et ventes à expédier</p>
+          <p className="text-muted text-xs mt-0.5">Achats en route et ventes à expédier</p>
         </div>
       </header>
 
@@ -100,8 +100,8 @@ export default function CommandesPage() {
 
         {empty && (
           <div className="text-center py-16">
-            <p className="text-[#b3aebf] text-sm">Rien en attente pour le moment.</p>
-            <p className="text-[#b3aebf] text-xs mt-1">Coche « en commande » à l'ajout d'un article, ou « à expédier » lors d'une vente.</p>
+            <p className="text-faint text-sm">Rien en attente pour le moment.</p>
+            <p className="text-faint text-xs mt-1">Coche « en commande » à l'ajout d'un article, ou « à expédier » lors d'une vente.</p>
           </div>
         )}
 
@@ -110,21 +110,21 @@ export default function CommandesPage() {
           <section className="animate-rise-in">
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-sm font-bold">Achats en route</h2>
-              <span className="text-xs bg-[#6d5ce6]/10 text-[#6d5ce6] font-semibold px-2 py-0.5 rounded-full">{purchases.length}</span>
+              <span className="text-xs bg-accent/10 text-accent font-semibold px-2 py-0.5 rounded-full">{purchases.length}</span>
             </div>
             <div className="flex flex-col gap-2">
               {purchases.map(p => (
-                <div key={p.id} className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-4 flex items-center justify-between gap-3">
+                <div key={p.id} className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-4 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">{p.name}</p>
-                    <p className="text-xs text-[#8b8496]">
+                    <p className="text-xs text-muted">
                       {p.purchase_price}€
                       {p.expected_delivery_date ? ` · livraison estimée ${fmtDate(p.expected_delivery_date)}` : ' · sans date de livraison'}
                     </p>
                   </div>
                   <button
                     onClick={() => markReceived(p)}
-                    className="text-xs bg-[#4a8a6f] hover:bg-[#3e7a5f] active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
+                    className="text-xs bg-sage hover:bg-sageh active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
                   >
                     Marquer reçu
                   </button>
@@ -139,24 +139,24 @@ export default function CommandesPage() {
           <section className="animate-rise-in">
             <div className="flex items-center gap-2 mb-3">
               <h2 className="text-sm font-bold">Ventes à expédier</h2>
-              <span className="text-xs bg-[#e0654a]/10 text-[#e0654a] font-semibold px-2 py-0.5 rounded-full">{shipments.length}</span>
+              <span className="text-xs bg-coral/10 text-coral font-semibold px-2 py-0.5 rounded-full">{shipments.length}</span>
             </div>
             <div className="flex flex-col gap-2">
               {shipments.map(s => {
                 const flow = SHIP_FLOW[s.shipping_status]
                 return (
-                  <div key={s.id} className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-4 flex items-center justify-between gap-3">
+                  <div key={s.id} className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-4 flex items-center justify-between gap-3">
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate">{s.products?.name || 'Article vendu'}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${flow?.color || ''}`}>{flow?.label}</span>
-                        <span className="text-xs text-[#8b8496]">{s.sale_price}€{s.platform ? ` · ${s.platform}` : ''}</span>
+                        <span className="text-xs text-muted">{s.sale_price}€{s.platform ? ` · ${s.platform}` : ''}</span>
                       </div>
                     </div>
                     {flow && (
                       <button
                         onClick={() => advanceShipment(s)}
-                        className="text-xs bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
+                        className="text-xs bg-inkd hover:bg-inkdh active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
                       >
                         {flow.nextLabel}
                       </button>

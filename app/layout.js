@@ -29,8 +29,14 @@ export const metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f5f2ec",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f2ec" },
+    { media: "(prefers-color-scheme: dark)", color: "#17141b" },
+  ],
 };
+
+// Applique le thème avant le premier rendu pour éviter tout flash de couleur.
+const themeInit = `(function(){try{var t=localStorage.getItem('fliptrack-theme');if(!t||t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}})();`;
 
 export default function RootLayout({ children }) {
   return (
@@ -38,6 +44,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${jakarta.variable} ${fraunces.variable} antialiased`}
       >
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <ToastProvider>
           <PageTransition>{children}</PageTransition>
           <ChatWidget />

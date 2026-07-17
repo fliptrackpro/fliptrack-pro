@@ -32,9 +32,9 @@ export function LogoMark(props) {
 export default function Logo({ className = '', markClass = 'w-8 h-8', textClass = 'text-lg' }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <LogoMark className={`${markClass} rounded-[28%] shadow-sm shadow-[#6d5ce6]/30 flex-shrink-0`} />
-      <span className={`font-serif italic text-[#241f2e] leading-none ${textClass}`}>
-        Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
+      <LogoMark className={`${markClass} rounded-[28%] shadow-sm shadow-accent/30 flex-shrink-0`} />
+      <span className={`font-serif italic text-ink leading-none ${textClass}`}>
+        Flip<span className="not-italic font-sans font-bold text-accent">Track</span>
       </span>
     </span>
   )

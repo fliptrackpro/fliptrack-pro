@@ -117,17 +117,17 @@ export default function SellProduct() {
     ? (parseFloat(form.sale_price || 0) - product.purchase_price - product.purchase_fees - parseFloat(form.platform_fees || 0)).toFixed(2)
     : 0
 
-  const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
-  const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
+  const inputClass = "w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
+  const labelClass = "text-xs font-semibold text-muted uppercase tracking-wider"
 
   if (!product) return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center">
-      <div className="w-6 h-6 border-2 border-[#6d5ce6] border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-canvas flex items-center justify-center">
+      <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] text-[#241f2e]">
+    <div className="min-h-screen bg-canvas text-ink">
 
       {celebration && (
         <SaleCelebration
@@ -139,17 +139,17 @@ export default function SellProduct() {
         />
       )}
 
-      <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-[#eae5f0] px-4 sm:px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-surface/90 backdrop-blur border-b border-line px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <button
             onClick={() => router.push('/products')}
-            className="w-8 h-8 rounded-lg hover:bg-[#f5f2ec] flex items-center justify-center text-[#8b8496] transition text-sm flex-shrink-0"
+            className="w-8 h-8 rounded-lg hover:bg-canvas flex items-center justify-center text-muted transition text-sm flex-shrink-0"
           >
             ←
           </button>
-          <span className="hidden sm:inline text-sm text-[#8b8496]">Stock</span>
-          <span className="hidden sm:inline text-sm text-[#d6cfe8]">/</span>
-          <span className="text-sm font-medium text-[#4a4356] truncate">Vendre</span>
+          <span className="hidden sm:inline text-sm text-muted">Stock</span>
+          <span className="hidden sm:inline text-sm text-line2">/</span>
+          <span className="text-sm font-medium text-ink2 truncate">Vendre</span>
         </div>
         <button onClick={() => router.push('/dashboard')} className="hover:opacity-70 transition">
           <Logo markClass="w-6 h-6" textClass="text-lg" />
@@ -159,11 +159,11 @@ export default function SellProduct() {
       <main className="max-w-2xl mx-auto px-4 py-10">
 
         <div className="mb-8">
-          <h2 className="text-2xl font-serif italic text-[#241f2e]">Vendre « {product.name} »</h2>
-          <p className="text-[#8b8496] text-sm mt-1">Coût d'achat : {(product.purchase_price + product.purchase_fees).toFixed(2)}€</p>
+          <h2 className="text-2xl font-serif italic text-ink">Vendre « {product.name} »</h2>
+          <p className="text-muted text-sm mt-1">Coût d'achat : {(product.purchase_price + product.purchase_fees).toFixed(2)}€</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm shadow-[#241f2e]/5 p-6 md:p-8 flex flex-col gap-6">
+        <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
 
           <div className="flex flex-col gap-1.5">
             <label className={labelClass}>Plateforme</label>
@@ -180,7 +180,7 @@ export default function SellProduct() {
             </select>
           </div>
 
-          <div className="border-t border-[#eae5f0]" />
+          <div className="border-t border-line" />
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
@@ -194,7 +194,7 @@ export default function SellProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
@@ -208,10 +208,10 @@ export default function SellProduct() {
                   placeholder="0"
                   className={`${inputClass} pr-8`}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b3aebf] text-sm">€</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
               {form.platform && FEE_RATES[form.platform] != null && (
-                <p className="text-[11px] text-[#8b8496]">
+                <p className="text-[11px] text-muted">
                   {FEE_RATES[form.platform] === 0
                     ? `Pas de frais vendeur sur ${form.platform}, ajuste si besoin.`
                     : `Estimé à ${(FEE_RATES[form.platform] * 100).toFixed(0)}% sur ${form.platform}, ajuste si besoin.`}
@@ -222,13 +222,13 @@ export default function SellProduct() {
 
           {form.sale_price && (
             <div className={`rounded-xl px-4 py-3 flex items-center justify-between border ${
-              margin >= 0 ? 'bg-[#4a8a6f]/10 border-[#4a8a6f]/20' : 'bg-[#e0654a]/10 border-[#e0654a]/20'
+              margin >= 0 ? 'bg-sage/10 border-sage/20' : 'bg-coral/10 border-coral/20'
             }`}>
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wider ${margin >= 0 ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>Marge nette</p>
-                <p className={`text-xs mt-0.5 ${margin >= 0 ? 'text-[#4a8a6f]/70' : 'text-[#e0654a]/70'}`}>Vente − coût d'achat − frais</p>
+                <p className={`text-xs font-semibold uppercase tracking-wider ${margin >= 0 ? 'text-sage' : 'text-coral'}`}>Marge nette</p>
+                <p className={`text-xs mt-0.5 ${margin >= 0 ? 'text-sage/70' : 'text-coral/70'}`}>Vente − coût d'achat − frais</p>
               </div>
-              <span className={`text-xl font-serif ${margin >= 0 ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>{margin}€</span>
+              <span className={`text-xl font-serif ${margin >= 0 ? 'text-sage' : 'text-coral'}`}>{margin}€</span>
             </div>
           )}
 
@@ -237,21 +237,21 @@ export default function SellProduct() {
             <button
               type="button"
               onClick={() => setToShip(v => !v)}
-              className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${toShip ? 'bg-[#6d5ce6]' : 'bg-[#eae5f0]'}`}
+              className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${toShip ? 'bg-accent' : 'bg-line'}`}
               aria-pressed={toShip}
             >
-              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${toShip ? 'left-[18px]' : 'left-0.5'}`} />
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-surface shadow transition-all ${toShip ? 'left-[18px]' : 'left-0.5'}`} />
             </button>
             <div>
-              <p className="text-sm font-medium text-[#241f2e]">Article à expédier</p>
-              <p className="text-xs text-[#8b8496]">Suis l'envoi dans « Commandes » jusqu'à la réception par l'acheteur.</p>
+              <p className="text-sm font-medium text-ink">Article à expédier</p>
+              <p className="text-xs text-muted">Suis l'envoi dans « Commandes » jusqu'à la réception par l'acheteur.</p>
             </div>
           </label>
 
           <button
             onClick={handleSubmit}
             disabled={loading || !form.sale_price}
-            className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
+            className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3.5 transition text-sm mt-1"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">

@@ -22,10 +22,10 @@ export function ToastProvider({ children }) {
         {toasts.map(t => (
           <div
             key={t.id}
-            className={`rounded-xl px-4 py-3 text-sm shadow-lg border bg-white ${
+            className={`rounded-xl px-4 py-3 text-sm shadow-lg border bg-surface ${
               t.type === 'error'
-                ? 'border-[#e0654a]/25 text-[#e0654a]'
-                : 'border-[#4a8a6f]/25 text-[#4a8a6f]'
+                ? 'border-coral/25 text-coral'
+                : 'border-sage/25 text-sage'
             }`}
           >
             {t.message}

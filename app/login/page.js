@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 import { LogoMark } from '@/components/Logo'
 import { isDisposableEmail } from '@/lib/disposableEmails'
 
-const inputClass = "w-full bg-white border border-[#eae5f0] rounded-xl px-4 py-3 text-[#241f2e] placeholder-[#b3aebf] focus:outline-none focus:border-[#6d5ce6] transition text-sm"
-const labelClass = "text-xs font-semibold text-[#8b8496] uppercase tracking-wider"
+const inputClass = "w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-faint focus:outline-none focus:border-accent transition text-sm"
+const labelClass = "text-xs font-semibold text-muted uppercase tracking-wider"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -130,24 +130,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f2ec] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white border border-[#eae5f0] rounded-2xl p-8 shadow-xl shadow-[#241f2e]/5">
+    <div className="min-h-screen bg-canvas flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-surface border border-line rounded-2xl p-8 shadow-xl shadow-inkd/5">
 
         <div className="text-center mb-8">
-          <LogoMark className="w-14 h-14 mx-auto mb-4 rounded-[28%] shadow-lg shadow-[#6d5ce6]/25" />
-          <h1 className="text-3xl font-serif italic text-[#241f2e]">
-            Flip<span className="not-italic font-sans font-bold text-[#6d5ce6]">Track</span>
+          <LogoMark className="w-14 h-14 mx-auto mb-4 rounded-[28%] shadow-lg shadow-accent/25" />
+          <h1 className="text-3xl font-serif italic text-ink">
+            Flip<span className="not-italic font-sans font-bold text-accent">Track</span>
           </h1>
-          <p className="text-[#8b8496] mt-2">
+          <p className="text-muted mt-2">
             Gérez vos achats et ventes en un clic
           </p>
         </div>
 
         {error && (
-          <p className="text-xs text-[#e0654a] bg-[#e0654a]/10 rounded-xl px-3 py-2 mb-4">{error}</p>
+          <p className="text-xs text-coral bg-coral/10 rounded-xl px-3 py-2 mb-4">{error}</p>
         )}
         {message && (
-          <p className="text-xs text-[#4a8a6f] bg-[#4a8a6f]/10 rounded-xl px-3 py-2 mb-4">{message}</p>
+          <p className="text-xs text-sage bg-sage/10 rounded-xl px-3 py-2 mb-4">{message}</p>
         )}
 
         {mode === 'sign_in' && (
@@ -178,15 +178,15 @@ export default function LoginPage() {
             <button
               onClick={handleSignIn}
               disabled={loading || !identifier.trim() || !password}
-              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+              className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
             <div className="flex items-center justify-between text-xs">
-              <button onClick={() => switchMode('forgot')} className="text-[#8b8496] hover:text-[#6d5ce6] transition">
+              <button onClick={() => switchMode('forgot')} className="text-muted hover:text-accent transition">
                 Mot de passe oublié ?
               </button>
-              <button onClick={() => switchMode('sign_up')} className="text-[#8b8496] hover:text-[#6d5ce6] transition">
+              <button onClick={() => switchMode('sign_up')} className="text-muted hover:text-accent transition">
                 Pas de compte ? S'inscrire
               </button>
             </div>
@@ -204,7 +204,7 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="username"
               />
-              <p className="text-[11px] text-[#b3aebf]">3 à 20 caractères : lettres, chiffres, underscore. Servira aussi à te connecter.</p>
+              <p className="text-[11px] text-faint">3 à 20 caractères : lettres, chiffres, underscore. Servira aussi à te connecter.</p>
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={labelClass}>Email</label>
@@ -231,11 +231,11 @@ export default function LoginPage() {
             <button
               onClick={handleSignUp}
               disabled={loading || !username.trim() || !email.trim() || !password}
-              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+              className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
             >
               {loading ? 'Création...' : "S'inscrire"}
             </button>
-            <button onClick={() => switchMode('sign_in')} className="text-xs text-[#8b8496] hover:text-[#6d5ce6] transition text-center">
+            <button onClick={() => switchMode('sign_in')} className="text-xs text-muted hover:text-accent transition text-center">
               Déjà un compte ? Se connecter
             </button>
           </div>
@@ -257,11 +257,11 @@ export default function LoginPage() {
             <button
               onClick={handleForgot}
               disabled={loading || !forgotEmail.trim()}
-              className="w-full bg-[#241f2e] hover:bg-[#3a3347] active:scale-[0.98] disabled:bg-[#eae5f0] disabled:text-[#c3bcf0] text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+              className="w-full bg-inkd hover:bg-inkdh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
             >
               {loading ? 'Envoi...' : 'Envoyer les instructions'}
             </button>
-            <button onClick={() => switchMode('sign_in')} className="text-xs text-[#8b8496] hover:text-[#6d5ce6] transition text-center">
+            <button onClick={() => switchMode('sign_in')} className="text-xs text-muted hover:text-accent transition text-center">
               Retour à la connexion
             </button>
           </div>
