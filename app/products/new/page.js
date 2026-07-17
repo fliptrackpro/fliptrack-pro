@@ -54,6 +54,8 @@ export default function NewProduct() {
   const [assistMessages, setAssistMessages] = useState([])
   const [assistInput, setAssistInput] = useState('')
   const [assistSending, setAssistSending] = useState(false)
+  const [isOrder, setIsOrder] = useState(false)
+  const [expectedDelivery, setExpectedDelivery] = useState('')
   const [form, setForm] = useState({
     name: '',
     category: '',
@@ -269,7 +271,8 @@ export default function NewProduct() {
       purchase_price: parseFloat(form.purchase_price),
       purchase_date: new Date().toISOString().split('T')[0],
       purchase_fees: parseFloat(form.purchase_fees) || 0,
-      status: 'stock',
+      status: isOrder ? 'commande' : 'stock',
+      expected_delivery_date: isOrder && expectedDelivery ? expectedDelivery : null,
       description: description || null,
       photo_url,
       photo_urls,
@@ -280,8 +283,8 @@ export default function NewProduct() {
     if (error) {
       toast('Erreur : ' + error.message)
     } else {
-      toast('Produit ajouté', 'success')
-      router.push('/products')
+      toast(isOrder ? 'Commande enregistrée' : 'Produit ajouté', 'success')
+      router.push(isOrder ? '/commandes' : '/products')
     }
     setLoading(false)
   }
@@ -592,6 +595,39 @@ export default function NewProduct() {
             </div>
           )}
 
+          {/* Separateur */}
+          <div className="border-t border-[#eae5f0]" />
+
+          {/* En commande (pas encore reçu) */}
+          <div className="flex flex-col gap-3">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <button
+                type="button"
+                onClick={() => setIsOrder(v => !v)}
+                className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${isOrder ? 'bg-[#6d5ce6]' : 'bg-[#eae5f0]'}`}
+                aria-pressed={isOrder}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${isOrder ? 'left-[18px]' : 'left-0.5'}`} />
+              </button>
+              <div>
+                <p className="text-sm font-medium text-[#241f2e]">Article encore en commande</p>
+                <p className="text-xs text-[#8b8496]">Payé mais pas encore reçu — il ira dans « Commandes », pas dans le stock.</p>
+              </div>
+            </label>
+
+            {isOrder && (
+              <div className="flex flex-col gap-1.5">
+                <label className={labelClass}>Livraison estimée (optionnel)</label>
+                <input
+                  type="date"
+                  value={expectedDelivery}
+                  onChange={(e) => setExpectedDelivery(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            )}
+          </div>
+
           {/* Bouton */}
           <button
             onClick={handleSubmit}
@@ -604,7 +640,7 @@ export default function NewProduct() {
                 Enregistrement...
               </span>
             ) : (
-              'Ajouter le produit →'
+              isOrder ? 'Enregistrer la commande →' : 'Ajouter le produit →'
             )}
           </button>
 

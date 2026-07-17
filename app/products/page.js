@@ -66,7 +66,8 @@ export default function ProductsPage() {
   }
 
   const filtered = products
-    .filter(p => filter === 'tous' ? true : p.status === filter)
+    // Les articles "en commande" (pas encore reçus) vivent dans la page Commandes, pas dans le stock
+    .filter(p => filter === 'tous' ? p.status !== 'commande' : p.status === filter)
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
   if (!user) return (
@@ -82,7 +83,7 @@ export default function ProductsPage() {
       <header className="flex items-center justify-between px-4 sm:px-6 py-5 border-b border-[#eae5f0]">
         <div>
           <h1 className="text-xl font-serif italic">Stock</h1>
-          <p className="text-[#8b8496] text-xs mt-0.5">{products.length} produit{products.length > 1 ? 's' : ''}</p>
+          <p className="text-[#8b8496] text-xs mt-0.5">{products.filter(p => p.status !== 'commande').length} produit{products.filter(p => p.status !== 'commande').length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex items-center gap-2">
           <button

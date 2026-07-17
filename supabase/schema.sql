@@ -10,7 +10,8 @@ create table if not exists products (
   purchase_price numeric not null default 0,
   purchase_fees numeric not null default 0,
   purchase_date date not null default current_date,
-  status text not null default 'stock' check (status in ('stock', 'vendu')),
+  status text not null default 'stock' check (status in ('commande', 'stock', 'vendu')),
+  expected_delivery_date date,
   description text,
   photo_url text,
   photo_urls jsonb not null default '[]'::jsonb,
@@ -29,6 +30,8 @@ create table if not exists sales (
   platform_fees numeric not null default 0,
   platform text,
   sale_date date not null default current_date,
+  shipping_status text not null default 'completed' check (shipping_status in ('to_ship', 'shipped', 'delivered', 'completed')),
+  shipped_at timestamptz,
   created_at timestamptz not null default now()
 );
 

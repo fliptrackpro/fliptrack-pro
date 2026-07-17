@@ -14,6 +14,7 @@ export default function SellProduct() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(false)
   const [celebration, setCelebration] = useState(null)
+  const [toShip, setToShip] = useState(false)
   const [form, setForm] = useState({
     sale_price: '',
     platform_fees: '',
@@ -81,6 +82,7 @@ export default function SellProduct() {
       platform_fees: parseFloat(form.platform_fees) || 0,
       platform: form.platform,
       sale_date: new Date().toISOString().split('T')[0],
+      shipping_status: toShip ? 'to_ship' : 'completed',
     })
 
     if (saleError) {
@@ -229,6 +231,22 @@ export default function SellProduct() {
               <span className={`text-xl font-serif ${margin >= 0 ? 'text-[#4a8a6f]' : 'text-[#e0654a]'}`}>{margin}€</span>
             </div>
           )}
+
+          {/* À expédier */}
+          <label className="flex items-center gap-3 cursor-pointer">
+            <button
+              type="button"
+              onClick={() => setToShip(v => !v)}
+              className={`relative w-10 h-6 rounded-full transition flex-shrink-0 ${toShip ? 'bg-[#6d5ce6]' : 'bg-[#eae5f0]'}`}
+              aria-pressed={toShip}
+            >
+              <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${toShip ? 'left-[18px]' : 'left-0.5'}`} />
+            </button>
+            <div>
+              <p className="text-sm font-medium text-[#241f2e]">Article à expédier</p>
+              <p className="text-xs text-[#8b8496]">Suis l'envoi dans « Commandes » jusqu'à la réception par l'acheteur.</p>
+            </div>
+          </label>
 
           <button
             onClick={handleSubmit}
