@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
 import Logo from '@/components/Logo'
+import ListingsTracker from '@/components/ListingsTracker'
 
 const PLATFORMS = [
   { key: 'vinted', label: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', url: 'https://www.vinted.fr/items/new' },
@@ -211,6 +212,10 @@ export default function PublishProduct() {
               'Générer les annonces →'
             )}
           </button>
+        </div>
+
+        <div className="mt-6">
+          <ListingsTracker productId={product.id} defaultPrice={price} />
         </div>
 
         {listings && (

@@ -66,6 +66,7 @@ export default function Dashboard() {
   const [products, setProducts] = useState([])
   const [sales, setSales] = useState([])
   const [period, setPeriod] = useState('mois')
+  const [listings, setListings] = useState([])
   const [goal, setGoal] = useState(null)
   const [goalInput, setGoalInput] = useState('')
   const [editingGoal, setEditingGoal] = useState(false)
@@ -101,6 +102,14 @@ export default function Dashboard() {
 
       const allSales = (prods || []).flatMap(p => p.sales || [])
       setSales(allSales)
+
+      const { data: activeListings } = await supabase
+        .from('listings')
+        .select('*, products(name)')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .order('listed_at', { ascending: true })
+      setListings(activeListings || [])
     }
     load()
   }, [router])
@@ -427,6 +436,40 @@ export default function Dashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          </section>
+        )}
+
+        {/* Annonces actives */}
+        {listings.length > 0 && (
+          <section style={{ animationDelay: '190ms' }} className="animate-rise-in">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <RepostIcon className="w-4 h-4 text-[#6d5ce6]" />
+                <h2 className="text-sm font-bold">Annonces actives</h2>
+              </div>
+              <span className="text-xs text-[#8b8496]">{listings.length} en ligne</span>
+            </div>
+            <div className="bg-white rounded-2xl px-5">
+              {listings.slice(0, 6).map((l, i) => {
+                const age = daysSince(l.listed_at)
+                const stale = age >= 14
+                return (
+                  <div
+                    key={l.id}
+                    className={`flex items-center justify-between py-3 cursor-pointer ${i < Math.min(listings.length, 6) - 1 ? 'border-b border-[#eae5f0]' : ''}`}
+                    onClick={() => l.product_id && router.push(`/products/${l.product_id}/publish`)}
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate max-w-[180px]">{l.products?.name || 'Article'}</p>
+                      <p className="text-xs text-[#8b8496]">{l.platform}{l.listed_price != null ? ` · ${l.listed_price}€` : ''}</p>
+                    </div>
+                    <span className={`text-xs font-bold px-2.5 py-1 rounded-full flex-shrink-0 ${stale ? 'bg-[#fbeee9] text-[#e0654a]' : 'bg-[#efebfd] text-[#6d5ce6]'}`}>
+                      {age <= 0 ? "auj." : `${age}j`}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
           </section>
         )}
