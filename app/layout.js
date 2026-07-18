@@ -17,12 +17,27 @@ const fraunces = Fraunces({
 });
 
 export const metadata = {
-  title: "FlipTrack",
-  description: "Gérez vos achats et ventes en un clic",
+  metadataBase: new URL("https://fliptrack-pro-9ziq.vercel.app"),
+  title: {
+    default: "FlipTrack — Gère ton activité d'achat-revente",
+    template: "%s · FlipTrack",
+  },
+  description:
+    "Suis ton stock, tes ventes et ta marge. Estimation de prix par IA depuis une photo, génération d'annonces Vinted/Leboncoin/eBay, suivi des annonces et des expéditions.",
   manifest: "/manifest.json",
   icons: {
     icon: "/icons/icon-192.png",
     apple: "/icons/icon-192.png",
+  },
+  openGraph: {
+    title: "FlipTrack — Gère ton activité d'achat-revente",
+    description:
+      "Stock, ventes, marge, annonces générées par IA : l'outil des revendeurs d'occasion.",
+    url: "/",
+    siteName: "FlipTrack",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "FlipTrack" }],
   },
 };
 
