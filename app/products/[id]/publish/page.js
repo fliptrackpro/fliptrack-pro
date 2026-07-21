@@ -8,11 +8,11 @@ import Logo from '@/components/Logo'
 import ListingsTracker from '@/components/ListingsTracker'
 
 const PLATFORMS = [
-  { key: 'vinted', label: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', url: 'https://www.vinted.fr/items/new' },
-  { key: 'leboncoin', label: 'Leboncoin', color: 'bg-orange-50 text-orange-700 border-orange-200', url: 'https://www.leboncoin.fr/deposer-une-annonce' },
-  { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', url: 'https://www.facebook.com/marketplace/create/item' },
-  { key: 'ebay', label: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', url: 'https://www.ebay.fr/sl/sell' },
-  { key: 'vestiaire', label: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200', url: 'https://www.vestiairecollective.com/' },
+  { key: 'vinted', label: 'Vinted', color: 'bg-platvinted/12 text-platvinted border-platvinted/25', url: 'https://www.vinted.fr/items/new' },
+  { key: 'leboncoin', label: 'Leboncoin', color: 'bg-platlbc/12 text-platlbc border-platlbc/25', url: 'https://www.leboncoin.fr/deposer-une-annonce' },
+  { key: 'facebook', label: 'Facebook Marketplace', color: 'bg-platfb/12 text-platfb border-platfb/25', url: 'https://www.facebook.com/marketplace/create/item' },
+  { key: 'ebay', label: 'eBay', color: 'bg-platebay/12 text-platebay border-platebay/25', url: 'https://www.ebay.fr/sl/sell' },
+  { key: 'vestiaire', label: 'Vestiaire Collective', color: 'bg-platvc/12 text-platvc border-platvc/25', url: 'https://www.vestiairecollective.com/' },
 ]
 
 function daysSince(dateStr) {
@@ -164,7 +164,7 @@ export default function PublishProduct() {
               <div className="flex flex-wrap gap-3">
                 {(product.photo_urls?.length > 0 ? product.photo_urls : [product.photo_url]).map((url, i) => (
                   <div key={url} className="flex flex-col items-center gap-1.5">
-                    <img src={url} alt="" className="w-16 h-16 rounded-xl object-cover" />
+                    <img loading="lazy" decoding="async" src={url} alt="" className="w-16 h-16 rounded-xl object-cover" />
                     <a
                       href={url}
                       download

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
 import Logo from '@/components/Logo'
 import { CameraIcon, BarcodeIcon, SparkleIcon } from '@/components/icons'
+import { compressImage, compressImages } from '@/lib/image'
 
 async function authHeaders() {
   const { data: { session } } = await supabase.auth.getSession()
@@ -94,7 +95,8 @@ export default function NewProduct() {
     setEstimating(true)
 
     try {
-      const allFiles = [photoFile, ...extraPhotos.map(p => p.file)]
+      // Compresser avant l'encodage base64 : divise d'autant le payload envoyé à l'IA
+      const allFiles = await compressImages([photoFile, ...extraPhotos.map(p => p.file)])
       const images = await Promise.all(allFiles.map(async file => ({
         data: await fileToBase64(file),
         mimeType: file.type,
@@ -240,7 +242,8 @@ export default function NewProduct() {
       return router.push('/login')
     }
 
-    const uploadOne = async (file) => {
+    const uploadOne = async (raw) => {
+      const file = await compressImage(raw)
       const ext = file.name.split('.').pop()
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`
       const { error: uploadError } = await supabase.storage.from('products').upload(path, file)
@@ -332,7 +335,7 @@ export default function NewProduct() {
             <span className={labelClass}>Photo (estimation IA)</span>
             <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
-                <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                <img loading="lazy" decoding="async" src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
                 <div className="w-14 h-14 rounded-lg bg-surface flex items-center justify-center">
                   <CameraIcon className="w-6 h-6 text-faint" />
@@ -468,7 +471,7 @@ export default function NewProduct() {
             <div className="flex flex-wrap gap-2">
               {extraPhotos.map((p, i) => (
                 <div key={i} className="relative w-16 h-16">
-                  <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <img loading="lazy" decoding="async" src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeExtraPhoto(i)}
                     className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"

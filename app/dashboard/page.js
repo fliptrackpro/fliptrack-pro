@@ -208,7 +208,7 @@ export default function Dashboard() {
 
         {/* Checklist bien démarrer */}
         {showOnboarding && (
-          <section className="animate-rise-in bg-surface rounded-2xl p-5">
+          <section className="bg-surface rounded-2xl p-5">
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-2">
                 <SparkleIcon className="w-4 h-4 text-accent" />
@@ -267,7 +267,7 @@ export default function Dashboard() {
 
         {/* Héro + stats secondaires */}
         <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-3.5">
-          <div className="animate-rise-in relative overflow-hidden rounded-[22px] p-6 text-white flex flex-col justify-between min-h-[220px] bg-gradient-to-br from-accent via-accent2 to-accent3">
+          <div className="relative overflow-hidden rounded-[22px] p-6 text-white flex flex-col justify-between min-h-[220px] bg-gradient-to-br from-accent via-accent2 to-accent3">
             <div className="absolute -right-10 -bottom-12 w-44 h-44 rounded-full bg-white/10" />
             <div className="relative z-10">
               <p className="text-[11px] uppercase tracking-widest opacity-75">Marge nette · {PERIODS.find(p => p.key === period)?.label.toLowerCase()}</p>
@@ -286,18 +286,18 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-1 gap-3.5">
-            <div className="animate-rise-in bg-surface rounded-2xl p-4" style={{ animationDelay: '40ms' }}>
+            <div className="bg-surface rounded-2xl p-4">
               <p className="text-[11px] text-muted uppercase tracking-wide">Chiffre d'affaires</p>
               <p className="font-serif text-2xl mt-1.5"><CountUp value={totalRevenue} />€</p>
             </div>
-            <div className="animate-rise-in bg-surface rounded-2xl p-4" style={{ animationDelay: '80ms' }}>
+            <div className="bg-surface rounded-2xl p-4">
               <p className="text-[11px] text-muted uppercase tracking-wide">En stock</p>
               <p className="font-serif text-2xl mt-1.5"><CountUp value={inStock} /></p>
             </div>
           </div>
         </div>
 
-        <div className="animate-rise-in bg-surface rounded-2xl p-4 flex items-center justify-between" style={{ animationDelay: '100ms' }}>
+        <div className="bg-surface rounded-2xl p-4 flex items-center justify-between">
           <p className="text-sm text-muted">Articles vendus sur la période</p>
           <p className="font-serif text-xl"><CountUp value={soldInPeriod} /></p>
         </div>
@@ -306,8 +306,8 @@ export default function Dashboard() {
         {(ordersInTransit > 0 || toShip > 0) && (
           <button
             onClick={() => router.push('/commandes')}
-            className="animate-rise-in bg-surface rounded-2xl p-4 flex items-center justify-between text-left hover:-translate-y-0.5 transition"
-            style={{ animationDelay: '110ms' }}
+            className="bg-surface rounded-2xl p-4 flex items-center justify-between text-left hover:-translate-y-0.5 transition"
+           
           >
             <div className="flex items-center gap-2">
               <TruckIcon className="w-4 h-4 text-accent" />
@@ -325,7 +325,7 @@ export default function Dashboard() {
         )}
 
         {/* Objectif de marge du mois */}
-        <section className="animate-rise-in bg-surface rounded-2xl p-5" style={{ animationDelay: '120ms' }}>
+        <section className="bg-surface rounded-2xl p-5">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <TargetIcon className={`w-4 h-4 ${goalReached ? 'text-sage' : 'text-accent'}`} />
@@ -404,7 +404,7 @@ export default function Dashboard() {
         </section>
 
         {/* Meilleures catégories */}
-        <section style={{ animationDelay: '140ms' }} className="animate-rise-in">
+        <section>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <TrendUpIcon className="w-4 h-4 text-sage" />
@@ -437,7 +437,7 @@ export default function Dashboard() {
 
         {/* Stock récent */}
         {recentStock.length > 0 && (
-          <section style={{ animationDelay: '180ms' }} className="animate-rise-in">
+          <section>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-bold">Stock récent</h2>
               <button onClick={() => router.push('/products')} className="text-xs text-accent font-semibold hover:underline">
@@ -449,7 +449,7 @@ export default function Dashboard() {
                 <div key={p.id} className="bg-surface rounded-2xl overflow-hidden cursor-pointer transition hover:-translate-y-0.5" onClick={() => router.push(`/products/${p.id}/edit`)}>
                   <div className="aspect-square bg-violetbg flex items-center justify-center">
                     {p.photo_url ? (
-                      <img src={p.photo_url} alt="" className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={p.photo_url} alt="" className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-[10px] text-muted">photo</span>
                     )}
@@ -467,7 +467,7 @@ export default function Dashboard() {
 
         {/* Annonces actives */}
         {listings.length > 0 && (
-          <section style={{ animationDelay: '190ms' }} className="animate-rise-in">
+          <section>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <RepostIcon className="w-4 h-4 text-accent" />
@@ -501,7 +501,7 @@ export default function Dashboard() {
 
         {/* À reposter */}
         {toRepost.length > 0 && (
-          <section style={{ animationDelay: '200ms' }} className="animate-rise-in">
+          <section>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <RepostIcon className="w-4 h-4 text-accent" />
@@ -532,7 +532,7 @@ export default function Dashboard() {
         )}
 
         {/* Produits qui stagnent */}
-        <section style={{ animationDelay: '220ms' }} className="animate-rise-in">
+        <section>
           <div className="flex items-center gap-2 mb-3">
             <ClockIcon className="w-4 h-4 text-coral" />
             <h2 className="text-sm font-bold">En stock depuis longtemps</h2>

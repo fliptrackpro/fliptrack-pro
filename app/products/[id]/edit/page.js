@@ -6,6 +6,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
 import Logo from '@/components/Logo'
 import { CameraIcon } from '@/components/icons'
+import { compressImage } from '@/lib/image'
 
 export default function EditProduct() {
   const router = useRouter()
@@ -80,7 +81,8 @@ export default function EditProduct() {
       return router.push('/login')
     }
 
-    const uploadOne = async (file) => {
+    const uploadOne = async (raw) => {
+      const file = await compressImage(raw)
       const ext = file.name.split('.').pop()
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`
       const { error: uploadError } = await supabase.storage.from('products').upload(path, file)
@@ -167,7 +169,7 @@ export default function EditProduct() {
             <span className={labelClass}>Photo</span>
             <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
-                <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                <img loading="lazy" decoding="async" src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
                 <div className="w-14 h-14 rounded-lg bg-surface flex items-center justify-center">
                   <CameraIcon className="w-6 h-6 text-faint" />
@@ -185,7 +187,7 @@ export default function EditProduct() {
             <div className="flex flex-wrap gap-2">
               {existingExtraUrls.map((url) => (
                 <div key={url} className="relative w-16 h-16">
-                  <img src={url} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <img loading="lazy" decoding="async" src={url} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeExistingExtra(url)}
                     className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
@@ -196,7 +198,7 @@ export default function EditProduct() {
               ))}
               {newExtraPhotos.map((p, i) => (
                 <div key={i} className="relative w-16 h-16">
-                  <img src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
+                  <img loading="lazy" decoding="async" src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   <button
                     onClick={() => removeNewExtra(i)}
                     className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"

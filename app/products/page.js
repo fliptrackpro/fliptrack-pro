@@ -171,7 +171,7 @@ export default function ProductsPage() {
               >
                 <div className="flex items-center gap-3 min-w-0">
                   {p.photo_url ? (
-                    <img src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                    <img loading="lazy" decoding="async" src={p.photo_url} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                   ) : (
                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ml-1 ${p.status === 'stock' ? 'bg-sage' : 'bg-disabled'}`} />
                   )}

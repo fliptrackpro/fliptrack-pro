@@ -5,11 +5,11 @@ import { supabase } from '@/lib/supabase'
 import { useToast } from '@/components/Toast'
 
 const PLATFORMS = [
-  { key: 'Vinted', color: 'bg-teal-50 text-teal-700 border-teal-200', create: 'https://www.vinted.fr/items/new' },
-  { key: 'Leboncoin', color: 'bg-orange-50 text-orange-700 border-orange-200', create: 'https://www.leboncoin.fr/deposer-une-annonce' },
-  { key: 'Facebook Marketplace', color: 'bg-blue-50 text-blue-700 border-blue-200', create: 'https://www.facebook.com/marketplace/create/item' },
-  { key: 'eBay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200', create: 'https://www.ebay.fr/sl/sell' },
-  { key: 'Vestiaire Collective', color: 'bg-purple-50 text-purple-700 border-purple-200', create: 'https://www.vestiairecollective.com/' },
+  { key: 'Vinted', color: 'bg-platvinted/12 text-platvinted border-platvinted/25', create: 'https://www.vinted.fr/items/new' },
+  { key: 'Leboncoin', color: 'bg-platlbc/12 text-platlbc border-platlbc/25', create: 'https://www.leboncoin.fr/deposer-une-annonce' },
+  { key: 'Facebook Marketplace', color: 'bg-platfb/12 text-platfb border-platfb/25', create: 'https://www.facebook.com/marketplace/create/item' },
+  { key: 'eBay', color: 'bg-platebay/12 text-platebay border-platebay/25', create: 'https://www.ebay.fr/sl/sell' },
+  { key: 'Vestiaire Collective', color: 'bg-platvc/12 text-platvc border-platvc/25', create: 'https://www.vestiairecollective.com/' },
   { key: 'Autre', color: 'bg-canvas text-muted2 border-line', create: null },
 ]
 
