@@ -91,19 +91,19 @@ export default function Home() {
           <div className="rounded-[22px] p-6 md:p-8 bg-gradient-to-br from-accent via-accent2 to-accent3 relative overflow-hidden">
             <div className="absolute -right-10 -bottom-12 w-56 h-56 rounded-full bg-white/10" />
             <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-white/15 backdrop-blur rounded-2xl p-4 col-span-2 md:col-span-1">
+              <div className="bg-white/12 ring-1 ring-white/15 rounded-2xl p-4 col-span-2 md:col-span-1">
                 <p className="text-[11px] uppercase tracking-widest text-white/70">Marge nette</p>
                 <p className="font-serif text-3xl text-white mt-1">+128€</p>
               </div>
-              <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
+              <div className="bg-white/12 ring-1 ring-white/15 rounded-2xl p-4">
                 <p className="text-[11px] uppercase tracking-widest text-white/70">CA</p>
                 <p className="font-serif text-2xl text-white mt-1">342€</p>
               </div>
-              <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
+              <div className="bg-white/12 ring-1 ring-white/15 rounded-2xl p-4">
                 <p className="text-[11px] uppercase tracking-widest text-white/70">En stock</p>
                 <p className="font-serif text-2xl text-white mt-1">14</p>
               </div>
-              <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
+              <div className="bg-white/12 ring-1 ring-white/15 rounded-2xl p-4">
                 <p className="text-[11px] uppercase tracking-widest text-white/70">Vendus</p>
                 <p className="font-serif text-2xl text-white mt-1">6</p>
               </div>
@@ -111,19 +111,35 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Fonctionnalités */}
-        <section className="pb-20">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {FEATURES.map(f => (
-              <div key={f.title} className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-5">
-                <div className="w-9 h-9 rounded-full bg-violetbg flex items-center justify-center mb-3">
-                  <f.Icon className="w-4 h-4 text-accent" />
+        {/* Fonctionnalités : la principale est mise en avant, les autres tiennent
+            dans un seul panneau divisé plutôt qu'en grille de cartes identiques. */}
+        <section className="pb-20 flex flex-col gap-4">
+          {(() => {
+            const [lead, ...rest] = FEATURES
+            return (
+              <>
+                <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8">
+                  <div className="w-11 h-11 rounded-full bg-violetbg flex items-center justify-center mb-4">
+                    <lead.Icon className="w-5 h-5 text-accent" />
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold">{lead.title}</h3>
+                  <p className="text-sm text-muted2 mt-2 leading-relaxed max-w-[60ch]">{lead.description}</p>
                 </div>
-                <h3 className="text-sm font-bold">{f.title}</h3>
-                <p className="text-xs text-muted2 mt-1.5 leading-relaxed">{f.description}</p>
-              </div>
-            ))}
-          </div>
+
+                {/* Le fond du conteneur fait office de séparateur : les gaps de 1px le
+                    laissent transparaître, ce qui reste juste quel que soit le nombre de colonnes. */}
+                <div className="bg-line rounded-2xl shadow-sm shadow-inkd/5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px overflow-hidden">
+                  {rest.map(f => (
+                    <div key={f.title} className="bg-surface p-5">
+                      <f.Icon className="w-4 h-4 text-accent mb-2.5" />
+                      <h3 className="text-sm font-bold">{f.title}</h3>
+                      <p className="text-xs text-muted2 mt-1.5 leading-relaxed">{f.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )
+          })()}
         </section>
 
         {/* CTA final */}
