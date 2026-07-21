@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import ImportCsvModal from '@/components/ImportCsvModal'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
@@ -113,7 +114,7 @@ export default function ProductsPage() {
     if (!p) return
     const { error } = await supabase.from('products').delete().eq('id', p.id)
     setPendingDelete(null)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
     setProducts(list => list.filter(x => x.id !== p.id))
     setTotal(t => Math.max(t - 1, 0))
     toast('Produit supprimé', 'success')

@@ -139,7 +139,7 @@ export default function LoginPage() {
             Flip<span className="not-italic font-sans font-bold text-accent">Track</span>
           </h1>
           <p className="text-muted mt-2">
-            Gérez vos achats et ventes en un clic
+            Suis tes achats, tes ventes et ta marge
           </p>
         </div>
 

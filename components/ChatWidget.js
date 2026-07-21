@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { friendlyError } from '@/lib/errors'
 
 function ChatIcon(props) {
   return (
@@ -123,7 +124,7 @@ export default function ChatWidget() {
         setMessages(m => [...m, { role: 'assistant', content: data.reply, pendingAction: data.pendingAction }])
       }
     } catch (err) {
-      setMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
+      setMessages(m => [...m, { role: 'assistant', content: friendlyError(err) }])
     } finally {
       setSending(false)
     }
@@ -147,7 +148,7 @@ export default function ChatWidget() {
         setMessages(m => [...m, { role: 'assistant', content: data.reply, action: data.action }])
       }
     } catch (err) {
-      setMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
+      setMessages(m => [...m, { role: 'assistant', content: friendlyError(err) }])
     } finally {
       setConfirmingIndex(null)
     }

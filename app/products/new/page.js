@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import Logo from '@/components/Logo'
 import { CameraIcon, BarcodeIcon, SparkleIcon } from '@/components/icons'
 import { compressImage, compressImages } from '@/lib/image'
@@ -129,7 +130,7 @@ export default function NewProduct() {
         }])
       }
     } catch (err) {
-      setEstimateError('Erreur lors de l\'analyse : ' + err.message)
+      setEstimateError(friendlyError(err, "L'analyse a échoué. Réessaie."))
     } finally {
       setEstimating(false)
     }
@@ -176,7 +177,7 @@ export default function NewProduct() {
         }
       }
     } catch (err) {
-      setAssistMessages(m => [...m, { role: 'assistant', content: 'Erreur : ' + err.message }])
+      setAssistMessages(m => [...m, { role: 'assistant', content: friendlyError(err) }])
     } finally {
       setAssistSending(false)
     }
@@ -228,7 +229,7 @@ export default function NewProduct() {
       }))
       toast('Produit trouvé via le code-barres', 'success')
     } catch (err) {
-      setScanError('Erreur lors du scan : ' + err.message)
+      setScanError(friendlyError(err))
     } finally {
       setScanning(false)
     }
@@ -261,7 +262,7 @@ export default function NewProduct() {
       }
       if (photo_url) photo_urls = [photo_url, ...photo_urls]
     } catch (uploadError) {
-      toast('Erreur upload photo : ' + uploadError.message)
+      toast(friendlyError(uploadError))
       setLoading(false)
       return
     }
@@ -284,7 +285,7 @@ export default function NewProduct() {
       is_luxury: aiEstimate?.is_luxury ?? false,
     })
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
     } else {
       toast(isOrder ? 'Commande enregistrée' : 'Produit ajouté', 'success')
       router.push(isOrder ? '/commandes' : '/products')

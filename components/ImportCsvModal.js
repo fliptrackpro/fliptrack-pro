@@ -11,6 +11,7 @@ import {
   buildLedgerImport,
 } from '@/lib/csv'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 
 const CATEGORIES = ['Vêtements', 'Chaussures', 'Électronique', 'Jeux vidéo', 'Maison', 'Sport', 'Autre']
 const CONDITIONS = ['Neuf avec étiquette', 'Très bon état', 'Bon état', 'État correct']
@@ -64,7 +65,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
         table = parseCSV(text)
       }
     } catch (err) {
-      setFileError('Impossible de lire ce fichier : ' + err.message)
+      setFileError('Impossible de lire ce fichier. Verifie qu il s agit bien d un CSV ou d un Excel.')
       return
     }
 
@@ -148,7 +149,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
       setImporting(false)
 
       if (error) {
-        toast('Erreur import : ' + error.message)
+        toast(friendlyError(error))
         return
       }
 

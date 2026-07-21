@@ -1,7 +1,7 @@
 {
   "name": "FlipTrack",
   "short_name": "FlipTrack",
-  "description": "Gérez vos achats et ventes en un clic",
+  "description": "Suis tes achats, tes ventes et ta marge",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#f5f2ec",

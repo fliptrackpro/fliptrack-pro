@@ -302,27 +302,30 @@ export default function Dashboard() {
           <p className="font-serif text-xl"><CountUp value={soldInPeriod} /></p>
         </div>
 
-        {/* Accès Commandes (achats en route + ventes à expédier) */}
-        {(ordersInTransit > 0 || toShip > 0) && (
-          <button
-            onClick={() => router.push('/commandes')}
-            className="bg-surface rounded-2xl p-4 flex items-center justify-between text-left hover:-translate-y-0.5 transition"
-           
-          >
-            <div className="flex items-center gap-2">
-              <TruckIcon className="w-4 h-4 text-accent" />
-              <div>
-                <p className="text-sm font-bold">Commandes</p>
-                <p className="text-xs text-muted">
-                  {ordersInTransit > 0 && `${ordersInTransit} achat${ordersInTransit > 1 ? 's' : ''} en route`}
-                  {ordersInTransit > 0 && toShip > 0 && ' · '}
-                  {toShip > 0 && `${toShip} à expédier`}
-                </p>
-              </div>
+        {/* Accès Commandes (achats en route + ventes à expédier).
+            Rendu SANS condition : c'est le seul point d'entrée mobile vers /commandes
+            (la barre du bas n'a que 4 onglets), donc le masquer quand la file est vide
+            faisait disparaître la fonctionnalité au moment précis où il faut la découvrir. */}
+        <button
+          onClick={() => router.push('/commandes')}
+          className="bg-surface rounded-2xl p-4 flex items-center justify-between text-left hover:-translate-y-0.5 transition"
+        >
+          <div className="flex items-center gap-2">
+            <TruckIcon className="w-4 h-4 text-accent" />
+            <div>
+              <p className="text-sm font-bold">Commandes</p>
+              <p className="text-xs text-muted">
+                {ordersInTransit === 0 && toShip === 0
+                  ? 'Suis tes achats en route et tes ventes à expédier'
+                  : [
+                      ordersInTransit > 0 && `${ordersInTransit} achat${ordersInTransit > 1 ? 's' : ''} en route`,
+                      toShip > 0 && `${toShip} à expédier`,
+                    ].filter(Boolean).join(' · ')}
+              </p>
             </div>
-            <span className="text-accent text-sm">→</span>
-          </button>
-        )}
+          </div>
+          <span className="text-accent text-sm">→</span>
+        </button>
 
         {/* Objectif de marge du mois */}
         <section className="bg-surface rounded-2xl p-5">

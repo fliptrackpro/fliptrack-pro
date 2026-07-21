@@ -131,14 +131,15 @@ select option {
   animation: riseIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Décélération exponentielle, sans rebond : la courbe précédente dépassait (1.56)
+   ET la keyframe dépassait aussi à 60%, donc l'effet était appliqué deux fois. */
 @keyframes popIn {
-  0% { opacity: 0; transform: scale(0.7) translateY(12px); }
-  60% { transform: scale(1.04) translateY(-2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .animate-pop-in {
-  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes confettiFall {
@@ -169,8 +170,16 @@ select option {
   to { background-position: 200% 0; }
 }
 
+/* Basé sur --ink pour rester visible dans les deux thèmes : en clair l'encre est
+   sombre (lavis sombre sur surface claire), en sombre elle est claire (lavis clair
+   sur surface sombre). Une valeur codée en dur ne marchait que dans un thème. */
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(43,36,56,0.04) 25%, rgba(43,36,56,0.09) 50%, rgba(43,36,56,0.04) 75%);
+  background: linear-gradient(
+    90deg,
+    rgb(var(--ink) / 0.05) 25%,
+    rgb(var(--ink) / 0.11) 50%,
+    rgb(var(--ink) / 0.05) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }

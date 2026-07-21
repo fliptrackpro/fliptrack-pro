@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import ThemeToggle from '@/components/ThemeToggle'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
@@ -58,7 +59,7 @@ export default function AccountPage() {
     const { error } = await supabase.from('profiles').upsert({ user_id: user.id, username: clean })
     setSavingUsername(false)
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
     } else {
       setCurrentUsername(clean)
       toast('Pseudo enregistré', 'success')
@@ -72,7 +73,7 @@ export default function AccountPage() {
     setSavingPassword(true)
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
     } else {
       toast('Mot de passe modifié', 'success')
       setNewPassword('')
@@ -92,7 +93,7 @@ export default function AccountPage() {
 
     const { error } = await supabase.from('products').delete().eq('user_id', user.id)
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
       setDeleting(false)
       return
     }
@@ -117,7 +118,7 @@ export default function AccountPage() {
       await supabase.auth.signOut()
       router.push('/login')
     } catch (err) {
-      toast('Erreur : ' + err.message)
+      toast(friendlyError(err))
       setDeletingAccount(false)
     }
   }

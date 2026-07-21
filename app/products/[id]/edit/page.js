@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import Logo from '@/components/Logo'
 import { CameraIcon } from '@/components/icons'
 import { compressImage } from '@/lib/image'
@@ -99,7 +100,7 @@ export default function EditProduct() {
         : []
       photo_urls = [...(photo_url ? [photo_url] : []), ...existingExtraUrls, ...newExtraUrls]
     } catch (uploadError) {
-      toast('Erreur upload photo : ' + uploadError.message)
+      toast(friendlyError(uploadError))
       setLoading(false)
       return
     }
@@ -115,7 +116,7 @@ export default function EditProduct() {
     }).eq('id', params.id).eq('user_id', user.id)
 
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
     } else {
       toast('Produit modifié', 'success')
       router.push('/products')

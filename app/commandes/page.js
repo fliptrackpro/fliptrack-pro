@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 
 function fmtDate(dateStr) {
   if (!dateStr) return null
@@ -52,7 +53,7 @@ export default function CommandesPage() {
       .update({ status: 'stock', purchase_date: new Date().toISOString().split('T')[0] })
       .eq('id', product.id)
       .eq('user_id', user.id)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
     setPurchases(p => p.filter(x => x.id !== product.id))
     toast(`« ${product.name} » est reçu et ajouté au stock`, 'success')
   }
@@ -64,7 +65,7 @@ export default function CommandesPage() {
     if (flow.next === 'shipped') patch.shipped_at = new Date().toISOString()
 
     const { error } = await supabase.from('sales').update(patch).eq('id', sale.id).eq('user_id', user.id)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
 
     if (flow.next === 'delivered') {
       // Livré = terminé, on le sort de la liste des expéditions en cours

@@ -4,7 +4,15 @@ import { useMemo } from 'react'
 import CountUp from '@/components/CountUp'
 import { CheckIcon } from '@/components/icons'
 
-const COLORS = ['#6d5ce6', '#a893f5', '#4a8a6f', '#e8b64c', '#e0654a']
+// Référencer les tokens plutôt que des hex : les confettis suivent alors le thème,
+// au lieu d'être les seules couleurs en dur de l'app.
+const COLORS = [
+  'rgb(var(--accent))',
+  'rgb(var(--accent3))',
+  'rgb(var(--sage))',
+  'rgb(var(--gold))',
+  'rgb(var(--coral))',
+]
 
 export default function SaleCelebration({ productName, platform, margin, onViewSales, onBackToStock }) {
   const positive = margin >= 0

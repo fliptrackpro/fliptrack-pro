@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import Logo from '@/components/Logo'
 import SaleCelebration from '@/components/SaleCelebration'
 
@@ -86,7 +87,7 @@ export default function SellProduct() {
     })
 
     if (saleError) {
-      toast('Erreur : ' + saleError.message)
+      toast(friendlyError(saleError))
       setLoading(false)
       return
     }
@@ -98,7 +99,7 @@ export default function SellProduct() {
       .eq('user_id', user.id)
 
     if (productError) {
-      toast('Erreur : ' + productError.message)
+      toast(friendlyError(productError))
       setLoading(false)
       return
     }

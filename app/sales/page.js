@@ -6,6 +6,7 @@ import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import ConfirmDialog from '@/components/ConfirmDialog'
 
 function exportCSV(sales) {
@@ -55,7 +56,7 @@ export default function SalesPage() {
       .delete()
       .eq('id', sale.id)
       .eq('user_id', user.id)
-    if (deleteError) return toast('Erreur : ' + deleteError.message)
+    if (deleteError) return toast(friendlyError(deleteError))
 
     if (sale.product_id) {
       const { error: productError } = await supabase
@@ -63,7 +64,7 @@ export default function SalesPage() {
         .update({ status: 'stock' })
         .eq('id', sale.product_id)
         .eq('user_id', user.id)
-      if (productError) return toast('Erreur : ' + productError.message)
+      if (productError) return toast(friendlyError(productError))
     }
 
     setSales(s => s.filter(x => x.id !== sale.id))

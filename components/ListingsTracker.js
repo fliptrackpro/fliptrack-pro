@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 const PLATFORMS = [
   { key: 'Vinted', color: 'bg-platvinted/12 text-platvinted border-platvinted/25', create: 'https://www.vinted.fr/items/new' },
@@ -41,6 +43,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
   const [url, setUrl] = useState('')
   const [editingUrlId, setEditingUrlId] = useState(null)
   const [editUrlValue, setEditUrlValue] = useState('')
+  const [pendingRemove, setPendingRemove] = useState(null)
 
   const load = async () => {
     const { data } = await supabase
@@ -73,7 +76,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
       status: 'active',
     })
     setAdding(false)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
     setUrl('')
     toast('Annonce ajoutée au suivi', 'success')
     load()
@@ -82,7 +85,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
   const saveUrl = async (id) => {
     const clean = editUrlValue.trim()
     const { error } = await supabase.from('listings').update({ url: clean || null }).eq('id', id)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
     setEditingUrlId(null)
     setEditUrlValue('')
     load()
@@ -90,13 +93,16 @@ export default function ListingsTracker({ productId, defaultPrice }) {
 
   const setStatus = async (id, status) => {
     const { error } = await supabase.from('listings').update({ status }).eq('id', id)
-    if (error) return toast('Erreur : ' + error.message)
+    if (error) return toast(friendlyError(error))
     load()
   }
 
-  const remove = async (id) => {
-    const { error } = await supabase.from('listings').delete().eq('id', id)
-    if (error) return toast('Erreur : ' + error.message)
+  const remove = async () => {
+    const l = pendingRemove
+    if (!l) return
+    setPendingRemove(null)
+    const { error } = await supabase.from('listings').delete().eq('id', l.id)
+    if (error) return toast(friendlyError(error))
     load()
   }
 
@@ -207,7 +213,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                       Réactiver
                     </button>
                   )}
-                  <button onClick={() => remove(l.id)} aria-label="Supprimer cette annonce du suivi" className="text-muted hover:text-coral rounded-full hover:bg-coral/10 transition inline-flex items-center justify-center min-w-[44px] min-h-[44px]">
+                  <button onClick={() => setPendingRemove(l)} aria-label="Supprimer cette annonce du suivi" className="text-muted hover:text-coral rounded-full hover:bg-coral/10 transition inline-flex items-center justify-center min-w-[44px] min-h-[44px]">
                     ✕
                   </button>
                 </div>
@@ -235,6 +241,16 @@ export default function ListingsTracker({ productId, defaultPrice }) {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={!!pendingRemove}
+        destructive
+        title="Retirer cette annonce du suivi ?"
+        message={pendingRemove ? `L'entrée ${pendingRemove.platform}${pendingRemove.listed_price != null ? ` à ${pendingRemove.listed_price}€` : ''} sera supprimée du suivi. Ton annonce sur la plateforme n'est pas affectée.` : ''}
+        confirmLabel="Retirer"
+        onConfirm={remove}
+        onCancel={() => setPendingRemove(null)}
+      />
     </div>
   )
 }

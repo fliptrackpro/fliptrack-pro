@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter, useParams } from 'next/navigation'
 import { useToast } from '@/components/Toast'
+import { friendlyError } from '@/lib/errors'
 import Logo from '@/components/Logo'
 import ListingsTracker from '@/components/ListingsTracker'
 
@@ -82,7 +83,7 @@ export default function PublishProduct() {
         setListings(data)
       }
     } catch (err) {
-      setError('Erreur : ' + err.message)
+      setError(friendlyError(err))
     } finally {
       setGenerating(false)
     }
@@ -104,7 +105,7 @@ export default function PublishProduct() {
       .eq('id', product.id)
       .eq('user_id', user?.id)
     if (error) {
-      toast('Erreur : ' + error.message)
+      toast(friendlyError(error))
     } else {
       setProduct(p => ({ ...p, last_reposted_at: now }))
       toast('Marqué comme reposté', 'success')
