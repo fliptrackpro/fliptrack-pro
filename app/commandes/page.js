@@ -124,7 +124,7 @@ export default function CommandesPage() {
                   </div>
                   <button
                     onClick={() => markReceived(p)}
-                    className="text-xs bg-sage hover:bg-sageh active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
+                    className="text-xs bg-sagebtn hover:bg-sageh active:scale-[0.98] text-white font-semibold px-4 py-3 rounded-full transition flex-shrink-0 min-h-[44px]"
                   >
                     Marquer reçu
                   </button>
@@ -156,7 +156,7 @@ export default function CommandesPage() {
                     {flow && (
                       <button
                         onClick={() => advanceShipment(s)}
-                        className="text-xs bg-inkd hover:bg-inkdh active:scale-[0.98] text-white font-semibold px-3 py-2 rounded-full transition flex-shrink-0"
+                        className="text-xs bg-inkd hover:bg-inkdh active:scale-[0.98] text-white font-semibold px-4 py-3 rounded-full transition flex-shrink-0 min-h-[44px]"
                       >
                         {flow.nextLabel}
                       </button>

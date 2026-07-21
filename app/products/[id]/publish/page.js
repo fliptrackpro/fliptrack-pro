@@ -158,9 +158,9 @@ export default function PublishProduct() {
         <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
           {(product.photo_urls?.length > 0 ? product.photo_urls : product.photo_url ? [product.photo_url] : []).length > 0 && (
             <div className="flex flex-col gap-2">
-              <label className={labelClass}>
+              <span className={labelClass}>
                 {(product.photo_urls?.length || (product.photo_url ? 1 : 0)) > 1 ? 'Photos' : 'Photo'}
-              </label>
+              </span>
               <div className="flex flex-wrap gap-3">
                 {(product.photo_urls?.length > 0 ? product.photo_urls : [product.photo_url]).map((url, i) => (
                   <div key={url} className="flex flex-col items-center gap-1.5">
@@ -179,8 +179,8 @@ export default function PublishProduct() {
               </div>
             </div>
           )}
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Prix de vente visé</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Prix de vente visé</span>
             <div className="relative">
               <input
                 value={price}
@@ -194,7 +194,7 @@ export default function PublishProduct() {
             {product.estimated_price_min != null && (
               <p className="text-xs text-sage">Préremplis avec l'estimation IA ({product.estimated_price_min}–{product.estimated_price_max}€), ajuste si besoin.</p>
             )}
-          </div>
+          </label>
 
           {error && <p className="text-xs text-coral">{error}</p>}
 

@@ -6,6 +6,7 @@ import { saleMargin } from '@/lib/margin'
 import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function exportCSV(sales) {
   const headers = ['Date', 'Produit', 'Plateforme', 'Prix achat', 'Frais achat', 'Prix vente', 'Frais plateforme', 'Marge']
@@ -40,11 +41,14 @@ export default function SalesPage() {
   const [user, setUser] = useState(null)
   const [sales, setSales] = useState([])
   const [search, setSearch] = useState('')
+  const [pendingCancel, setPendingCancel] = useState(null)
   const router = useRouter()
   const toast = useToast()
 
-  const handleCancelSale = async (sale) => {
-    if (!confirm(`Annuler la vente de « ${sale.products?.name || 'cet article'} » ? Il repassera en stock.`)) return
+  const handleCancelSale = async () => {
+    const sale = pendingCancel
+    if (!sale) return
+    setPendingCancel(null)
 
     const { error: deleteError } = await supabase
       .from('sales')
@@ -189,7 +193,7 @@ export default function SalesPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => handleCancelSale(s)}
+                      onClick={() => setPendingCancel(s)}
                       className="text-xs text-disabled hover:text-coral px-2 py-1.5 rounded-full hover:bg-coral/10 transition"
                       title="Annuler la vente"
                     >
@@ -202,6 +206,16 @@ export default function SalesPage() {
           </div>
         )}
       </main>
+
+      <ConfirmDialog
+        open={!!pendingCancel}
+        title="Annuler cette vente ?"
+        message={pendingCancel ? `« ${pendingCancel.products?.name || 'Cet article'} » repassera en stock et la vente sera effacée de ton historique.` : ''}
+        confirmLabel="Annuler la vente"
+        cancelLabel="Revenir"
+        onConfirm={handleCancelSale}
+        onCancel={() => setPendingCancel(null)}
+      />
     </div>
   )
 }

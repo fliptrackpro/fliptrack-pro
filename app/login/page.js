@@ -152,8 +152,8 @@ export default function LoginPage() {
 
         {mode === 'sign_in' && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Email ou pseudo</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Email ou pseudo</span>
               <input
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
@@ -162,9 +162,9 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="username"
               />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Mot de passe</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Mot de passe</span>
               <input
                 type="password"
                 value={password}
@@ -174,7 +174,7 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="current-password"
               />
-            </div>
+            </label>
             <button
               onClick={handleSignIn}
               disabled={loading || !identifier.trim() || !password}
@@ -195,8 +195,8 @@ export default function LoginPage() {
 
         {mode === 'sign_up' && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Pseudo</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Pseudo</span>
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -205,9 +205,9 @@ export default function LoginPage() {
                 autoComplete="username"
               />
               <p className="text-[11px] text-faint">3 à 20 caractères : lettres, chiffres, underscore. Servira aussi à te connecter.</p>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Email</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Email</span>
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -215,9 +215,9 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="email"
               />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Mot de passe</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Mot de passe</span>
               <input
                 type="password"
                 value={password}
@@ -227,7 +227,7 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="new-password"
               />
-            </div>
+            </label>
             <button
               onClick={handleSignUp}
               disabled={loading || !username.trim() || !email.trim() || !password}
@@ -243,8 +243,8 @@ export default function LoginPage() {
 
         {mode === 'forgot' && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Email</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Email</span>
               <input
                 value={forgotEmail}
                 onChange={(e) => setForgotEmail(e.target.value)}
@@ -253,7 +253,7 @@ export default function LoginPage() {
                 className={inputClass}
                 autoComplete="email"
               />
-            </div>
+            </label>
             <button
               onClick={handleForgot}
               disabled={loading || !forgotEmail.trim()}

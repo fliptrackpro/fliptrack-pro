@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
 import ImportCsvModal from '@/components/ImportCsvModal'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function daysSince(dateStr) {
   const d = new Date(dateStr)
@@ -19,6 +20,7 @@ export default function ProductsPage() {
   const [filter, setFilter] = useState('tous')
   const [search, setSearch] = useState('')
   const [showImport, setShowImport] = useState(false)
+  const [pendingDelete, setPendingDelete] = useState(null)
   const router = useRouter()
   const toast = useToast()
 
@@ -57,11 +59,13 @@ export default function ProductsPage() {
     return () => window.removeEventListener('pageshow', handlePageShow)
   }, [])
 
-  const handleDelete = async (id) => {
-    if (!confirm('Supprimer ce produit et ses ventes associées ?')) return
-    const { error } = await supabase.from('products').delete().eq('id', id)
+  const handleDelete = async () => {
+    const p = pendingDelete
+    if (!p) return
+    const { error } = await supabase.from('products').delete().eq('id', p.id)
+    setPendingDelete(null)
     if (error) return toast('Erreur : ' + error.message)
-    setProducts(products.filter(p => p.id !== id))
+    setProducts(list => list.filter(x => x.id !== p.id))
     toast('Produit supprimé', 'success')
   }
 
@@ -107,6 +111,16 @@ export default function ProductsPage() {
           onImported={() => user && load(user.id)}
         />
       )}
+
+      <ConfirmDialog
+        open={!!pendingDelete}
+        destructive
+        title="Supprimer cet article ?"
+        message={pendingDelete ? `« ${pendingDelete.name} » et ses ventes associées seront définitivement supprimés.` : ''}
+        confirmLabel="Supprimer"
+        onConfirm={handleDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
 
       <main className="px-4 sm:px-6 py-6 pb-24 md:pb-6 flex flex-col gap-4 max-w-3xl mx-auto w-full">
 
@@ -206,7 +220,8 @@ export default function ProductsPage() {
                     <span className="text-xs px-2 py-1 rounded-full bg-line text-muted">Vendu</span>
                   )}
                   <button
-                    onClick={() => handleDelete(p.id)}
+                    onClick={() => setPendingDelete(p)}
+                    aria-label={`Supprimer ${p.name}`}
                     className="text-xs text-disabled hover:text-coral px-2 py-1.5 rounded-full hover:bg-coral/10 transition"
                   >
                     ✕

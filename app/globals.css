@@ -15,20 +15,22 @@
   --inkd: 36 31 46;
   --inkdh: 58 51 71;
   --ink2: 74 67 86;
-  --muted: 139 132 150;
-  --muted2: 101 94 114;
-  --faint: 179 174 191;
-  --disabled: 195 188 240;
+  --muted: 97 92 108;
+  --muted2: 80 74 93;
+  --faint: 111 108 118;
+  --disabled: 101 98 125;
   --canvas: 245 242 236;
   --surface: 255 255 255;
   --line: 234 229 240;
   --line2: 214 207 232;
-  --sage: 74 138 111;
+  --sage: 64 120 97;
   --sage2: 111 181 147;
-  --sageh: 62 122 95;
+  --sageh: 52 102 82;
   --sagebg: 231 243 238;
-  --coral: 224 101 74;
+  --coral: 177 80 58;
   --coralbg: 251 238 233;
+  --coralbtn: 177 80 58;
+  --sagebtn: 64 120 97;
   --gold: 232 182 76;
   --violetbg: 239 235 253;
   --violetbg2: 229 224 247;
@@ -50,20 +52,22 @@
   --inkd: 47 40 57;
   --inkdh: 59 52 71;
   --ink2: 207 200 219;
-  --muted: 155 147 169;
-  --muted2: 180 172 194;
-  --faint: 107 100 128;
-  --disabled: 74 67 86;
+  --muted: 163 156 178;
+  --muted2: 190 183 205;
+  --faint: 138 133 155;
+  --disabled: 155 152 162;
   --canvas: 23 20 27;
   --surface: 34 29 43;
   --line: 51 46 61;
   --line2: 58 52 70;
   --sage: 95 160 130;
   --sage2: 111 181 147;
-  --sageh: 79 143 114;
+  --sageh: 62 106 86;
   --sagebg: 23 39 31;
   --coral: 239 115 87;
   --coralbg: 51 33 28;
+  --coralbtn: 184 89 67;
+  --sagebtn: 75 126 103;
   --gold: 232 182 76;
   --violetbg: 42 35 64;
   --violetbg2: 44 37 66;
@@ -78,6 +82,24 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+/* Respect de la préférence système "réduire les animations" (troubles vestibulaires).
+   Le contenu reste visible : on neutralise le mouvement, pas l'affichage. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Les confettis sont purement décoratifs : on les masque plutôt que de les figer à l'écran */
+  .confetti-piece {
+    display: none !important;
+  }
 }
 
 body {

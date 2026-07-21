@@ -35,6 +35,9 @@ module.exports = {
         sagebg: 'rgb(var(--sagebg) / <alpha-value>)',
         coral: 'rgb(var(--coral) / <alpha-value>)',
         coralbg: 'rgb(var(--coralbg) / <alpha-value>)',
+        // Variantes assombries pour les boutons à fond plein (texte blanc dessus, ≥4.5:1)
+        coralbtn: 'rgb(var(--coralbtn) / <alpha-value>)',
+        sagebtn: 'rgb(var(--sagebtn) / <alpha-value>)',
         gold: 'rgb(var(--gold) / <alpha-value>)',
         violetbg: 'rgb(var(--violetbg) / <alpha-value>)',
         violetbg2: 'rgb(var(--violetbg2) / <alpha-value>)',

@@ -165,8 +165,8 @@ export default function SellProduct() {
 
         <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Plateforme</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Plateforme</span>
             <select
               name="platform"
               value={form.platform}
@@ -178,13 +178,13 @@ export default function SellProduct() {
                 <option key={pl} value={pl}>{pl}</option>
               ))}
             </select>
-          </div>
+          </label>
 
           <div className="border-t border-line" />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Prix de vente</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Prix de vente</span>
               <div className="relative">
                 <input
                   name="sale_price"
@@ -196,9 +196,9 @@ export default function SellProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Frais plateforme</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Frais plateforme</span>
               <div className="relative">
                 <input
                   name="platform_fees"
@@ -217,7 +217,7 @@ export default function SellProduct() {
                     : `Estimé à ${(FEE_RATES[form.platform] * 100).toFixed(0)}% sur ${form.platform}, ajuste si besoin.`}
                 </p>
               )}
-            </div>
+            </label>
           </div>
 
           {form.sale_price && (

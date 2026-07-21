@@ -164,7 +164,7 @@ export default function EditProduct() {
         <div className="bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 md:p-8 flex flex-col gap-6">
 
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Photo</label>
+            <span className={labelClass}>Photo</span>
             <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
@@ -181,7 +181,7 @@ export default function EditProduct() {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Photos supplémentaires ({existingExtraUrls.length + newExtraPhotos.length})</label>
+            <span className={labelClass}>Photos supplémentaires ({existingExtraUrls.length + newExtraPhotos.length})</span>
             <div className="flex flex-wrap gap-2">
               {existingExtraUrls.map((url) => (
                 <div key={url} className="relative w-16 h-16">
@@ -214,19 +214,19 @@ export default function EditProduct() {
 
           <div className="border-t border-line" />
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Nom du produit</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Nom du produit</span>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               className={inputClass}
             />
-          </div>
+          </label>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Catégorie</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Catégorie</span>
               <select
                 name="category"
                 value={form.category}
@@ -238,9 +238,9 @@ export default function EditProduct() {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>État</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>État</span>
               <select
                 name="condition"
                 value={form.condition}
@@ -252,14 +252,14 @@ export default function EditProduct() {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-            </div>
+            </label>
           </div>
 
           <div className="border-t border-line" />
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Prix d'achat</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Prix d'achat</span>
               <div className="relative">
                 <input
                   name="purchase_price"
@@ -270,9 +270,9 @@ export default function EditProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Frais d'achat</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Frais d'achat</span>
               <div className="relative">
                 <input
                   name="purchase_fees"
@@ -283,7 +283,7 @@ export default function EditProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
-            </div>
+            </label>
           </div>
 
           {form.purchase_price && (

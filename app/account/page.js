@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Nav from '@/components/BottomNav'
 import { useToast } from '@/components/Toast'
 import ThemeToggle from '@/components/ThemeToggle'
+import ConfirmDialog from '@/components/ConfirmDialog'
 
 function maskEmail(email) {
   if (!email) return ''
@@ -21,6 +22,7 @@ export default function AccountPage() {
   const [savingPassword, setSavingPassword] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deletingAccount, setDeletingAccount] = useState(false)
+  const [confirmMode, setConfirmMode] = useState(null) // 'data' | 'account'
   const [currentUsername, setCurrentUsername] = useState(null)
   const [usernameInput, setUsernameInput] = useState('')
   const [savingUsername, setSavingUsername] = useState(false)
@@ -80,9 +82,7 @@ export default function AccountPage() {
   }
 
   const handleDeleteData = async () => {
-    if (!confirm('Supprimer TOUTES tes données (produits, ventes, photos) ? Cette action est irréversible.')) return
-    if (!confirm('Vraiment sûr ? Tout ton historique de ventes et ton stock seront perdus définitivement.')) return
-
+    setConfirmMode(null)
     setDeleting(true)
 
     const { data: files } = await supabase.storage.from('products').list(user.id, { limit: 1000 })
@@ -103,10 +103,7 @@ export default function AccountPage() {
   }
 
   const handleDeleteAccount = async () => {
-    if (!confirm('Supprimer ton COMPTE et toutes tes données ? Tu ne pourras plus te connecter. Cette action est irréversible.')) return
-    const typed = prompt('Pour confirmer, tape SUPPRIMER en majuscules :')
-    if (typed !== 'SUPPRIMER') return toast('Suppression annulée.')
-
+    setConfirmMode(null)
     setDeletingAccount(true)
     try {
       const { data: { session } } = await supabase.auth.getSession()
@@ -162,15 +159,15 @@ export default function AccountPage() {
               {currentUsername ? 'Utilisé pour te connecter, en plus de ton email.' : "Définis un pseudo pour pouvoir te connecter sans ton email."}
             </p>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Pseudo</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Pseudo</span>
             <input
               value={usernameInput}
               onChange={(e) => setUsernameInput(e.target.value)}
               placeholder="ex: flipmaster"
               className={inputClass}
             />
-          </div>
+          </label>
           <button
             onClick={handleSaveUsername}
             disabled={savingUsername || !usernameInput.trim() || usernameInput.trim().toLowerCase() === currentUsername}
@@ -182,8 +179,8 @@ export default function AccountPage() {
 
         <div className="animate-rise-in bg-surface rounded-2xl shadow-sm shadow-inkd/5 p-6 flex flex-col gap-4" style={{ animationDelay: '20ms' }}>
           <h2 className="text-sm font-bold">Changer le mot de passe</h2>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Nouveau mot de passe</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Nouveau mot de passe</span>
             <input
               type="password"
               value={newPassword}
@@ -191,9 +188,9 @@ export default function AccountPage() {
               placeholder="Au moins 6 caractères"
               className={inputClass}
             />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Confirmer le mot de passe</label>
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Confirmer le mot de passe</span>
             <input
               type="password"
               value={confirmPassword}
@@ -201,7 +198,7 @@ export default function AccountPage() {
               placeholder="Répète le mot de passe"
               className={inputClass}
             />
-          </div>
+          </label>
           <button
             onClick={handleChangePassword}
             disabled={savingPassword || !newPassword}
@@ -226,7 +223,7 @@ export default function AccountPage() {
             Supprime définitivement tous tes produits, ventes et photos. Ton compte reste actif mais reparti de zéro.
           </p>
           <button
-            onClick={handleDeleteData}
+            onClick={() => setConfirmMode('data')}
             disabled={deleting || deletingAccount}
             className="w-full bg-coral/10 hover:bg-coral/20 text-coral font-semibold rounded-xl px-4 py-3 transition text-sm disabled:opacity-50"
           >
@@ -239,13 +236,37 @@ export default function AccountPage() {
             Ou supprime définitivement ton compte : données, photos et identifiants de connexion. Rien ne sera conservé.
           </p>
           <button
-            onClick={handleDeleteAccount}
+            onClick={() => setConfirmMode('account')}
             disabled={deleting || deletingAccount}
-            className="w-full bg-coral hover:opacity-90 text-white font-semibold rounded-xl px-4 py-3 transition text-sm disabled:opacity-50"
+            className="w-full bg-coralbtn hover:opacity-90 text-white font-semibold rounded-xl px-4 py-3 transition text-sm disabled:opacity-50"
           >
             {deletingAccount ? 'Suppression du compte...' : 'Supprimer mon compte définitivement'}
           </button>
         </div>
+
+        <ConfirmDialog
+          open={confirmMode === 'data'}
+          destructive
+          title="Supprimer toutes tes données ?"
+          message="Ton stock, ton historique de ventes et tes photos seront effacés définitivement. Ton compte restera actif, mais reparti de zéro."
+          confirmLabel="Tout supprimer"
+          requireText="SUPPRIMER"
+          busy={deleting}
+          onConfirm={handleDeleteData}
+          onCancel={() => setConfirmMode(null)}
+        />
+
+        <ConfirmDialog
+          open={confirmMode === 'account'}
+          destructive
+          title="Supprimer ton compte ?"
+          message="Données, photos et identifiants seront effacés. Tu ne pourras plus te connecter et rien ne sera récupérable."
+          confirmLabel="Supprimer mon compte"
+          requireText="SUPPRIMER"
+          busy={deletingAccount}
+          onConfirm={handleDeleteAccount}
+          onCancel={() => setConfirmMode(null)}
+        />
 
       </main>
     </div>

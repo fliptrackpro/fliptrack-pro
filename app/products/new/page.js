@@ -329,7 +329,7 @@ export default function NewProduct() {
 
           {/* Photo + estimation IA */}
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Photo (estimation IA)</label>
+            <span className={labelClass}>Photo (estimation IA)</span>
             <label className="flex items-center gap-4 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
               {photoPreview ? (
                 <img src={photoPreview} alt="" className="w-14 h-14 rounded-lg object-cover" />
@@ -413,7 +413,7 @@ export default function NewProduct() {
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-1.5">
               <SparkleIcon className="w-3.5 h-3.5 text-accent" />
-              <label className={labelClass}>Assistant Flip (optionnel)</label>
+              <span className={labelClass}>Assistant Flip (optionnel)</span>
             </div>
             <p className="text-xs text-faint -mt-0.5">
               Décris l'article en quelques mots, ex : « Pokémon Version Rouge complet en boîte » — Flip complète nom, catégorie, état et prix pour toi.
@@ -464,7 +464,7 @@ export default function NewProduct() {
 
           {/* Photos supplémentaires */}
           <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Photos supplémentaires ({extraPhotos.length})</label>
+            <span className={labelClass}>Photos supplémentaires ({extraPhotos.length})</span>
             <div className="flex flex-wrap gap-2">
               {extraPhotos.map((p, i) => (
                 <div key={i} className="relative w-16 h-16">
@@ -506,8 +506,8 @@ export default function NewProduct() {
           <div className="border-t border-line" />
 
           {/* Nom */}
-          <div className="flex flex-col gap-1.5">
-            <label className={labelClass}>Nom du produit</label>
+          <label className="flex flex-col gap-1.5">
+            <span className={labelClass}>Nom du produit</span>
             <input
               name="name"
               value={form.name}
@@ -515,12 +515,12 @@ export default function NewProduct() {
               placeholder="Ex: Nike Air Max 90 blanche T42"
               className={inputClass}
             />
-          </div>
+          </label>
 
           {/* Categorie + Etat */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Catégorie</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Catégorie</span>
               <select
                 name="category"
                 value={form.category}
@@ -532,9 +532,9 @@ export default function NewProduct() {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>État</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>État</span>
               <select
                 name="condition"
                 value={form.condition}
@@ -546,7 +546,7 @@ export default function NewProduct() {
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
-            </div>
+            </label>
           </div>
 
           {/* Separateur */}
@@ -554,8 +554,8 @@ export default function NewProduct() {
 
           {/* Prix + Frais */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Prix d'achat</label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Prix d'achat</span>
               <div className="relative">
                 <input
                   name="purchase_price"
@@ -567,9 +567,9 @@ export default function NewProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className={labelClass}>Frais d'achat</label>
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={labelClass}>Frais d'achat</span>
               <div className="relative">
                 <input
                   name="purchase_fees"
@@ -581,7 +581,7 @@ export default function NewProduct() {
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-faint text-sm">€</span>
               </div>
-            </div>
+            </label>
           </div>
 
           {/* Apercu cout total */}
@@ -616,15 +616,15 @@ export default function NewProduct() {
             </label>
 
             {isOrder && (
-              <div className="flex flex-col gap-1.5">
-                <label className={labelClass}>Livraison estimée (optionnel)</label>
+              <label className="flex flex-col gap-1.5">
+                <span className={labelClass}>Livraison estimée (optionnel)</span>
                 <input
                   type="date"
                   value={expectedDelivery}
                   onChange={(e) => setExpectedDelivery(e.target.value)}
                   className={inputClass}
                 />
-              </div>
+              </label>
             )}
           </div>
 

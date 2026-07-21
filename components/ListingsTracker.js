@@ -186,7 +186,7 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                 ) : (
                   <button
                     onClick={() => { setEditingUrlId(l.id); setEditUrlValue('') }}
-                    className="text-[11px] text-muted hover:text-accent transition"
+                    className="text-xs text-muted hover:text-accent transition inline-flex items-center min-h-[44px] pr-2"
                   >
                     + Ajouter le lien
                   </button>
@@ -194,20 +194,20 @@ export default function ListingsTracker({ productId, defaultPrice }) {
                 <div className="flex items-center gap-1">
                   {l.status === 'active' && (
                     <>
-                      <button onClick={() => setStatus(l.id, 'sold')} className="text-[11px] bg-sage/10 text-sage hover:bg-sage/20 font-medium px-2 py-1 rounded-full transition">
+                      <button onClick={() => setStatus(l.id, 'sold')} className="text-xs bg-sage/10 text-sage hover:bg-sage/20 font-medium px-3 rounded-full transition min-h-[44px]">
                         Vendue
                       </button>
-                      <button onClick={() => setStatus(l.id, 'expired')} className="text-[11px] bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-2 py-1 rounded-full transition">
+                      <button onClick={() => setStatus(l.id, 'expired')} className="text-xs bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-3 rounded-full transition min-h-[44px]">
                         Retirer
                       </button>
                     </>
                   )}
                   {l.status !== 'active' && (
-                    <button onClick={() => setStatus(l.id, 'active')} className="text-[11px] bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-2 py-1 rounded-full transition">
+                    <button onClick={() => setStatus(l.id, 'active')} className="text-xs bg-surface border border-line text-muted2 hover:bg-canvas font-medium px-3 rounded-full transition min-h-[44px]">
                       Réactiver
                     </button>
                   )}
-                  <button onClick={() => remove(l.id)} className="text-[11px] text-disabled hover:text-coral px-1.5 py-1 rounded-full hover:bg-coral/10 transition">
+                  <button onClick={() => remove(l.id)} aria-label="Supprimer cette annonce du suivi" className="text-muted hover:text-coral rounded-full hover:bg-coral/10 transition inline-flex items-center justify-center min-w-[44px] min-h-[44px]">
                     ✕
                   </button>
                 </div>
