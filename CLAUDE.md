@@ -8,7 +8,7 @@ Application de suivi d'achat/revente ("flip") d'articles d'occasion : stock, ven
 - **Supabase** — auth (email/mdp + pseudo), Postgres avec RLS par `user_id`, Storage (bucket public `products` pour les photos)
 - **Google Gemini** (`gemini-flash-lite-latest`, tier gratuit) — estimation prix depuis photo, génération d'annonces, chatbot-agent "Flip"
 - **Tailwind CSS v3** — config `tailwind.config.js`, PostCSS via `postcss.config.mjs` (ne PAS recréer de `postcss.config.js`, ça casse le build)
-- **Vercel** — déploiement auto à chaque push sur `main` → https://fliptrack-pro-9ziq.vercel.app
+- **Vercel** — déploiement auto à chaque push sur `main` → https://fliptrackpro.vercel.app (l'URL publique ne doit PAS être codée en dur : elle est résolue dans `lib/siteUrl.js` via `NEXT_PUBLIC_SITE_URL` ou `VERCEL_PROJECT_PRODUCTION_URL`, car un renommage du projet Vercel avait déjà cassé le sitemap et l'Open Graph)
 - **PWA** — `public/manifest.json` + icônes générées ; viewport défini dans `app/layout.js`
 
 ## Commandes

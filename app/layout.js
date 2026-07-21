@@ -3,6 +3,7 @@ import "./globals.css";
 import { ToastProvider } from "@/components/Toast";
 import ChatWidget from "@/components/ChatWidget";
 import PageTransition from "@/components/PageTransition";
+import { SITE_URL } from "@/lib/siteUrl";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-sans",
@@ -17,7 +18,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://fliptrack-pro-9ziq.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "FlipTrack — Gère ton activité d'achat-revente",
     template: "%s · FlipTrack",

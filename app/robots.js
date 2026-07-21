@@ -1,3 +1,5 @@
+import { SITE_URL } from '@/lib/siteUrl'
+
 export default function robots() {
   return {
     rules: [
@@ -8,6 +10,6 @@ export default function robots() {
         disallow: ['/dashboard', '/products', '/sales', '/commandes', '/account', '/api/'],
       },
     ],
-    sitemap: 'https://fliptrack-pro-9ziq.vercel.app/sitemap.xml',
+    sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }
