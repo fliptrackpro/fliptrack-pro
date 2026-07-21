@@ -23,6 +23,20 @@ function fileToBase64(file) {
   })
 }
 
+// Marque un champ prérempli par l'IA : l'utilisateur sait quoi relire au lieu de
+// découvrir des valeurs apparues sans explication.
+function AiChip({ on }) {
+  if (!on) return null
+  return (
+    <span
+      title="Prérempli par l'IA — vérifie et corrige si besoin"
+      className="text-[10px] font-semibold text-accent bg-accent/10 px-1.5 py-0.5 rounded-full leading-none"
+    >
+      IA
+    </span>
+  )
+}
+
 function guessCategory(text, categories) {
   const t = (text || '').toLowerCase()
   const map = {
@@ -56,6 +70,10 @@ export default function NewProduct() {
   const [assistMessages, setAssistMessages] = useState([])
   const [assistInput, setAssistInput] = useState('')
   const [assistSending, setAssistSending] = useState(false)
+  const [showAssistant, setShowAssistant] = useState(false)
+  // Champs renseignés par l'IA : signalés à l'utilisateur pour qu'il sache
+  // quoi relire plutôt que de découvrir des valeurs apparues toutes seules.
+  const [aiFilled, setAiFilled] = useState({})
   const [isOrder, setIsOrder] = useState(false)
   const [expectedDelivery, setExpectedDelivery] = useState('')
   const [form, setForm] = useState({
@@ -114,12 +132,21 @@ export default function NewProduct() {
       } else {
         setAiEstimate(data)
         setDescription(data.description || '')
-        setForm(f => ({
-          ...f,
-          name: f.name || data.name || '',
-          category: f.category || data.category || '',
-          condition: f.condition || data.condition || '',
-        }))
+        setForm(f => {
+          const next = {
+            ...f,
+            name: f.name || data.name || '',
+            category: f.category || data.category || '',
+            condition: f.condition || data.condition || '',
+          }
+          setAiFilled(prev => ({
+            ...prev,
+            name: prev.name || (!f.name && !!next.name),
+            category: prev.category || (!f.category && !!next.category),
+            condition: prev.condition || (!f.condition && !!next.condition),
+          }))
+          return next
+        })
 
         const priceText = (data.estimated_price_min != null && data.estimated_price_max != null)
           ? ` Estimation : ${data.estimated_price_min}€ – ${data.estimated_price_max}€.`
@@ -344,10 +371,45 @@ export default function NewProduct() {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-ink2">{photoPreview ? 'Changer la photo' : 'Ajouter une photo'}</p>
-                <p className="text-xs text-faint">Ajoute aussi des photos supplémentaires (étiquette, détails) puis lance l'analyse IA</p>
+                <p className="text-xs text-muted">L'IA remplit le nom, la catégorie, l'état et le prix pour toi</p>
               </div>
               <input type="file" accept="image/*" onChange={handlePhoto} className="hidden" />
             </label>
+
+            {/* Photos supplémentaires : repliées dans le bloc photo tant qu'il n'y a pas
+                de photo principale — elles n'ont aucun sens seules. */}
+            {photoPreview && (
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                {extraPhotos.map((p, i) => (
+                  <div key={i} className="relative w-14 h-14">
+                    <img loading="lazy" decoding="async" src={p.preview} alt="" className="w-14 h-14 rounded-lg object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeExtraPhoto(i)}
+                      aria-label={`Retirer la photo ${i + 2}`}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                <label className="w-14 h-14 flex-shrink-0 rounded-lg bg-canvas border border-dashed border-line2 hover:border-accent/50 flex flex-col items-center justify-center cursor-pointer transition">
+                  <span className="text-lg text-muted leading-none">+</span>
+                  <span className="text-[9px] text-muted mt-0.5">angle</span>
+                  <input type="file" accept="image/*" multiple onChange={handleExtraPhotos} className="hidden" />
+                </label>
+                <span className="text-xs text-muted">Plus d'angles = meilleure estimation</span>
+              </div>
+            )}
+
+            {/* Scanner : chemin secondaire, pas un bloc concurrent */}
+            <label className="inline-flex items-center gap-2 cursor-pointer text-xs text-muted hover:text-accent transition mt-1 self-start min-h-[44px]">
+              <BarcodeIcon className="w-4 h-4 flex-shrink-0" />
+              <span>ou scanner un code-barres (objet scellé)</span>
+              {scanning && <span className="w-3.5 h-3.5 border-2 border-accent border-t-transparent rounded-full animate-spin" />}
+              <input type="file" accept="image/*" capture="environment" onChange={handleScan} className="hidden" />
+            </label>
+            {scanError && <p className="text-xs text-coral">{scanError}</p>}
 
             {photoFile && !estimating && !aiEstimate && (
               <button
@@ -413,17 +475,25 @@ export default function NewProduct() {
             )}
           </div>
 
-          {/* Assistant IA conversationnel */}
+          {/* Correction par le texte : repliée par défaut. C'est un recours quand la photo
+              s'est trompée, pas une troisième méthode de saisie concurrente. */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-1.5">
-              <SparkleIcon className="w-3.5 h-3.5 text-accent" />
-              <span className={labelClass}>Assistant Flip (optionnel)</span>
-            </div>
-            <p className="text-xs text-faint -mt-0.5">
-              Décris l'article en quelques mots, ex : « Pokémon Version Rouge complet en boîte » — Flip complète nom, catégorie, état et prix pour toi.
-            </p>
+            {!showAssistant && assistMessages.length === 0 ? (
+              <button
+                type="button"
+                onClick={() => setShowAssistant(true)}
+                className="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition self-start min-h-[44px]"
+              >
+                <SparkleIcon className="w-3.5 h-3.5" />
+                {aiEstimate ? 'Pas tout à fait ? Corrige en une phrase' : "Décrire l'article en une phrase"} →
+              </button>
+            ) : (
+              <p className="text-xs text-muted">
+                Décris l'article en quelques mots, ex : « Pokémon Version Rouge complet en boîte ».
+              </p>
+            )}
 
-            {assistMessages.length > 0 && (
+            {(showAssistant || assistMessages.length > 0) && assistMessages.length > 0 && (
               <div className="flex flex-col gap-2 bg-canvas rounded-xl p-3 max-h-56 overflow-y-auto">
                 {assistMessages.map((m, i) => (
                   <div
@@ -447,63 +517,27 @@ export default function NewProduct() {
               </div>
             )}
 
-            <div className="flex items-center gap-2">
-              <input
-                value={assistInput}
-                onChange={(e) => setAssistInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAssistSend() } }}
-                placeholder='Ex : "Pokémon Rouge complet, cartouche + boîte"'
-                className={inputClass}
-              />
-              <button
-                type="button"
-                onClick={handleAssistSend}
-                disabled={assistSending || !assistInput.trim()}
-                className="w-11 h-11 flex-shrink-0 bg-inkd disabled:bg-line rounded-xl flex items-center justify-center text-white transition"
-              >
-                →
-              </button>
-            </div>
-          </div>
-
-          {/* Photos supplémentaires */}
-          <div className="flex flex-col gap-1.5">
-            <span className={labelClass}>Photos supplémentaires ({extraPhotos.length})</span>
-            <div className="flex flex-wrap gap-2">
-              {extraPhotos.map((p, i) => (
-                <div key={i} className="relative w-16 h-16">
-                  <img loading="lazy" decoding="async" src={p.preview} alt="" className="w-16 h-16 rounded-lg object-cover" />
-                  <button
-                    onClick={() => removeExtraPhoto(i)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-inkd text-white text-xs flex items-center justify-center"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ))}
-              <label className="w-16 h-16 flex-shrink-0 rounded-lg bg-canvas border border-dashed border-line2 hover:border-accent/50 flex items-center justify-center cursor-pointer transition">
-                <span className="text-xl text-faint">+</span>
-                <input type="file" accept="image/*" multiple onChange={handleExtraPhotos} className="hidden" />
-              </label>
-            </div>
-            <p className="text-xs text-faint">Améliore la précision de l'analyse IA et sert pour les annonces multi-angles (Vinted, Vestiaire Collective...)</p>
-          </div>
-
-          {/* Scanner code-barres */}
-          <div className="flex flex-col gap-1.5">
-            <label className="flex items-center gap-3 cursor-pointer bg-canvas border border-dashed border-line2 rounded-xl px-4 py-3 hover:border-accent/50 transition">
-              <BarcodeIcon className="w-5 h-5 text-faint flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-ink2">Scanner un code-barres</p>
-                <p className="text-xs text-faint">Utile pour les objets encore emballés/scellés</p>
+            {(showAssistant || assistMessages.length > 0) && (
+              <div className="flex items-center gap-2">
+                <input
+                  autoFocus={showAssistant && assistMessages.length === 0}
+                  value={assistInput}
+                  onChange={(e) => setAssistInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAssistSend() } }}
+                  placeholder='Ex : "Pokémon Rouge complet, cartouche + boîte"'
+                  aria-label="Décrire l'article pour que l'IA complète la fiche"
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={handleAssistSend}
+                  disabled={assistSending || !assistInput.trim()}
+                  aria-label="Envoyer la description"
+                  className="w-11 h-11 flex-shrink-0 bg-inkd disabled:bg-line rounded-xl flex items-center justify-center text-white transition"
+                >
+                  →
+                </button>
               </div>
-              {scanning && (
-                <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin flex-shrink-0" />
-              )}
-              <input type="file" accept="image/*" capture="environment" onChange={handleScan} className="hidden" />
-            </label>
-            {scanError && (
-              <p className="text-xs text-coral mt-1">{scanError}</p>
             )}
           </div>
 
@@ -511,7 +545,10 @@ export default function NewProduct() {
 
           {/* Nom */}
           <label className="flex flex-col gap-1.5">
-            <span className={labelClass}>Nom du produit</span>
+            <span className="flex items-center gap-1.5">
+              <span className={labelClass}>Nom du produit</span>
+              <AiChip on={aiFilled.name} />
+            </span>
             <input
               name="name"
               value={form.name}
@@ -524,7 +561,10 @@ export default function NewProduct() {
           {/* Categorie + Etat */}
           <div className="grid grid-cols-2 gap-4">
             <label className="flex flex-col gap-1.5">
-              <span className={labelClass}>Catégorie</span>
+              <span className="flex items-center gap-1.5">
+                <span className={labelClass}>Catégorie</span>
+                <AiChip on={aiFilled.category} />
+              </span>
               <select
                 name="category"
                 value={form.category}
@@ -538,7 +578,10 @@ export default function NewProduct() {
               </select>
             </label>
             <label className="flex flex-col gap-1.5">
-              <span className={labelClass}>État</span>
+              <span className="flex items-center gap-1.5">
+                <span className={labelClass}>État</span>
+                <AiChip on={aiFilled.condition} />
+              </span>
               <select
                 name="condition"
                 value={form.condition}
