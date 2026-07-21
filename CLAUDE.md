@@ -45,7 +45,7 @@ Les mêmes variables doivent exister dans les settings Vercel.
 
 Schéma complet dans `supabase/schema.sql` ; migrations incrémentales dans `supabase/migration_00X_*.sql`. **Les migrations doivent être exécutées à la main dans le SQL Editor Supabase** (pas de CLI configurée). Après toute modification de schéma : mettre à jour `schema.sql` ET créer une migration.
 
-Tables : `products` (avec `photo_url`, `estimated_price_min/max`, `last_reposted_at`), `sales`, `ai_usage` (quota IA/jour), `profiles` (`user_id` ↔ `username` unique, lecture publique du pseudo uniquement, remplie automatiquement à l'inscription par un trigger sur `auth.users`), `listings` (suivi des annonces : `product_id`, `platform`, `listed_price`, `url`, `status` active/sold/expired, `listed_at` ; une ligne par plateforme où un article est publié). RLS activée partout, scope `auth.uid() = user_id`. Bucket Storage `products` : lecture publique, écriture limitée au dossier de l'utilisateur.
+Tables : `products` (avec `photo_url`, `estimated_price_min/max`, `last_reposted_at`, `generated_listings` jsonb + `listings_generated_at` : les annonces IA sont persistées pour survivre à l'aller-retour vers la plateforme), `sales`, `ai_usage` (quota IA/jour), `profiles` (`user_id` ↔ `username` unique, lecture publique du pseudo uniquement, remplie automatiquement à l'inscription par un trigger sur `auth.users`), `listings` (suivi des annonces : `product_id`, `platform`, `listed_price`, `url`, `status` active/sold/expired, `listed_at` ; une ligne par plateforme où un article est publié). RLS activée partout, scope `auth.uid() = user_id`. Bucket Storage `products` : lecture publique, écriture limitée au dossier de l'utilisateur.
 
 ## Conventions et pièges
 

@@ -19,6 +19,8 @@ create table if not exists products (
   estimated_price_min numeric,
   estimated_price_max numeric,
   is_luxury boolean not null default false,
+  generated_listings jsonb,
+  listings_generated_at timestamptz,
   created_at timestamptz not null default now()
 );
 

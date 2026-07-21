@@ -31,6 +31,7 @@ export default function PublishProduct() {
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
   const [listings, setListings] = useState(null)
+  const [generatedAt, setGeneratedAt] = useState(null)
   const [copiedKey, setCopiedKey] = useState('')
   const [marking, setMarking] = useState(false)
 
@@ -48,6 +49,12 @@ export default function PublishProduct() {
 
       if (error || !data) return router.push('/products')
       setProduct(data)
+      // Réafficher les annonces déjà générées : publier impose de quitter la page,
+      // les regénérer au retour consommait du quota IA pour rien.
+      if (data.generated_listings) {
+        setListings(data.generated_listings)
+        setGeneratedAt(data.listings_generated_at || null)
+      }
       if (data.estimated_price_min != null && data.estimated_price_max != null) {
         setPrice(String(Math.round((data.estimated_price_min + data.estimated_price_max) / 2)))
       }
@@ -81,6 +88,15 @@ export default function PublishProduct() {
         setError(data.error || 'Erreur inconnue')
       } else {
         setListings(data)
+        const now = new Date().toISOString()
+        setGeneratedAt(now)
+        // Persisté pour survivre à l'aller-retour vers la plateforme.
+        // Un échec d'écriture ne doit pas priver l'utilisateur du texte affiché.
+        const { error: saveError } = await supabase
+          .from('products')
+          .update({ generated_listings: data, listings_generated_at: now })
+          .eq('id', product.id)
+        if (saveError) console.error('Annonces non sauvegardées :', saveError.message)
       }
     } catch (err) {
       setError(friendlyError(err))
@@ -209,14 +225,18 @@ export default function PublishProduct() {
                 <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
                 Génération en cours...
               </span>
+            ) : listings ? (
+              'Régénérer les annonces →'
             ) : (
               'Générer les annonces →'
             )}
           </button>
-        </div>
 
-        <div className="mt-6">
-          <ListingsTracker productId={product.id} defaultPrice={price} />
+          {listings && generatedAt && !generating && (
+            <p className="text-xs text-muted text-center -mt-1">
+              Annonces générées {daysSince(generatedAt) <= 0 ? "aujourd'hui" : `il y a ${daysSince(generatedAt)} j`} et conservées ici.
+            </p>
+          )}
         </div>
 
         {listings && (
@@ -283,13 +303,20 @@ export default function PublishProduct() {
               <button
                 onClick={handleMarkReposted}
                 disabled={marking}
-                className="w-full bg-sage hover:bg-sageh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm"
+                className="w-full bg-sagebtn hover:bg-sageh active:scale-[0.98] disabled:bg-line disabled:text-disabled text-white font-semibold rounded-xl px-4 py-3 transition text-sm min-h-[44px]"
               >
                 {marking ? 'Enregistrement...' : '✓ Marquer comme reposté'}
               </button>
             </div>
           </div>
         )}
+
+        {/* Le suivi vient APRÈS les annonces : il s'intercalait entre le bouton
+            "Générer" et son résultat, donc la réponse attendue apparaissait sous
+            un formulaire sans rapport. */}
+        <div className="mt-6">
+          <ListingsTracker productId={product.id} defaultPrice={price} />
+        </div>
       </main>
     </div>
   )

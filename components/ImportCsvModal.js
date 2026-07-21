@@ -65,7 +65,7 @@ export default function ImportCsvModal({ onClose, onImported }) {
         table = parseCSV(text)
       }
     } catch (err) {
-      setFileError('Impossible de lire ce fichier. Verifie qu il s agit bien d un CSV ou d un Excel.')
+      setFileError("Impossible de lire ce fichier. Vérifie qu'il s'agit bien d'un CSV ou d'un Excel.")
       return
     }
 
